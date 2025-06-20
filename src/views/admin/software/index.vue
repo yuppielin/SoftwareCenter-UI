@@ -101,8 +101,7 @@
         </el-form>
       </el-col>
     </div>
-    <el-table :show-header="false"  :data="reviewData" :row-key = "getRowKeys" ref="mutipleTable" @selection-change="handleItemSelection">
-      <el-table-column  v-if="$checkPermission(['admin','XTUser'])" :selectable="checkBoxSelect" type="selection" :reserve-selection = "true" width="50"></el-table-column>
+    <el-table :show-header="false"  :data="reviewData" :row-key = "getRowKeys" ref="mutipleTable">
       <el-table-column>
         <template slot-scope="{row}">
         <el-row :gutter="20" style="margin:10px 0;">
@@ -118,7 +117,7 @@
               </el-col>
               <el-col :span="12" style="line-height:1.5">
                 <div
-                  style="cursor: pointer;font-size:16px;font-weight:600;display:inline-block;width:150px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;color:#2098cc;"
+                  style="cursor: pointer;font-size:16px;font-weight:600;display:inline-block;width:150px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;color:#1e7d34;"
                   @click="showRelation(row.versionData)"
                 >{{row.name}}</div>
                 <el-select
@@ -144,27 +143,27 @@
             <span class="subContent">{{row.versionData.prefix?row.versionData.prefix:'-'}}</span>
           </el-col> -->
           <el-col :span="3" style="line-height:2.0">
-            <span class="subTitle">大小</span>
+            <span class="subTitle" style="font-size:14px;font-weight:600;">大小</span>
             <br />
             <span class="subContent">{{formatFileSize(row.versionData.sizes)}}</span>
           </el-col>
           <el-col :span="3" style="line-height:2.0">
-            <span class="subTitle">研制单位</span>
+            <span class="subTitle" style="font-size:14px;font-weight:600;">研制单位</span>
             <br />
             <span class="subContent">{{row.versionData.source?row.versionData.source:'-'}}</span>
           </el-col>
           <el-col :span="3" style="line-height:2.0">
-            <span class="subTitle">提供单位</span>
+            <span class="subTitle" style="font-size:14px;font-weight:600;">提供单位</span>
             <br />
             <span class="subContent">{{row.versionData.offerUnit}}</span>
           </el-col>
           <el-col :span="3" style="line-height:2.0">
-            <span class="subTitle">上传人</span>
+            <span class="subTitle" style="font-size:14px;font-weight:600;">上传人</span>
             <br />
             <span class="subContent">{{row.versionData.uname}}</span>
           </el-col>
           <el-col :span="3" style="line-height:2.0">
-            <span class="subTitle">上传时间</span>
+            <span class="subTitle" style="font-size:14px;font-weight:600;">上传时间</span>
             <br />
             <span class="subContent">{{row.versionData.ctime|parseTime('{y}-{m}-{d} {h}:{m}:{s}')}}</span>
           </el-col>
@@ -900,18 +899,18 @@ el-card {
   border-radius: 4px;
   border: 0px solid #e6ebf5;
 }
-/deep/ .el-input--small .el-input__inner {
+::v-deep .el-input--small .el-input__inner {
   height: 36px;
   line-height: 36px;
 }
-/deep/ .el-table {
+::v-deep .el-table {
   /* overflow: visible !important; */
 }
-/deep/ .el-table .cell {
+::v-deep .el-table .cell {
   /*overflow: visible !important;*/
 }
 
-/deep/ .el-table__body-wrapper {
+::v-deep .el-table__body-wrapper {
   overflow: visible !important;
 }
 .version >>> .el-input__inner {
@@ -961,20 +960,58 @@ el-card {
   margin-left: 16px;
 }
 
-/deep/ .vue-treeselect{
+::v-deep .vue-treeselect{
   top: 3px;
 }
-/deep/ .vue-treeselect__control {
+::v-deep .vue-treeselect__control {
   height: 32px;
   line-height: 32px;
 }
 
-/deep/ .vue-treeselect__placeholder, .vue-treeselect__single-value {
+::v-deep .vue-treeselect__placeholder, .vue-treeselect__single-value {
   line-height: 32px;
 }
-/deep/ .el-input.el-input--medium.el-input--suffix{
+::v-deep .el-input.el-input--medium.el-input--suffix{
   line-height: 32px;
   top:2px;
+}
+
+/* 添加绿色系的主题覆盖 */
+::v-deep .el-select .el-input.is-focus .el-input__inner {
+  border-color: #1e7d34;
+}
+
+::v-deep .el-select-dropdown__item.selected {
+  color: #1e7d34;
+}
+
+::v-deep .el-select .el-input__inner:focus {
+  border-color: #1e7d34;
+}
+
+::v-deep .el-input__inner:focus {
+  border-color: #1e7d34;
+}
+
+::v-deep .el-checkbox__input.is-checked .el-checkbox__inner,
+::v-deep .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background-color: #1e7d34;
+  border-color: #1e7d34;
+}
+
+::v-deep .el-button--primary {
+  background-color: #1e7d34;
+  border-color: #1e7d34;
+}
+
+::v-deep .el-button--primary:hover,
+::v-deep .el-button--primary:focus {
+  background-color: #2a9d42;
+  border-color: #2a9d42;
+}
+
+::v-deep .el-pagination.is-background .el-pager li:not(.disabled).active {
+  background-color: #1e7d34;
 }
 </style>
 
