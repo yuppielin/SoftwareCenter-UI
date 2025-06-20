@@ -1272,7 +1272,7 @@ export const asyncRoutes = [
   },
   {
     path: '/admin/analysis',
-    // redirect: 'noRedirect',
+    redirect: 'noRedirect',
     component: Layout,
     meta: {
       title: '生态分析',
@@ -1282,13 +1282,13 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'dev-analysis',
+        path: 'dev',
         name: 'dev-analysis',
         component: () => import('@/views/admin/analysis/dev'),
         meta: { title: '开发生态', icon: 'el-icon-tickets' }
       },
       {
-        path: 'runtime-analysis',
+        path: 'runtime',
         name: 'runtime-analysis',
         component: () => import('@/views/admin/analysis/runtime'),
         meta: { title: '运行生态', icon: 'el-icon-tickets' }

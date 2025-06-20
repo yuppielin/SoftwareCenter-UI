@@ -6,12 +6,8 @@
     <el-row :gutter="10">
       <el-col :span="3">
         <el-card class="topCard">
-          <div class="topTitle"><i style="color: blue;" class="el-icon-s-help"></i>在网系统总数量</div>
+          <div class="topTitle"><i style="color: blue;" class="el-icon-s-help"></i>软件总数</div>
           <div class="topNum">{{topShowInfo.softwareAllNum}}</div>
-          <!-- <div class="topTitle">
-                  软件段总数
-                  <span style="margin-left:40px;">{{topShowInfo.fragmentNum}}</span>
-          </div>-->
         </el-card>
       </el-col>
       <el-col :span="3">
