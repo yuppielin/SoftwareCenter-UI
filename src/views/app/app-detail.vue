@@ -93,12 +93,12 @@ export default {
         description: '软件成果描述',
         createTime: '2022-03-25',
         downloadNumber: 10,
-        pic: require('@/assets/index/software.png')
+        pic: require('@/assets/index/softwareDefault.png')
       },
       activeName: 'first',
       questionList: [],
       commentVisible: false,
-      defaultS: 'this.src="' + require('@/assets/index/software.png') + '"',
+      defaultS: 'this.src="' + require('@/assets/index/softwareDefault.png') + '"',
       tag: [],
       logoAndPicUrl: appConfig.config.urlFilePrefix
     }

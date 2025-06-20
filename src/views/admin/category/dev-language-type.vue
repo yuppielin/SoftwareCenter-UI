@@ -2,7 +2,7 @@
     <div class="app-container">
         <el-card class="custome" >
             <div style="margin-bottom:10px;">
-                <el-button size="small" type="primary" @click="handleAdd">添加需求类型</el-button>
+                <el-button size="small" type="primary" @click="handleAdd">添加开发语言类型</el-button>
                 <el-input size="small" v-model="search.keyword" style="width:200px;margin-left:10px;" placeholder="关键字"></el-input>
                 <el-button size="small" type="primary" icon="el-icon-search" style="margin-left:10px" @click="this.queryCategory">搜索</el-button>
                 <el-button size="small" type="reset" title="重置" @click="handleReset">重置</el-button>
@@ -27,7 +27,7 @@
                         :normalizer="normalizer"
                         :show-count="true"
                         @select="selectModuleAdd"
-                        placeholder="请选择上级需求类型"/>
+                        placeholder="请选择上级开发语言类型"/>
                     </el-form-item>
                 </el-form>
                 <span slot="footer">
@@ -112,7 +112,7 @@ import * as category from '@/api/category'
      * 获取分类列表
      */
     getCategoryList() {
-      category.getCategoryList("demand_cate", this.currentPage, this.pageSize).then(response => {
+      category.getCategoryList("language_cate", this.currentPage, this.pageSize).then(response => {
         if (response.code === 200) {
           this.typeData = response.data.list
           this.totalCount = response.data.total
@@ -122,7 +122,7 @@ import * as category from '@/api/category'
     queryCategory() {
       // 查询软件分类 42 为资料分类的根节点id
       if (this.search.keyword) {
-        category.queryCategory("demand_cate", this.search.keyword, this.currentPage, this.pageSize).then(response => {
+        category.queryCategory("language_cate", this.search.keyword, this.currentPage, this.pageSize).then(response => {
           if (response.code === 200) {
             this.typeData = response.data.list
             this.totalCount = response.data.total
@@ -160,7 +160,7 @@ import * as category from '@/api/category'
      * @param typeForm form表单数据
      */
     addCategory(typeForm) {
-      let pid = 39
+      let pid = 753
       const categoryData = this.typeForm
       if (categoryData.parentId) {
         pid = categoryData.parentId
@@ -225,7 +225,7 @@ import * as category from '@/api/category'
       this.dialogVisible = true
       this.title = '编辑分类'
       this.typeForm = row
-      if (this.typeForm.parentId === 39) {
+      if (this.typeForm.parentId === 753) {
         this.typeForm.parentId = null
       }
     },

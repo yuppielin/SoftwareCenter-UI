@@ -359,8 +359,8 @@ export default {
         require("@/assets/imgs/banner.png")
       ],
       defaultS: 'this.src="' + require("@/assets/index/pic.png") + '"',
-      imgSource: require("@/assets/index/software.png"),
-      defaultImg: 'this.src="' + require("@/assets/index/software.png") + '"',
+      imgSource: require("@/assets/index/softwareDefault.png"),
+      defaultImg: 'this.src="' + require("@/assets/index/softwareDefault.png") + '"',
 
       selectType: null,
       logoAndPicUrl: config.urlFilePrefix

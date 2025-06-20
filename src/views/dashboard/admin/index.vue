@@ -288,11 +288,11 @@ export default {
       },
       // 添加饼图数据
       pieChartData: [
-        { value: 320, name: 'JavaScript' },
-        { value: 240, name: 'Python' },
-        { value: 149, name: 'Java' },
-        { value: 100, name: 'C++' },
-        { value: 490, name: 'Go' }
+        { value: 320, name: 'JavaScript', itemStyle: { color: '#6072be' } },
+        { value: 240, name: 'Python', itemStyle: { color: '#97c37d' } },
+        { value: 149, name: 'Java', itemStyle: { color: '#f4d07a' } },
+        { value: 100, name: 'C++', itemStyle: { color: '#e67e7e' } },
+        { value: 490, name: 'Go', itemStyle: { color: '#79c0d5' } }
       ]
     };
   },

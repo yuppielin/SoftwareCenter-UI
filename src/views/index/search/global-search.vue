@@ -45,7 +45,7 @@ export default {
         {
           id: 1,
           name: '腾讯软件',
-          logo: require('@/assets/index/software.png'),
+          logo: require('@/assets/index/softwareDefault.png'),
           version: '1.2.1',
           content: '高清互联网电视、视频等',
           size: '123.3M',
@@ -54,7 +54,7 @@ export default {
         {
           id: 2,
           name: 'QQ软件',
-          logo: require('@/assets/index/software.png'),
+          logo: require('@/assets/index/softwareDefault.png'),
           version: '1.2.1',
           content: '高清互联网电视、视频等',
           size: '123.3M',
@@ -63,7 +63,7 @@ export default {
         {
           id: 3,
           name: '安全软件',
-          logo: require('@/assets/index/software.png'),
+          logo: require('@/assets/index/softwareDefault.png'),
           version: '1.2.1',
           content: '高清互联网电视、视频等',
           size: '123.3M',

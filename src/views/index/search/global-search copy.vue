@@ -47,7 +47,7 @@
                                 </el-col>
                                 <el-col :span="8">
                                      <div style="width:90px;height:90px;float:left;">
-                                        <img src="@/assets/index/software.png" width="60" height="60" style="margin:15px;"/>
+                                        <img src="@/assets/index/softwareDefault.png" width="60" height="60" style="margin:15px;"/>
                                     </div>
                                     <div style="width:calc(100% - 100px);height:90px;float:left;">
                                         <div style="line-height:30px;height:30px;margin-top:15px;">
@@ -96,7 +96,7 @@
                                 </el-col>
                                 <el-col :span="8">
                                      <div style="width:90px;height:90px;float:left;">
-                                        <img src="@/assets/index/software.png" width="60" height="60" style="margin:15px;"/>
+                                        <img src="@/assets/index/softwareDefault.png" width="60" height="60" style="margin:15px;"/>
                                     </div>
                                     <div style="width:calc(100% - 100px);height:90px;float:left;">
                                         <div style="line-height:30px;height:30px;margin-top:15px;">
@@ -137,7 +137,7 @@ export default {
                 {
                     id:1,
                     name:"腾讯软件",
-                    logo:require("@/assets/index/software.png"),
+                    logo:require("@/assets/index/softwareDefault.png"),
                     version:"1.2.1",
                     content:'高清互联网电视、视频等',
                     size:'123.3M',
@@ -146,7 +146,7 @@ export default {
                 {
                     id:2,
                     name:"QQ软件",
-                    logo:require("@/assets/index/software.png"),
+                    logo:require("@/assets/index/softwareDefault.png"),
                     version:"1.2.1",
                     content:'高清互联网电视、视频等',
                     size:'123.3M',
@@ -155,7 +155,7 @@ export default {
                 {
                     id:3,
                     name:"安全软件",
-                    logo:require("@/assets/index/software.png"),
+                    logo:require("@/assets/index/softwareDefault.png"),
                     version:"1.2.1",
                     content:'高清互联网电视、视频等',
                     size:'123.3M',

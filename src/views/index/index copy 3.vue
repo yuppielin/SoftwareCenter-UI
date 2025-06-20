@@ -365,8 +365,8 @@ export default {
       defaultS: 'this.src="' + require('@/assets/index/pic.png') + '"',
       activeName: 'first',
       currentPage: 1,
-      imgSource: require('@/assets/index/software.png'),
-      defaultImg: 'this.src="' + require('@/assets/index/software.png') + '"',
+      imgSource: require('@/assets/index/softwareDefault.png'),
+      defaultImg: 'this.src="' + require('@/assets/index/softwareDefault.png') + '"',
       selectedSoftware: [],
       downloadMutil: false,
 

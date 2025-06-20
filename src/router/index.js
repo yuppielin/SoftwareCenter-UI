@@ -1068,6 +1068,18 @@ export const asyncRoutes = [
         component: () => import('@/views/admin/category/software-demand-type'),
         meta: { title: '需求分类', icon: 'el-icon-tickets' }
       },
+      {
+        path: 'language',
+        name:'language',
+        component: () => import('@/views/admin/category/dev-language-type'),
+        meta: { title: '开发语言分类', icon: 'el-icon-tickets' }
+      },
+      {
+        path: 'tech-stack',
+        name:'tech-stack',
+        component: () => import('@/views/admin/category/tech-stack-type'),
+        meta: { title: '技术栈分类', icon: 'el-icon-tickets' }
+      },
       // {
       //   path: 'question',
       //   name:'question',
@@ -1256,6 +1268,32 @@ export const asyncRoutes = [
         component: () => import('@/views/index/online-ts/'),
         meta: { title: '技术支持', icon: 'el-icon-chat-line-round', noCache: true, roles: ['editor', 'user'],}
       }
+    ]
+  },
+  {
+    path: '/admin/analysis',
+    // redirect: 'noRedirect',
+    component: Layout,
+    meta: {
+      title: '生态分析',
+      icon: 'el-icon-menu',
+      noCache: true,
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: 'dev-analysis',
+        name: 'dev-analysis',
+        component: () => import('@/views/admin/analysis/dev'),
+        meta: { title: '开发生态', icon: 'el-icon-tickets' }
+      },
+      {
+        path: 'runtime-analysis',
+        name: 'runtime-analysis',
+        component: () => import('@/views/admin/analysis/runtime'),
+        meta: { title: '运行生态', icon: 'el-icon-tickets' }
+      }
+    
     ]
   },
 

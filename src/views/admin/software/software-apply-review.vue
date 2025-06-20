@@ -82,7 +82,7 @@ export default {
   data() {
     return {
       rejectVisible: false,
-      defaultImg: 'this.src="' + require('@/assets/index/software.png') + '"',
+      defaultImg: 'this.src="' + require('@/assets/index/softwareDefault.png') + '"',
       software: {},
       globalUrl: '',
       userInfo: {},

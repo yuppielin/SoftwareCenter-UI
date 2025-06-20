@@ -55,7 +55,7 @@ export default {
   data() {
     return {
       selectedVersion: null,
-      defaultImg: 'this.src="' + require('@/assets/index/software.png') + '"',
+      defaultImg: 'this.src="' + require('@/assets/index/softwareDefault.png') + '"',
       globalUrl: '',
       userInfo: {},
       logoAndPicUrl: appConfig.config.urlFilePrefix

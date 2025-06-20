@@ -109,7 +109,7 @@ export default {
   },
   data() {
     return {
-      imgSource: require('@/assets/index/software.png'),
+      imgSource: require('@/assets/index/softwareDefault.png'),
       previewType: ["docx", "doc", "png", "jpg", "pdf", 'mp4'],
       showSoftwareDataVisible:false,
       typeJudge: 0,

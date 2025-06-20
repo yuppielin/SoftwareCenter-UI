@@ -238,8 +238,8 @@ export default {
   data() {
     return {
       id: null,
-      imgSource: require("@/assets/index/software.png"),
-      defaultS: 'this.src="' + require("@/assets/index/software.png") + '"',
+      imgSource: require("@/assets/index/softwareDefault.png"),
+      defaultS: 'this.src="' + require("@/assets/index/softwareDefault.png") + '"',
       picSource: require("@/assets/index/nodata.png"),
       defaultP: 'this.src="' + require("@/assets/index/pic.png") + '"',
       globalUrl: "",

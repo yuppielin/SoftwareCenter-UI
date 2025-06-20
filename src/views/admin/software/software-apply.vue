@@ -140,8 +140,8 @@ export default {
       softwareData: [],
       userInfo: {},
       status: 1,
-      imgSource: require('@/assets/index/software.png'),
-      defaultImg: 'this.src="' + require('@/assets/index/software.png') + '"',
+      imgSource: require('@/assets/index/softwareDefault.png'),
+      defaultImg: 'this.src="' + require('@/assets/index/softwareDefault.png') + '"',
       logoAndPicUrl: appConfig.config.urlFilePrefix
     }
   },

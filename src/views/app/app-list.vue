@@ -41,7 +41,7 @@ export default {
       appData: [],
       keyword: '',
       userInfo: {},
-      defaultS: 'this.src="' + require('@/assets/index/software.png') + '"',
+      defaultS: 'this.src="' + require('@/assets/index/softwareDefault.png') + '"',
       logoAndPicUrl: appConfig.config.urlFilePrefix
     }
   },

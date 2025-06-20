@@ -434,8 +434,8 @@ export default {
       currentPage: 1,
       pageSize: 6,
       totalPage: 0,
-      imgSource: require("@/assets/index/software.png"),
-      defaultImg: 'this.src="' + require("@/assets/index/software.png") + '"',
+      imgSource: require("@/assets/index/softwareDefault.png"),
+      defaultImg: 'this.src="' + require("@/assets/index/softwareDefault.png") + '"',
       search: {
         offerUnit: null,
         devUnit: null,

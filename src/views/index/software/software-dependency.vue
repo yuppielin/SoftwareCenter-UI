@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      defaultS: 'this.src="' + require('@/assets/index/software.png') + '"',
+      defaultS: 'this.src="' + require('@/assets/index/softwareDefault.png') + '"',
       dependencyData: []
     }
   },
