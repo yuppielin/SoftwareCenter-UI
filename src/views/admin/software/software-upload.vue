@@ -11,17 +11,18 @@
     >
       <el-form-item
           prop="softwareType"
-          label="软件类型:"
-          :rules="[{required:true,message:'软件类型',trigger:'blur'}]"
+          label="类型:"
+          :rules="[{required:true,message:'上传类型',trigger:'blur'}]"
         >
           <el-select
             v-model="softwareForm.softwareType"
             size="small"
             style="width:100%"
             filterable
-
+            value-key="softwareType"
+            placeholder="请选择类型"
+            @change="handleSoftwareTypeChange"
             ref="softwareType"
-            @blur="closeOptions('softwareType')"
           >
             <el-option
               label="通用软件"
@@ -31,19 +32,23 @@
               label="业务软件"
               :value="3"
             ></el-option>
+            <el-option
+              label="软件模型"
+              :value="4"
+            ></el-option>
           </el-select>
       </el-form-item>
       <el-form-item
         prop="name"
-        label="软件名称:"
-        :rules="[{ required: true, message: '软件名称不能为空', trigger: 'blur' }]"
+        :label="labelTexts.name"
+        :rules="[{ required: true, message: labelTexts.nameRequired, trigger: 'blur' }]"
       >
         <el-input v-model="softwareForm.name" size="small" style="width:100%"></el-input>
       </el-form-item>
        <el-form-item
         prop="path"
-        label="软件路径:"
-        :rules="[{ required: true, message: '请上传软件', trigger: 'blur' }]"
+        :label="labelTexts.path"
+        :rules="[{ required: true, message: labelTexts.pathRequired, trigger: 'blur' }]"
       >
         <el-input class="notClick" v-model="softwareForm.path" size="small" style="width:calc(100% - 90px );margin-right:8px"></el-input>
         <el-button size="small" type="primary"  @click="upload">点击上传</el-button>
@@ -109,7 +114,7 @@
         <el-col :span="12">
           <el-form-item
             prop="devUnit"
-            label="研制单位:"
+            :label="labelTexts.devUnit"
             :rules="[{required:true,message:'请选择研制单位',trigger:'change'}]"
           >
             <el-input v-model="softwareForm.devUnit" size="small" style="width:100%" />
@@ -118,7 +123,7 @@
       </el-row>
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-form-item label="软件Logo:">
+          <el-form-item :label="labelTexts.logo">
             <el-upload
               ref="logoFile"
               class="upload-demo"
@@ -145,7 +150,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="软件封面:">
+          <el-form-item :label="labelTexts.pic">
             <el-upload
               ref="pageFile"
               :auto-upload="true"
@@ -226,8 +231,8 @@
         <el-col :span="12">
           <el-form-item
             prop="version"
-            label="软件版本:"
-            :rules="[{ required: true, message: '软件版本不能为空', trigger: 'blur' }]"
+            :label="labelTexts.version"
+            :rules="[{ required: true, message: labelTexts.versionRequired, trigger: 'blur' }]"
           >
             <el-input v-model="softwareForm.version" size="small" style="width:100%"></el-input>
           </el-form-item>
@@ -258,8 +263,8 @@
       </el-row>
       <el-form-item
         prop="description"
-        label="软件描述:"
-        :rules="[{required:true,message:'软件描述不能为空',trigger:'blur'}]"
+        :label="labelTexts.description"
+        :rules="[{required:true,message:labelTexts.descriptionRequired,trigger:'blur'}]"
       >
         <!-- <markdown-editor ref="markdownEditor" v-model="softwareForm.content" :options="{hideModeSwitch:true,previewStyle:'tab'}" height="200px" /> -->
         <el-input type="textarea" v-model="softwareForm.description" rows="4" style="width:100%"></el-input>
@@ -269,13 +274,13 @@
         v-if="softwareForm.versionData.isUpgrade==1"
         prop="versionData.upgradeDescription"
         label="升级描述:"
-        :rules="[{required:true,message:'软件升级描述不能为空',trigger:'blur'}]"
+        :rules="[{required:true,message:labelTexts.upgradeDescription,trigger:'blur'}]"
       >
 
         <el-input type="textarea" v-model="softwareForm.versionData.upgradeDescription" rows="4" show-word-limit  maxlength="200" style="width:100%"></el-input>
       </el-form-item>
 
-      <el-form-item label="软件资料:">
+      <el-form-item :label="labelTexts.softwareData">
         <el-row :gutter="20">
           <el-col :span="6">
             <el-upload
@@ -312,14 +317,14 @@
                 header-align="center"
                 label="序号"
               />
-              <el-table-column min-width="120px" label="资料名称">
+              <el-table-column min-width="120px" :label="labelTexts.dataName">
                 <template slot-scope="{row}">
                   <template>
                     <el-input v-model="row.name" class="edit-input" size="small" />
                   </template>
                 </template>
               </el-table-column>
-              <el-table-column align="center" header-align="center" label="资料类型" prop="category">
+              <el-table-column align="center" header-align="center" :label="labelTexts.dataType" prop="category">
                 <template slot-scope="scope">
                   <treeselect
                     v-model="scope.row.category"
@@ -330,7 +335,7 @@
                     :disable-branch-nodes="false"
                     :normalizer="normalizer"
                     :show-count="true"
-                    placeholder="请选择资料类型"
+                    :placeholder="labelTexts.selectDataType"
                   ></treeselect>
                 </template>
               </el-table-column>
@@ -498,7 +503,7 @@
         </el-table>
       </el-form-item> -->
       <div style="text-align:center;">
-        <el-button size="small" type="primary" @click="addSoftware">提交</el-button>
+        <el-button size="small" type="primary" @click="addSoftware">{{labelTexts.submitText}}</el-button>
         <el-button size="small" @click="cancleSubmit">取消</el-button>
       </div>
     </el-form>
@@ -547,8 +552,9 @@ export default {
         pic: "",
         logo: "",
         attribute: 2,
-        softwareDetailAntivirusList: [], // 杀毒证明
-        softwareDetailTestList: [], // 测试证明
+        softwareType: null,
+        softwareDetailAntivirusList: [],
+        softwareDetailTestList: [],
         versionData: {
           isUpgrade:0
         }
@@ -557,7 +563,6 @@ export default {
       softwareDataTypes: [],
       testDepartmentList: [],
       softwareServiceList: [],
-      softwareTypeList: [],
       logoFileList: [],
       docData: [],
       originalNameList: [],
@@ -574,6 +579,56 @@ export default {
 
       isUploadVolums: false,
     };
+  },
+  computed: {
+    labelTexts() {
+      // 根据软件类型返回不同的标签文本
+      const softwareType = this.softwareForm.softwareType !== null ? parseInt(this.softwareForm.softwareType) : null;
+      console.log("计算属性中的软件类型:", softwareType);
+      
+      if (softwareType === 4) { // 软件模型类型
+        return {
+          name: "模型名称:",
+          nameRequired: "模型名称不能为空",
+          path: "模型路径:",
+          pathRequired: "请上传模型",
+          version: "模型版本:",
+          versionRequired: "模型版本不能为空",
+          description: "模型描述:",
+          descriptionRequired: "模型描述不能为空",
+          dataName: "资料名称",
+          dataType: "资料类型",
+          selectDataType: "请选择资料类型",
+          softwareData: "模型资料:",
+          devUnit: "研制单位:",
+          logo: "模型Logo:",
+          pic: "模型封面:",
+          upgradeDescription: "模型升级描述不能为空",
+          submitText: "提交模型"
+        }
+      } else {
+        // 默认使用软件相关的标签
+        return {
+          name: "软件名称:",
+          nameRequired: "软件名称不能为空",
+          path: "软件路径:",
+          pathRequired: "请上传软件",
+          version: "软件版本:",
+          versionRequired: "软件版本不能为空",
+          description: "软件描述:",
+          descriptionRequired: "软件描述不能为空",
+          dataName: "资料名称",
+          dataType: "资料类型",
+          selectDataType: "请选择资料类型",
+          softwareData: "软件资料:",
+          devUnit: "研制单位:",
+          logo: "软件Logo:",
+          pic: "软件封面:",
+          upgradeDescription: "软件升级描述不能为空",
+          submitText: "提交"
+        }
+      }
+    }
   },
   async mounted() {
     await this.getSoftwareTypeList();
@@ -623,6 +678,32 @@ export default {
     Bus.$off("fileSuccess");
   },
   methods: {
+    handleSoftwareTypeChange(val) {
+      // 软件类型变更时触发界面更新
+      console.log("软件类型变更为:", val);
+      
+      // 使用Vue的$set方法确保响应式更新
+      this.$set(this.softwareForm, 'softwareType', parseInt(val));
+      
+      // 根据软件类型进行处理
+      if (parseInt(val) === 4) {
+        // 如果选择了软件模型，可以在这里进行一些特殊处理
+        this.$message.info("您已选择软件模型类型，界面标签已更新");
+      } else if (parseInt(val) === 3) {
+        this.$message.info("您已选择业务软件类型");
+      } else if (parseInt(val) === 1) {
+        this.$message.info("您已选择通用软件类型");
+      }
+      
+      // 强制更新视图
+      this.$forceUpdate();
+    },
+    closeOptions(ref) {
+      // 关闭下拉选项
+      if (this.$refs[ref]) {
+        this.$refs[ref].blur();
+      }
+    },
     beforeProveUpload(file) {
       let fileSize = file.size / 1024 / 1024
       const fileType = file.name.substring(file.name.lastIndexOf("."));
@@ -763,7 +844,7 @@ export default {
           // page: 'home'
         },
         options: {
-          target: config.url + "/appstore/upload/fileUpload",
+          target: appConfig.config.url + "/appstore/upload/fileUpload",
           accept: [".zip", ".tar"],
           singleFile: true
         }
@@ -796,6 +877,12 @@ export default {
       this.softwareForm.offerUnit = val.name;
     },
     addSoftware() {
+      // 先检查软件类型是否已选择
+      if (this.softwareForm.softwareType === null) {
+        this.$message.error("请先选择类型");
+        return;
+      }
+
       this.$refs.softwareForm.validate(valid => {
         if (valid) {
           this.uploadLoading = true;

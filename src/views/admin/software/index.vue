@@ -40,7 +40,7 @@
           size="small"
           type="primary"
           @click="goToSoftwareUpload"
-        >软件上传</el-button>
+        >软件/模型上传</el-button>
         <el-button
           v-if="$checkPermission(['admin','XTUser'])"
           size="small"
