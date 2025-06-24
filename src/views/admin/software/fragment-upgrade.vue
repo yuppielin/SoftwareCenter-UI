@@ -107,7 +107,7 @@
         </el-form-item>
         <el-form-item
           prop="service"
-          label="软件分类:">
+          label="软件业务分类:">
           <span class="show-text" v-text="selectDictLabels(categoryProps, softwareDataInfo.service)" />
         </el-form-item>
         <el-form-item

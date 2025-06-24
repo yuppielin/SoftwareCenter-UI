@@ -282,7 +282,9 @@ export default {
                 localStorage.setItem('loginType', 'admin');
                 if(roles.includes("admin")===true) {
                   this.$router.push({
-                    path: '/bigscreen',
+                    //大屏展示跳转链接
+                    // path: '/bigscreen',
+                    path: '/admin',
                     query: this.otherQuery
                   })
                 }else {
@@ -292,6 +294,7 @@ export default {
                     query: this.otherQuery
                   })
                 }
+                
               }
               else {
                 localStorage.setItem('loginType', 'user');

@@ -117,8 +117,8 @@
         </el-form-item>
         <el-form-item
           prop="service"
-          label="软件分类:"
-          :rules="[{required:true,message:'选择软件的软件分类',trigger:'blur'}]"
+          label="软件业务分类:"
+          :rules="[{required:true,message:'选择软件的业务分类',trigger:'blur'}]"
         >
           <!-- <el-cascader v-model="softwareForm.service" :props="categoryProps" style="width:58%" /> -->
           <treeselect
@@ -129,7 +129,7 @@
             :options="categoryProps"
             :append-to-body="true"
             z-index="9999"
-            placeholder="请选软件分类 "
+            placeholder="请选软件业务分类 "
             clearable
             :multiple="true"
             :limit="5"
