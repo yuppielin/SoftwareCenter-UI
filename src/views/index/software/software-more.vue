@@ -7,7 +7,15 @@
             <i class="el-icon-menu" style="color:#05994e;font-size:16px;margin-right:5px;line-height:28px"/> {{typeName}} <span v-if="childService!='全部'"> - {{childService}}</span>
           </el-col>
           <el-col :span="12" style="text-align:right;">
-           <el-input v-model="queryStr" @select="getSoftwareList" @change="getSoftwareList" size="mini" style="width:200px;" suffix-icon="el-icon-search" placeholder="请输入关键字" />
+            <el-input
+              v-model="queryStr"
+              placeholder="请输入关键字搜索"
+              style="width: 260px;color: #000000;border-radius:20px;box-shadow: 0 2px 6px rgba(0,0,0,0.15);"
+              @blur="getSoftwareList"
+            >
+              <el-button slot="append" icon="el-icon-search" type="mini" @click="getSoftwareList">搜索</el-button>
+            </el-input>
+            <!-- <el-input v-model="queryStr" @select="getSoftwareList" @change="getSoftwareList" size="mini" style="width:200px;" suffix-icon="el-icon-search" placeholder="请输入关键字" /> -->
             <!-- <el-autocomplete
               class="inline-input"
               v-model="queryStr"
@@ -26,7 +34,7 @@
             <div id="categroy-nav" style="height:30px;line-height:30px;">
               <el-link :underline="false" class="categroy-nav-item" :class="['categroy-nav-item',{'categroy-nav-curr':isCurrent=='全部'}]" @click="handleCategoryChange(null)">全部</el-link>
               <el-link v-for="item in typeData" :key="item.id" :underline="false" :class="['categroy-nav-item',{'categroy-nav-curr':isCurrent==item.name}]" @click="handleCategoryChange(item)" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis">{{ item.name }}</el-link>
-              <!-- <el-button  v-for="item in typeData" :key="item.id" style="margin:0 5px;background:rgb(48, 65, 86);color:white;" size="mini">{{ item.name }}</el-button> -->
+              <!-- <el-button  v-for="item in typeData" :key="item.id" style="margin:0 5px;background:rgb(48, 65, 86);color:white;" size="mini">{{ item.name }}</el-button>-->
             </div>
 <!--            <el-button type="primary" size="mini" style="margin-right:5px;">全部</el-button>-->
 <!--            <el-button v-for="item in typeData" :key="item.id" style="margin:0 5px;background:rgb(48, 65, 86);color:white;" size="mini">{{ item.name }}</el-button>-->
@@ -62,7 +70,7 @@
       @current-change="handleCurrentChange"
     />
 
-    <div style="position:fixed;top:50%;right:0px;background-color:#2365e8;color:#fff;font-weight:white;padding:3px 5px;cursor: pointer;transform: perspective(0.5em) rotateY(-3deg); translateY(-50%) " @click="dataVisible=true">
+    <div style="position:fixed;top:50%;right:0px;background-color:#2365e8;color:#fff;font-weight:white;padding:3px 5px;cursor: pointer;transform: perspective(0.5em) rotateY(-3deg) translateY(-50%)" @click="dataVisible=true">
       <i class="el-icon-d-arrow-left" ></i>
       <br/>
       业<br/>务<br/>资<br/>料
@@ -158,6 +166,8 @@ export default {
       let type=null;
       if(this.typeName=='通用软件'){
         type="common";
+      }else if(this.typeName=='软件模型'){
+        type="module";
       }else{
         type="service"
       }
@@ -226,6 +236,8 @@ export default {
       let type=null;
       if(this.typeName=='通用软件'){
         type="common";
+      }else if(this.typeName=='软件模型'){
+        type="module";
       }else{
         type="service"
       }
@@ -282,7 +294,47 @@ export default {
     border-radius: 4px;
   }
 
+  /* 深度选择器使用 /deep/ 代替旧的 >>> */
   /deep/ :focus {
     outline: 0;
+  }
+  
+  /deep/ .el-input--medium .el-input__inner {
+    height: 28px;
+    line-height: 28px;
+  }
+
+  /deep/ .el-input__inner {
+    border-radius: 20px;
+    border: solid 1px #2bb56e;
+    color: #000000;
+    padding-left: 35px;
+    height: 36px;
+    font-size: 14px;
+    transition: all 0.3s;
+    background-color: #f9f9f9;
+  }
+  
+  /deep/ .el-input__inner:focus {
+    border: solid 1px #1890ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  }
+  
+  /deep/ .el-input__prefix {
+    left: 10px;
+    color: #2bb56e;
+  }
+  
+  /deep/ .el-input-group__append {
+    background-color: #05994e;
+    border-color: #05994e;
+    color: white;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+  
+  /deep/ .el-input-group__append:hover {
+    background-color: #05994e;
+    border-color: #05994e;
   }
 </style>

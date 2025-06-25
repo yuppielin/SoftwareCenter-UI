@@ -25,6 +25,22 @@
                     <router-link style="font-size:15px;font-weight:bold;" :underline="false" :to="{path:'/index/list/'+item.softwareId,query:{version:item.versionId}}">{{
                       item.name }}
                     </router-link>
+                    <span 
+                      class="software-type-tag software-type-common"
+                      v-if="item.softwareType == 1"
+                    >通用软件</span>
+                    <span 
+                      class="software-type-tag software-type-fragment"
+                      v-else-if="item.softwareType == 2"
+                    >软件段</span>
+                    <span 
+                      class="software-type-tag software-type-business"
+                      v-else-if="item.softwareType == 3"
+                    >业务软件</span>
+                    <span 
+                      class="software-type-tag software-type-model"
+                      v-else-if="item.softwareType == 4"
+                    >模型</span>
                   </div>
                   <div style="font-size:12px;color:#000000;margin-top:10px;">{{ item.vtime | parseTime('{y}-{m}-{d}')}}</div>
                   <div class="info-btn">
@@ -58,6 +74,22 @@
                         <router-link style="font-size:15px;font-weight:bold;" :underline="false" :to="{path:'/index/list/'+item.softwareId,query:{version:item.versionId}}">
                         {{ item.name }}
                         </router-link>
+                        <span 
+                          class="software-type-tag software-type-common"
+                          v-if="item.softwareType == 1"
+                        >通用软件</span>
+                        <span 
+                          class="software-type-tag software-type-fragment"
+                          v-else-if="item.softwareType == 2"
+                        >软件段</span>
+                        <span 
+                          class="software-type-tag software-type-business"
+                          v-else-if="item.softwareType == 3"
+                        >业务软件</span>
+                        <span 
+                          class="software-type-tag software-type-model"
+                          v-else-if="item.softwareType == 4"
+                        >模型</span>
                       </div>
                       <div style="font-size:12px;color:#000000;margin-top:10px;">{{ item.vtime | parseTime('{y}-{m}-{d}')}}</div>
                       <div class="info-btn">
@@ -77,15 +109,18 @@
             <div  style="line-height:30px;height:30px;" slot="header">
               <el-row :gutter="20">
                 <el-col :span="12">
-                  <i class="el-icon-menu" style="color:#05994e;font-size:16px;margin-right:5px;" />业务软件
+                  <i class="el-icon-menu" style="color:#05994e;font-size:16px;margin-right:5px;" />软件段
                 </el-col>
                 <el-col :span="12" style="text-align:right;">
                   <!--              <el-input size="mini" style="width:200px;" suffix-icon="el-icon-search" placeholder="请输入关键字" v-model="queryStr" @change="getSoftwareList" />-->
                   <el-input
                     v-model="queryStr"
-                    placeholder="请输入关键字搜索"
-                    style="width: 260px;color: #000000;border-radius:20px;box-shadow: 0 2px 6px rgba(0,0,0,0.15);"
+                    placeholder="请输入软件段名搜索"
+                    style="width: 270px;color: #000000;border-radius:20px;box-shadow: 0 2px 6px rgba(0,0,0,0.15);"
                     @blur="getFrontSoftwareList('service')"
+                    @keyup.enter.native="getFrontSoftwareList('service')"
+                    clearable
+                    @clear="clearSearch('service')"
                   >
                     <el-button slot="append" icon="el-icon-search" type="mini" @click="getFrontSoftwareList('service')">搜索</el-button>
                   </el-input>
@@ -109,14 +144,52 @@
             <div  style="line-height:30px;height:30px;" slot="header">
               <el-row :gutter="20">
                 <el-col :span="12">
+                  <i class="el-icon-menu" style="color:#05994e;font-size:16px;margin-right:5px;" />软件模型
+                </el-col>
+                <el-col :span="12" style="text-align:right;">
+                  <!--              <el-input size="mini" style="width:200px;" suffix-icon="el-icon-search" placeholder="请输入关键字" v-model="queryStr" @change="getSoftwareList" />-->
+                  <el-input
+                    v-model="queryStrModule"
+                    placeholder="请输入模型名称搜索"
+                    style="width: 270px;color: #000000;border-radius:20px;box-shadow: 0 2px 6px rgba(0,0,0,0.15);"
+                    @blur="getFrontSoftwareList('module')"
+                    @keyup.enter.native="getFrontSoftwareList('module')"
+                    clearable
+                    @clear="clearSearch('module')"
+                  >
+                    <el-button slot="append" icon="el-icon-search" type="mini" @click="getFrontSoftwareList('module')">搜索</el-button>
+                  </el-input>
+                  <el-button
+                    type="text"
+                    size="primary"
+                    style="margin-left:10px;color:#000000"
+                    @click="gotoSoftwareMore('module')"
+                  > 更多 >>
+                  </el-button>
+                </el-col>
+              </el-row>
+            </div>
+            <el-row :gutter="10">
+            <el-col v-for="(item,index) in moduleSoftwareData" :key="index" :span="6">
+              <Sitem :data="item" />
+            </el-col>
+          </el-row>
+          </el-card>
+          <el-card style="margin-top:10px;">
+            <div  style="line-height:30px;height:30px;" slot="header">
+              <el-row :gutter="20">
+                <el-col :span="12">
                   <i class="el-icon-menu" style="color:#05994e;font-size:16px;margin-right:5px;" />通用软件
                 </el-col>
                 <el-col :span="12" style="text-align:right;">
                   <el-input
                     v-model="keyword"
-                    placeholder="请输入关键字搜索"
-                    style="width: 260px;color: #000000;border-radius:20px;box-shadow: 0 2px 6px rgba(0,0,0,0.15);"
+                    placeholder="请输入软件名称搜索"
+                    style="width: 270px;color: #000000;border-radius:20px;box-shadow: 0 2px 6px rgba(0,0,0,0.15);"
                     @blur="getFrontSoftwareList('common')"
+                    @keyup.enter.native="getFrontSoftwareList('common')"
+                    clearable
+                    @clear="clearSearch('common')"
                   >
                     <el-button slot="append" icon="el-icon-search" type="mini" @click="getFrontSoftwareList('common')">搜索</el-button>
                   </el-input>
@@ -214,7 +287,25 @@
                 <span v-else>{{ index+1 }}</span>
               </el-col>
               <el-col :span="15">
-                <span style="font-size:14px;font-weight:600;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display:flex;width:160px">{{ item.name }}</span>
+                <div style="font-size:14px;font-weight:600;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display:flex;width:160px;align-items:center;">
+                  <span>{{ item.name }}</span>
+                  <span 
+                    class="rank-software-type-tag software-type-common"
+                    v-if="item.softwareType == 1"
+                  >通用软件</span>
+                  <span 
+                    class="rank-software-type-tag software-type-fragment"
+                    v-else-if="item.softwareType == 2"
+                  >软件段</span>
+                  <span 
+                    class="rank-software-type-tag software-type-business"
+                    v-else-if="item.softwareType == 3"
+                  >业务软件</span>
+                  <span 
+                    class="rank-software-type-tag software-type-model"
+                    v-else-if="item.softwareType == 4"
+                  >模型</span>
+                </div>
               </el-col>
               <el-col :span="5">
                 <div class="info-btn2" style="margin-top:0px;display:inline-block;">
@@ -308,6 +399,7 @@ export default {
     return {
       isCurrent: '全部',
       queryStr: '',
+      queryStrModule:'',
       keyword:'',
       imgList: [
         // require('@/assets/imgs/banner.png'),
@@ -334,6 +426,7 @@ export default {
       typeData: [],
       softwareData: [],
       commonSoftwareData:[],
+      moduleSoftwareData:[],
       totalPage: 0,
       pageSize: 10,
       pageNum: 1,
@@ -365,6 +458,7 @@ export default {
 
     this.getFrontSoftwareList('service');
     this.getFrontSoftwareList('common');
+    this.getFrontSoftwareList('module');
   },
   methods: {
     // initWebSocket() {
@@ -399,17 +493,33 @@ export default {
     //   // 关闭
     //   // 路由跳转时结束webSocket链接
     // },
+      // 清除搜索条件
+   clearSearch(type) {
+     if(type=="common"){
+       this.keyword = '';
+     } else if(type=="module") {
+       this.queryStrModule = '';
+     } else {
+       this.queryStr = '';
+     }
+     this.getFrontSoftwareList(type);
+   },
+   
    async getFrontSoftwareList(type){
      let keyword=null;
      if(type=="common"){
          keyword=this.keyword;
-        }else{
+        }else if(type=="module")  {
+           keyword=this.queryStrModule;
+          }else{
         keyword=this.queryStr;
       }
      await  software.getFrontSoftwareList(keyword,type,8).then(response=>{
         if(type=="common"){
           this.commonSoftwareData=response.data;
-        }else{
+         }else if(type=="module"){
+           this.moduleSoftwareData=response.data;
+          }else{
           this.softwareData=response.data;
         }
       })
@@ -570,6 +680,15 @@ export default {
           query:{
             title:"通用软件",
             service:'91',
+            childService:'全部'
+          }
+          })
+      }else if(type=='module'){
+        this.$router.push({ 
+          path: '/index/software-more',
+          query:{
+            title:"软件模型",
+            service:'20',
             childService:'全部'
           }
           })
@@ -946,5 +1065,65 @@ export default {
     .message-container {
       padding-right: 0 !important;
     }
+  }
+
+  /* 软件分类标签样式 */
+  .software-type-tag {
+    position: relative;
+    top: -1px;
+    right: auto;
+    margin-left: 5px;
+    font-size: 10px;
+    padding: 0 5px;
+    border-radius: 4px;
+    color: #fff;
+    white-space: nowrap;
+    display: inline-block;
+    line-height: 1.2;
+    height: 14px;
+    line-height: 14px;
+    border: none;
+    box-shadow: none;
+    z-index: 1;
+  }
+
+  /* 各类软件标签颜色 */
+  .software-type-common {
+    background-color: #1e7d34;
+    border-color: #1e7d34;
+  }
+
+  .software-type-fragment {
+    background-color: #e6a23c;
+    border-color: #e6a23c;
+  }
+
+  .software-type-business {
+    background-color: #9c27b0;
+    border-color: #9c27b0;
+  }
+
+  .software-type-model {
+    background-color: #409eff;
+    border-color: #409eff;
+  }
+
+  /* 排行榜中的标签样式 */
+  .rank-software-type-tag {
+    position: relative;
+    top: -1px;
+    right: auto;
+    margin-left: 5px;
+    font-size: 8px;
+    padding: 0 4px;
+    border-radius: 3px;
+    color: #fff;
+    white-space: nowrap;
+    display: inline-block;
+    height: 12px;
+    line-height: 12px;
+    border: none;
+    box-shadow: none;
+    z-index: 1;
   }
 </style>

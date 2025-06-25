@@ -28,10 +28,10 @@
               label="通用软件"
               :value="1"
             ></el-option>
-            <el-option
+            <!-- <el-option
               label="业务软件"
               :value="3"
-            ></el-option>
+            ></el-option> -->
             <el-option
               label="软件模型"
               :value="4"

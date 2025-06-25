@@ -42,8 +42,8 @@
       </div>
       <div style="margin:10px;">
         <el-button type="primary" size="mini" @click="batchDownload" :loading="loading">批量下载</el-button>
-        <el-button type="primary" size="mini" @click="batchByDownlader" :loading="loading">添加至下载器</el-button>
-        <el-button type="primary" size="mini" v-if = "type !== 'common'" @click="jumpToSoftwareDownloadList">导入下载</el-button>
+        <!-- <el-button type="primary" size="mini" @click="batchByDownlader" :loading="loading">添加至下载器</el-button> -->
+        <!-- <el-button type="primary" size="mini" v-if = "type !== 'common'" @click="jumpToSoftwareDownloadList">导入下载</el-button> -->
       </div>
       <el-table
         ref="multipleTable"
@@ -67,6 +67,7 @@
         <el-table-column align="center" header-align="center" prop="type" label="软件类型">
           <template slot-scope="{row}">
             <span v-if="row.softwareType==1">通用软件</span>
+            <span v-else-if="row.softwareType==4">软件模型</span>
             <div v-else>
               <span
                 v-text="row.fragmentType==1?'数据库段':row.fragmentType==2?'镜像段':row.fragmentType==3?'客户端段':row.fragmentType==4?'服务段':'数据段'"

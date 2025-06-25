@@ -61,6 +61,9 @@
     <div class="menu_container" :class="{'is-active':$route.path=='/index/software-more?service=91&title=通用软件'}">
       <span><router-link to="/index/software-more?service=91&childService=全部&title=通用软件"> <i class="el-icon-menu"></i> 通用软件</router-link></span>
     </div>
+    <div class="menu_container" :class="{'is-active':$route.path=='/index/software-more?service=20&title=软件模型'}">
+      <span><router-link to="/index/software-more?service=20&childService=全部&title=软件模型"> <i class="el-icon-menu"></i> 软件模型</router-link></span>
+    </div>
     <el-divider direction="vertical"></el-divider>
     <div class="menu_container" :class="{'is-active':index==acticeIndex}" v-for="(item, index) in serviceList" :index="index"  :key="index" @mousemove="showChild(index,item)" @click="selectCate(item)" style="position:relative">
             {{ item.name ? item.name : item.children[0].name }}

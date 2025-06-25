@@ -116,10 +116,28 @@
                 />
               </el-col>
               <el-col :span="12" style="line-height:1.5">
-                <div
-                  style="cursor: pointer;font-size:16px;font-weight:600;display:inline-block;width:150px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;color:#1e7d34;"
-                  @click="showRelation(row.versionData)"
-                >{{row.name}}</div>
+                <div style="position: relative;">
+                  <div
+                    style="cursor: pointer;font-size:16px;font-weight:600;display:inline-block;width:150px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;color:#1e7d34;"
+                    @click="showRelation(row.versionData)"
+                  >{{row.name}}</div>
+                  <span 
+                    class="software-type-tag software-type-common"
+                    v-if="row.softwareType == 1"
+                  >通用软件</span>
+                  <span 
+                    class="software-type-tag software-type-fragment"
+                    v-else-if="row.softwareType == 2"
+                  >软件段</span>
+                  <span 
+                    class="software-type-tag software-type-business"
+                    v-else-if="row.softwareType == 3"
+                  >业务软件</span>
+                  <span 
+                    class="software-type-tag software-type-model"
+                    v-else-if="row.softwareType == 4"
+                  >模型</span>
+                </div>
                 <el-select
                   v-model="row.versionId"
                   size="mini"
@@ -1012,6 +1030,45 @@ el-card {
 
 ::v-deep .el-pagination.is-background .el-pager li:not(.disabled).active {
   background-color: #1e7d34;
+}
+
+/* 软件分类标签样式 */
+.software-type-tag {
+  position: absolute;
+  top: -10px;
+  right: 5px;
+  font-size: 10px;
+  padding: 0 5px;
+  border-radius: 8px;
+  color: #fff;
+  white-space: nowrap;
+  display: inline-block;
+  line-height: 1.2;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+/* 各类软件标签颜色 */
+.software-type-common {
+  background-color: #1e7d34;
+  border-color: #1e7d34;
+}
+
+.software-type-fragment {
+  background-color: #e6a23c;
+  border-color: #e6a23c;
+}
+
+.software-type-business {
+  background-color: #9c27b0;
+  border-color: #9c27b0;
+}
+
+.software-type-model {
+  
+  background-color: #409eff;
+  border-color: #409eff;
 }
 </style>
 

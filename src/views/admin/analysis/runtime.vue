@@ -66,7 +66,7 @@
       <el-col :xs="24" :lg="12">
         <el-card class="box-card">
           <div slot="header" class="clearfix title-container">
-            <span class="chart-title"><i class="el-icon-s-platform" style="color: #67C23A;"></i> 运行平台分布</span>
+            <span class="chart-title"><i class="el-icon-s-platform" style="color: #67C23A;"></i> 系统性能趋势</span>
           </div>
           <div class="chart-container" v-loading="loading.platformDistribution">
             <div ref="platformDistributionChart" style="width: 100%; height: 400px"></div>
@@ -76,7 +76,7 @@
       <el-col :xs="24" :lg="12">
         <el-card class="box-card">
           <div slot="header" class="clearfix title-container">
-            <span class="chart-title"><i class="el-icon-s-cooperation" style="color: #F56C6C;"></i> 版本分布</span>
+            <span class="chart-title"><i class="el-icon-s-cooperation" style="color: #F56C6C;"></i> 资源使用情况</span>
           </div>
           <div class="chart-container" v-loading="loading.versionDistribution">
             <div ref="versionDistributionChart" style="width: 100%; height: 400px"></div>
@@ -279,39 +279,123 @@ export default {
     initPlatformDistributionChart() {
       this.loading.platformDistribution = true
       
-      // 模拟平台分布数据
-      const platformData = [
-        { name: 'Windows', value: 45 },
-        { name: 'Linux', value: 32 },
-        { name: 'macOS', value: 18 },
-        { name: 'Android', value: 3 },
-        { name: 'iOS', value: 2 }
-      ]
+      // 系统性能趋势数据
+      const xAxisData = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'];
+      const cpuData = [30, 32, 45, 62, 58, 65, 40];
+      const memoryData = [45, 48, 50, 52, 58, 55, 48];
+      const responseTimeData = [120, 150, 160, 260, 320, 280, 150];
       
       this.platformDistributionChart = echarts.init(this.$refs.platformDistributionChart)
       const option = {
+        title: {
+          text: '系统性能趋势',
+          left: 'left',
+          textStyle: {
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
         tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)'
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross'
+          }
         },
         legend: {
-          orient: 'vertical',
-          left: 'left',
-          data: platformData.map(item => item.name)
+          data: ['CPU使用率', '内存使用率', '响应时间'],
+          top: 30
         },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          top: '70px',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: xAxisData,
+          axisLabel: {
+            interval: 0
+          }
+        },
+        yAxis: [
+          {
+            type: 'value',
+            name: '百分比',
+            min: 0,
+            max: 100,
+            position: 'left',
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#5470C6'
+              }
+            },
+            axisLabel: {
+              formatter: '{value}%'
+            }
+          },
+          {
+            type: 'value',
+            name: '响应时间',
+            min: 0,
+            max: 500,
+            position: 'right',
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#E6A23C'
+              }
+            },
+            axisLabel: {
+              formatter: '{value}ms'
+            }
+          }
+        ],
         series: [
           {
-            name: '运行平台',
-            type: 'pie',
-            radius: '55%',
-            center: ['50%', '60%'],
-            data: platformData,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
+            name: 'CPU使用率',
+            type: 'line',
+            symbol: 'circle',
+            symbolSize: 8,
+            data: cpuData,
+            lineStyle: {
+              width: 3,
+              color: '#5470C6'
+            },
+            itemStyle: {
+              color: '#5470C6'
+            }
+          },
+          {
+            name: '内存使用率',
+            type: 'line',
+            symbol: 'circle',
+            symbolSize: 8,
+            data: memoryData,
+            lineStyle: {
+              width: 3,
+              color: '#91CC75'
+            },
+            itemStyle: {
+              color: '#91CC75'
+            }
+          },
+          {
+            name: '响应时间',
+            type: 'line',
+            symbol: 'circle',
+            symbolSize: 8,
+            yAxisIndex: 1,
+            data: responseTimeData,
+            lineStyle: {
+              width: 3,
+              color: '#E6A23C'
+            },
+            itemStyle: {
+              color: '#E6A23C'
             }
           }
         ]
@@ -322,39 +406,78 @@ export default {
     initVersionDistributionChart() {
       this.loading.versionDistribution = true
       
-      // 模拟版本分布数据
-      const versionData = [
-        { name: 'v1.0.0', value: 5 },
-        { name: 'v1.1.0', value: 8 },
-        { name: 'v1.2.0', value: 12 },
-        { name: 'v2.0.0', value: 20 },
-        { name: 'v2.1.0', value: 25 },
-        { name: 'v2.2.0', value: 30 }
-      ]
+      // 资源使用情况数据
+      const resourceData = [
+        { name: 'CPU', used: 45, available: 55 },
+        { name: '内存', used: 60, available: 40 },
+        { name: '存储', used: 70, available: 30 },
+        { name: '带宽', used: 40, available: 60 },
+        { name: '数据库连接', used: 55, available: 45 }
+      ];
       
       this.versionDistributionChart = echarts.init(this.$refs.versionDistributionChart)
       const option = {
+        title: {
+          text: '资源使用情况',
+          left: 'left',
+          textStyle: {
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
         tooltip: {
           trigger: 'axis',
           axisPointer: {
             type: 'shadow'
+          },
+          formatter: function(params) {
+            const used = params[0];
+            const available = params[1];
+            return used.name + '<br/>' +
+                   used.seriesName + ': ' + used.value + '<br/>' +
+                   available.seriesName + ': ' + available.value;
           }
         },
+        legend: {
+          data: ['已用', '可用'],
+          top: 30
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          top: '70px',
+          containLabel: true
+        },
         xAxis: {
-          type: 'category',
-          data: versionData.map(item => item.name)
+          type: 'value',
+          max: 70
         },
         yAxis: {
-          type: 'value'
+          type: 'category',
+          data: resourceData.map(item => item.name),
+          axisLabel: {
+            interval: 0
+          }
         },
         series: [
           {
-            name: '用户数',
+            name: '已用',
             type: 'bar',
-            data: versionData.map(item => item.value),
+            stack: 'total',
             itemStyle: {
-              color: '#F56C6C'
-            }
+              color: '#5470C6'
+            },
+            data: resourceData.map(item => item.used)
+          },
+          {
+            name: '可用',
+            type: 'bar',
+            stack: 'total',
+            itemStyle: {
+              color: '#91CC75'
+            },
+            data: resourceData.map(item => item.available)
           }
         ]
       }
