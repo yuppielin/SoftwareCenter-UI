@@ -628,7 +628,7 @@ export const asyncRoutes = [
         meta: {
           title: '首页',
           icon: 'dashboard',
-          roles: ['admin', 'applicationUser', 'SHUser', 'AFUser', "XTUser", 'SYUser'],
+          roles: ['admin', 'applicationUser', 'SHUser', 'AFUser', "XTUser", 'SYUser','CSUser'],
           noCache: true
         }
       },{
@@ -739,7 +739,7 @@ export const asyncRoutes = [
       title: '软件仓库',
       icon: 'tree-table',
       noCache: true,
-      roles: ['admin', 'applicationUser', 'SHUser', "XTUser",]
+      roles: ['admin', 'applicationUser', 'SHUser', "XTUser","CSUser"]
     },
     children: [
       // {
@@ -893,7 +893,7 @@ export const asyncRoutes = [
       title: '软件资料',
       icon: 'el-icon-files',
       noCache: true,
-      roles: ['admin','applicationUser']
+      roles: ['admin','applicationUser',]
     },
     children: [
       // {

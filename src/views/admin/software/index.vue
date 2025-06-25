@@ -36,13 +36,13 @@
 
       <el-col :span="12" style="margin-top:10px">
         <el-button
-          v-if="$checkPermission(['admin','XTUser'])"
+          v-if="$checkPermission(['admin','XTUser','CSUser'])"
           size="small"
           type="primary"
           @click="goToSoftwareUpload"
         >软件/模型上传</el-button>
         <el-button
-          v-if="$checkPermission(['admin','XTUser'])"
+          v-if="$checkPermission(['admin','XTUser','CSUser'])"
           size="small"
           type="primary"
           @click="goToFragmentUpload"

@@ -275,7 +275,7 @@ export default {
             .then(() => {
               let roles = localStorage.getItem('roles');
               roles = JSON.parse(roles);
-              let commonRoles = roles.filter((v) => ['admin', 'applicationUser', 'SHUser', 'SYUser', 'AFUser', 'XTUser'].includes(v))
+              let commonRoles = roles.filter((v) => ['admin', 'applicationUser', 'SHUser', 'SYUser', 'AFUser', 'XTUser','CSUser'].includes(v))
               // 判断人员身份
               // if (this.$auth.hasRoleOr(['admin', 'applicationUser', 'SHUser', 'SYUser', 'AFUser', 'XTUser'])) {
               if (commonRoles && commonRoles.length>0) {
