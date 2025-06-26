@@ -89,7 +89,7 @@
               v-model="search.keyword"
               :fetch-suggestions="querySearch"
               style="width: 100%"
-              placeholder="请输入软件名称段前缀"
+              placeholder="请输入软件名称/段前缀"
               @select="getSoftwareList"
               @change="getSoftwareList"
             ></el-autocomplete>
@@ -104,10 +104,10 @@
     <el-table :show-header="false"  :data="reviewData" :row-key = "getRowKeys" ref="mutipleTable">
       <el-table-column>
         <template slot-scope="{row}">
-        <el-row :gutter="20" style="margin:10px 0;">
-          <el-col :span="5" style="display: flex;">
+        <el-row :gutter="20" style="margin:10px 0;width:100%;display:flex;align-items:center;">
+          <el-col :span="6" style="display: flex;">
             <el-row>
-              <el-col :span="12">
+              <el-col :span="10">
                 <img
                   :src="logoAndPicUrl+row.versionData.logo"
                   :onerror="defaultImg"
@@ -115,10 +115,10 @@
                   height="60px"
                 />
               </el-col>
-              <el-col :span="12" style="line-height:1.5">
+              <el-col :span="14" style="line-height:1.5">
                 <div style="position: relative;">
                   <div
-                    style="cursor: pointer;font-size:16px;font-weight:600;display:inline-block;width:150px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;color:#1e7d34;"
+                    style="cursor: pointer;font-size:16px;font-weight:600;display:inline-block;width:120px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;color:#1e7d34;"
                     @click="showRelation(row.versionData)"
                   >{{row.name}}</div>
                   <span 
@@ -151,11 +151,11 @@
               </el-col>
             </el-row>
           </el-col>
-          <!-- <el-col :span="3" style="line-height:2.0">
+          <el-col :span="3" style="line-height:2.0">
             <span class="subTitle">段前缀</span>
             <br />
             <span class="subContent">{{row.versionData.prefix?row.versionData.prefix:'-'}}</span>
-          </el-col> -->
+          </el-col>
           <el-col :span="3" style="line-height:2.0">
             <span class="subTitle" style="font-size:14px;font-weight:600;">大小</span>
             <br />
@@ -179,13 +179,22 @@
           <el-col :span="3" style="line-height:2.0">
             <span class="subTitle" style="font-size:14px;font-weight:600;">上传时间</span>
             <br />
-            <span class="subContent">{{row.versionData.ctime|parseTime('{y}-{m}-{d} {h}:{m}:{s}')}}</span>
+            <span class="subContent">{{row.versionData.ctime|parseTime('{y}-{m}-{d}')}}</span>
           </el-col>
-          <el-col :span="4" style="text-align:right;padding:20px;">
+          <el-col :span="3" style="line-height:2.0" v-if="$checkPermission(['CSUser'])">
+            <span class="subTitle" style="font-size:14px;font-weight:600;">审核状态</span>
+            <br />
+            <span class="status-tag" :class="getStatusClass(row.versionData.csStatus || 0)">
+              {{getStatusText(row.versionData.csStatus || 0)}}
+            </span>
+          </el-col>
+          <el-col :span="4" style="text-align:right;padding:10px 0;">
             <!-- <el-button v-if ="row.softwareType == 2 && $checkPermission(['admin','XTUser'])" circle size="mini" type="warning" icon="el-icon-folder-add" title="推送" @click="pushSoftware(row)"></el-button> -->
-            <el-button circle size="small" type="warning" icon="el-icon-sell" title="升级" @click="upgradeSoftware(row)"></el-button>
-            <el-button circle size="small" type="primary" icon="el-icon-edit" title="编辑" @click="editSoftware(row)"></el-button>
-            <el-button circle size="small" type="danger" icon="el-icon-close" title="删除" @click="deleteItem(row)"></el-button>
+            <div style="display:flex;justify-content:flex-end;align-items:center;height:100%;">
+              <el-button circle size="small" type="warning" icon="el-icon-sell" title="升级" @click="upgradeSoftware(row)" style="margin-right:5px;"></el-button>
+              <el-button circle size="small" type="primary" icon="el-icon-edit" title="编辑" @click="editSoftware(row)" style="margin-right:5px;"></el-button>
+              <el-button circle size="small" type="danger" icon="el-icon-close" title="删除" @click="deleteItem(row)"></el-button>
+            </div>
           </el-col>
         </el-row>
         </template>
@@ -340,14 +349,6 @@ export default {
         sys:{},
         mem:{}
       },
-      // softwareTopInfo: {
-      //   unStart: 10,
-      //   unExamine: 10,
-      //   unDetection: 10,
-      //   unTest: 10,
-      //   unPublish: 10,
-      //   hasPublish: 10
-      // },
       softwareOptions: [],
       sysData: [],
       logoAndPicUrl: appConfig.config.urlFilePrefix,
@@ -398,6 +399,22 @@ export default {
     // }
   },
   methods: {
+    getStatusText(status) {
+      const statusMap = {
+        0: '进行中',
+        1: '已完成',
+        2: '未通过'
+      };
+      return statusMap[status] || '进行中';
+    },
+    getStatusClass(status) {
+      const statusClassMap = {
+        0: 'status-processing',
+        1: 'status-success',
+        2: 'status-failed'
+      };
+      return statusClassMap[status] || 'status-processing';
+    },
     getServerInfo(){
       software.getServerInfo().then(response =>{
         if(response.code == 200){
@@ -480,6 +497,7 @@ export default {
       };
     },
     getSoftwareList() {
+      const userRole = window.localStorage.getItem("userType");
       software
         .getSoftwareList({
           ...this.search,
@@ -488,7 +506,6 @@ export default {
         })
         .then(response => {
           if (response.code === 200) {
-            // debugger
             this.reviewData = response.data.list;
             this.totalPage = response.data.total;
 
@@ -883,7 +900,7 @@ export default {
   height: 12px;
   line-height: 12px;
   /* border-left: 4px solid #1890ff; */
-  margin-left: 50px;
+  margin-left: 5px;
   font-size: 12px;
   padding-left: 5px;
   overflow: hidden;
@@ -895,7 +912,7 @@ export default {
   height: 12px;
   line-height: 12px;
   /* border-left: 4px solid #1890ff; */
-  margin-left: 50px;
+  margin-left: 5px;
   font-size: 12px;
   padding-left: 5px;
   overflow: hidden;
@@ -922,6 +939,9 @@ el-card {
 }
 ::v-deep .el-table .cell {
   /*overflow: visible !important;*/
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 ::v-deep .el-table__body-wrapper {
@@ -1065,6 +1085,40 @@ el-card {
   
   background-color: #409eff;
   border-color: #409eff;
+}
+
+/* 状态标签样式 */
+.status-tag {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  display: inline-block;
+  color: #fff;
+  text-align: center;
+  min-width: 60px;
+}
+
+.status-processing {
+  background-color: #409eff;
+}
+
+.status-success {
+  background-color: #1e7d34;
+}
+
+.status-failed {
+  background-color: #f56c6c;
+}
+
+/* 添加表格行自适应样式 */
+::v-deep .el-row {
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+::v-deep .el-col {
+  min-width: 0;
 }
 </style>
 
