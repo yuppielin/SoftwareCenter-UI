@@ -130,10 +130,6 @@
                     v-else-if="row.softwareType == 2"
                   >软件段</span>
                   <span 
-                    class="software-type-tag software-type-business"
-                    v-else-if="row.softwareType == 3"
-                  >业务软件</span>
-                  <span 
                     class="software-type-tag software-type-model"
                     v-else-if="row.softwareType == 4"
                   >模型</span>

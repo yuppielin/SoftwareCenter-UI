@@ -1,9 +1,10 @@
 import request from '@/utils/request'
 
-export function getSystemData() {
+export function getSystemData(params) {
     return request({
         url: '/statistic/systemData',
-        method: 'get'
+        method: 'get',
+        params: params
     })
 }
 
@@ -113,5 +114,23 @@ export function getMapInfo() {
     return request({
         url: '/statistic/getSoftwareByMap',
         method: 'get'
+    })
+}
+
+// 获取月上传趋势数据
+export function getMonthlyUploadTrend(params) {
+    return request({
+        url: '/statistic/monthlyUploadTrend',
+        method: 'get',
+        params: params
+    })
+}
+
+// 获取上传软件进度分类占比数据
+export function getUploadStatusDistribution(params) {
+    return request({
+        url: '/statistic/uploadStatusDistribution',
+        method: 'get',
+        params: params
     })
 }

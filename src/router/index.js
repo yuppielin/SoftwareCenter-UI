@@ -628,7 +628,7 @@ export const asyncRoutes = [
         meta: {
           title: '首页',
           icon: 'dashboard',
-          roles: ['admin', 'applicationUser', 'SHUser', 'AFUser', "XTUser", 'SYUser','CSUser'],
+          roles: ['admin', 'applicationUser', 'SHUser', 'AFUser', "XTUser", 'SYUser'],
           noCache: true
         }
       },{
@@ -739,7 +739,7 @@ export const asyncRoutes = [
       title: '软件仓库',
       icon: 'tree-table',
       noCache: true,
-      roles: ['admin', 'applicationUser', 'SHUser', "XTUser","CSUser"]
+      roles: ['admin', 'applicationUser', 'SHUser', "XTUser"]
     },
     children: [
       // {
