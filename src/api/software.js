@@ -664,3 +664,16 @@ export function docusignDownload(id, type) {
     url
   )
 }
+
+export function reviewSoftware(versionId, softwareId, comment, status) {
+  return request({
+    url: '/software/review',
+    method: 'post',
+    params: {
+      versionId: versionId,
+      softwareId: softwareId,
+      comment: comment,
+      status: status
+    }
+  })
+}

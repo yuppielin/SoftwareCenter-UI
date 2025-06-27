@@ -56,7 +56,7 @@
         >软件段批量上传</el-button> -->
       </el-col>
 
-      <el-col :span="$checkPermission(['admin','XTUser'])?12:24" style="text-align: right;margin-top:10px">
+      <el-col :span="$checkPermission(['admin','XTUser'])?24:24" style="text-align: right;margin-top:10px">
         <el-form :inline="true">
           <!-- <el-form-item>
             <el-select v-model="search.system" filterable clearable placeholder="请选择软件所属系统">
@@ -77,11 +77,25 @@
               :options="softwareOptions"
               :appendToBody="true"
               z-index="9999"
-              placeholder="请选软件分类 "
+              placeholder="请选软件业务分类 "
               clearable
               :style="{ width: '180px'}"
               @select="selectChange"
             ></treeselect>
+          </el-form-item>
+          <el-form-item>
+            <el-select v-model="search.csStatus" placeholder="审核状态" clearable style="width: 120px">
+              <el-option label="进行中" :value="0"></el-option>
+              <el-option label="已完成" :value="1"></el-option>
+              <el-option label="未通过" :value="2"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-select v-model="search.softwareType" placeholder="软件类型" clearable style="width: 120px">
+              <el-option label="通用软件" :value="1"></el-option>
+              <el-option label="软件段" :value="2"></el-option>
+              <el-option label="模型" :value="4"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-autocomplete
@@ -101,7 +115,7 @@
         </el-form>
       </el-col>
     </div>
-    <el-table :show-header="false"  :data="reviewData" :row-key = "getRowKeys" ref="mutipleTable">
+    <el-table :show-header="false"  :data="reviewData" :row-key = "getRowKeys" ref="mutipleTable" >
       <el-table-column>
         <template slot-scope="{row}">
         <el-row :gutter="20" style="margin:10px 0;width:100%;display:flex;align-items:center;">
@@ -156,7 +170,7 @@
             <br />
             <span class="subContent">{{row.versionData.prefix?row.versionData.prefix:'-'}}</span>
           </el-col>
-          <el-col :span="3" style="line-height:2.0">
+          <el-col :span="2" style="line-height:2.0">
             <span class="subTitle" style="font-size:14px;font-weight:600;">大小</span>
             <br />
             <span class="subContent">{{formatFileSize(row.versionData.sizes)}}</span>
@@ -181,19 +195,21 @@
             <br />
             <span class="subContent">{{row.versionData.ctime|parseTime('{y}-{m}-{d}')}}</span>
           </el-col>
-          <el-col :span="3" style="line-height:2.0" v-if="$checkPermission(['CSUser'])">
+          <el-col :span="3" style="line-height:2.0">
             <span class="subTitle" style="font-size:14px;font-weight:600;">审核状态</span>
             <br />
             <span class="status-tag" :class="getStatusClass(row.versionData.csStatus || 0)">
               {{getStatusText(row.versionData.csStatus || 0)}}
             </span>
           </el-col>
-          <el-col :span="4" style="text-align:right;padding:10px 0;">
+          <el-col :span="5" style="text-align:right;padding:10px 0;">
             <!-- <el-button v-if ="row.softwareType == 2 && $checkPermission(['admin','XTUser'])" circle size="mini" type="warning" icon="el-icon-folder-add" title="推送" @click="pushSoftware(row)"></el-button> -->
             <div style="display:flex;justify-content:flex-end;align-items:center;height:100%;">
+              <el-button v-if="$checkPermission(['admin']) && row.versionData.csStatus !== 1" circle size="small" type="success" icon="el-icon-check" title="审核" @click="reviewSoftware(row)" style="margin-right:5px;"></el-button>
               <el-button circle size="small" type="warning" icon="el-icon-sell" title="升级" @click="upgradeSoftware(row)" style="margin-right:5px;"></el-button>
               <el-button circle size="small" type="primary" icon="el-icon-edit" title="编辑" @click="editSoftware(row)" style="margin-right:5px;"></el-button>
-              <el-button circle size="small" type="danger" icon="el-icon-close" title="删除" @click="deleteItem(row)"></el-button>
+              <el-button v-if="$checkPermission(['admin'])" circle size="small" type="danger" icon="el-icon-close" title="删除" @click="deleteItem(row)"></el-button>
+              <el-button v-if="$checkPermission(['CSUser'])" circle size="small" type="primary" icon="el-icon-message" title="查看审核意见" @click="showReviewComment(row)" style="margin-right:5px;"></el-button>
             </div>
           </el-col>
         </el-row>
@@ -284,6 +300,62 @@
       </el-dialog>
 
       <SoftwareRelation :dialogVisible="softwareRelationVisible" :data="softwareRelationData" @closeSoftwareRelation="closeSoftwareRelation"></SoftwareRelation>
+
+      <!-- 审核对话框 -->
+      <el-dialog
+        title="软件审核"
+        width="35%"
+        :visible.sync="reviewDialogVisible"
+        :close-on-click-modal="false"
+        append-to-body
+        custom-class="review-dialog"
+      >
+        <el-form
+          ref="reviewForm"
+          :model="reviewForm"
+          label-width="100px"
+          label-position="left"
+          size="small"
+          style="text-align:left;margin: 0;"
+        >
+          <el-form-item label="审核意见" prop="comment" style="margin-bottom: 0;">
+            <el-input
+              type="textarea"
+              :rows="6"
+              v-model="reviewForm.comment"
+              placeholder="请输入审核意见"
+              style="width:100%"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" @click="reviewDialogVisible = false">取消</el-button>
+          <el-button size="small" type="success" @click="submitReview(1)">通过</el-button>
+          <el-button size="small" type="danger" @click="submitReview(2)">驳回</el-button>
+        </span>
+      </el-dialog>
+
+      <!-- 查看审核意见对话框 -->
+      <el-dialog
+        title="审核意见"
+        width="35%"
+        :visible.sync="commentDialogVisible"
+        :close-on-click-modal="false"
+        append-to-body
+        custom-class="review-dialog"
+      >
+        <div v-if="currentReviewComment" class="review-comment-container">
+          <div class="review-comment-content">
+            <p>{{currentReviewComment}}</p>
+          </div>
+        </div>
+        <div v-else class="review-comment-container">
+          <p>暂无审核意见</p>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" type="primary" @click="commentDialogVisible = false">关闭</el-button>
+        </span>
+      </el-dialog>
 </div>
 </template>
 <script>
@@ -320,7 +392,9 @@ export default {
         devUnit: null,
         keyword: null,
         type: null,
-        system: null
+        system: null,
+        csStatus: null,
+        softwareType: null
       },
       offerUnits: [],
       reviewData: [],
@@ -359,7 +433,16 @@ export default {
       softVersionPushId:0,
       appConfig: appConfig.config,
       softwareRelationVisible: false,
-      softwareRelationData: {}
+      softwareRelationData: {},
+      // 审核相关数据
+      reviewDialogVisible: false,
+      reviewForm: {
+        comment: '',
+        softwareId: null,
+        versionId: null
+      },
+      commentDialogVisible: false,
+      currentReviewComment: null,
     };
   },
 
@@ -497,7 +580,7 @@ export default {
       };
     },
     getSoftwareList() {
-      const userRole = window.localStorage.getItem("userType");
+      console.log("this.search",this.search);
       software
         .getSoftwareList({
           ...this.search,
@@ -607,8 +690,11 @@ export default {
       (this.search = {
         offerUnit: null,
         devUnit: null,
-        keyWord: null,
-        type: null
+        keyword: null,
+        type: null,
+        system: null,
+        csStatus: null,
+        softwareType: null
       }),
         this.getSoftwareList();
     },
@@ -881,6 +967,39 @@ export default {
     showRelation(versionData) {
       this.softwareRelationVisible = true;
       this.softwareRelationData = versionData;
+    },
+    // 打开审核对话框
+    reviewSoftware(item) {
+      this.reviewDialogVisible = true;
+      this.reviewForm.comment = '';
+      this.reviewForm.versionId = item.versionData.id;
+      this.reviewForm.softwareId = item.id;
+    },
+    
+    // 提交审核结果
+    submitReview(status) {
+      if (!this.reviewForm.comment.trim()) {
+        this.$message.warning('请输入审核意见');
+        return;
+      }
+      console.log(this.reviewForm.versionId,this.reviewForm.softwareId,this.reviewForm.comment,status);
+      software.reviewSoftware(this.reviewForm.versionId,this.reviewForm.softwareId,this.reviewForm.comment,status).then(response => {
+        if (response.code === 200) {
+          this.$message.success(status === 1 ? '审核通过成功' : '驳回成功');
+          this.reviewDialogVisible = false;
+          this.getSoftwareList(); // 刷新列表
+        } else {
+          this.$message.error('审核操作失败');
+        }
+      }).catch(error => {
+        this.$message.error('审核操作失败：' + error.message);
+      });
+    },
+    showReviewComment(row) {
+      // 实现查看审核意见的逻辑
+      console.log("查看审核意见", row);
+      this.currentReviewComment = row.versionData.csReview;
+      this.commentDialogVisible = true;
     }
   }
 };
@@ -1098,6 +1217,16 @@ el-card {
   min-width: 60px;
 }
 
+/* 审核弹窗样式 */
+::v-deep .review-dialog {
+  min-height: 300px;
+}
+
+::v-deep .review-dialog .el-dialog__body {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
 .status-processing {
   background-color: #409eff;
 }
@@ -1108,6 +1237,23 @@ el-card {
 
 .status-failed {
   background-color: #f56c6c;
+}
+
+/* 审核意见容器样式 */
+.review-comment-container {
+  padding: 10px;
+  min-height: 100px;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.review-comment-content {
+  padding: 10px;
+  line-height: 1.6;
+  word-break: break-all;
 }
 
 /* 添加表格行自适应样式 */
