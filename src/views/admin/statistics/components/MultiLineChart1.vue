@@ -22,7 +22,7 @@ export default {
     },
     height: {
       type: String,
-      default: '300px'
+      default: '350px'
     },
     option: {
       type: Object,
@@ -78,36 +78,86 @@ export default {
         tooltip: {
           trigger: 'axis',
           axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            type: 'line' // 改为直线指示器
+          },
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          borderColor: '#ccc',
+          borderWidth: 1,
+          textStyle: {
+            color: '#333'
+          },
+          formatter: function(params) {
+            let result = params[0].name + '<br/>';
+            // 确保所有系列数据都显示，包括软件模型
+            for (let i = 0; i < params.length; i++) {
+              const item = params[i];
+              result += 
+                '<span style="display:inline-block;margin-right:5px;border-radius:50%;width:10px;height:10px;background-color:' + 
+                item.color + '"></span>' +
+                item.seriesName + ': ' + 
+                item.value + '<br/>';
+            }
+            return result;
           }
         },
         grid: {
-          top: 30,
-          left: '2%',
+          top: 50,
+          left: '3%',
           right: '4%',
-          bottom: '3%',
+          bottom: '8%',
           containLabel: true
         },
         legend: {
           data: this.option.legend,
           textStyle: {
-            color: '#000'
+            color: '#666',
+            fontSize: 12
           },
-          x: 'right',
+          top: 10,
+          right: '4%',
           icon: 'circle'
         },
         xAxis: [{
           data: this.option.xAxis,
           boundaryGap: false,
           axisTick: {
-            alignWithLabel: true
+            alignWithLabel: true,
+            show: false
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#ddd'
+            }
           },
           axisLabel: {
             textStyle: {
-              color: '#000'
+              color: '#666',
+              fontSize: 12
             },
-            interval: 0,
-            rotate: 20// 顺时针旋转20度
+            interval: 'auto',
+            rotate: 0,
+            formatter: function(value) {
+              // 优化日期显示，如果格式为MM-DD，保持原样
+              if (/^\d{1,2}-\d{1,2}$/.test(value)) {
+                return value;
+              }
+              // 如果是完整日期格式，只显示月和日
+              if (value.indexOf('-') !== -1) {
+                const parts = value.split('-');
+                if (parts.length >= 3) {
+                  return parts[1] + '-' + parts[2];
+                }
+              }
+              return value;
+            }
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: ['#f5f5f5'],
+              width: 1,
+              type: 'dashed'
+            }
           }
         }],
         yAxis: [{
@@ -115,87 +165,141 @@ export default {
           axisTick: {
             show: false,
           },
-          axisLabel: {
-            textStyle: {
-              color: '#000'
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#ddd'
             }
           },
-          textStyle: {
-            color: '#000'
+          axisLabel: {
+            textStyle: {
+              color: '#666',
+              fontSize: 12
+            },
+            formatter: function(value) {
+              return Math.floor(value); // 确保只显示整数
+            }
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: ['#f5f5f5'],
+              width: 1,
+              type: 'dashed'
+            }
+          },
+          minInterval: 1, // 强制使用整数间隔
+          splitNumber: 3, // 默认显示3个刻度
+          boundaryGap: [0, '20%'], // 下方从0开始，上方留出20%的空间
+          scale: false, // 不自动调整，使用固定间隔
+          min: 0, // 强制从0开始
+          max: function(value) {
+            // 计算最大值，并确保多显示2个刻度
+            let maxVal = Math.ceil(value.max);
+            if (maxVal <= 3) {
+              return 3; // 如果最大值小于等于3，显示0-3的刻度
+            } else {
+              // 根据最大值计算合适的刻度间隔
+              let interval = Math.ceil(maxVal / 3); // 基础间隔
+              return maxVal + interval * 2; // 最大值上方多出2个刻度
+            }
           }
         }],
-        // toolbox: {
-        //     show: true,
-        //     feature: {
-        //     dataView: { show: true, readOnly: false },
-        //     magicType: { show: true, type: ['line', 'bar'] },
-        //     restore: { show: true },
-        //     saveAsImage: { show: true }
-        //     }
-        // },
         series: [
           {
             name: this.option.legend[0],
             itemStyle: {
               normal: {
-                // color: '#FF005A',
                 color: 'orange',
                 lineStyle: {
-                  // color: '#FF005A',
                   color: 'orange',
-                  width: 2
+                  width: 3
                 }
               }
             },
             smooth: true,
+            symbol: 'circle',
+            symbolSize: 8,
+            showSymbol: false, // 只在hover时显示标记点
             type: 'line',
             animationDuration: 2800,
             animationEasing: 'cubicInOut',
             data: this.option.seriesA,
             areaStyle: {
-              color: 'rgba(255,165,0,0.1)'
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(255,165,0,0.3)'
+              }, {
+                offset: 0.8,
+                color: 'rgba(255,165,0,0)'
+              }], false),
+              shadowColor: 'rgba(0, 0, 0, 0.1)',
+              shadowBlur: 10
             },
-            // markPoint: {
-            //   data: [
-            //     { type: 'max', name: 'Max' },
-            //     { type: 'min', name: 'Min' }
-            //   ]
-            // },
-            // markLine: {
-            //   data: [{ type: 'average', name: 'Avg' }]
-            // },
             animationDuration
           },
           {
             name: this.option.legend[1],
             type: 'line',
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 8,
+            showSymbol: false, // 只在hover时显示标记点
             itemStyle: {
               normal: {
                 color: '#2bb56e',
                 lineStyle: {
                   color: '#2bb56e',
-                  width: 2
+                  width: 3
                 }
-                // areaStyle: {
-                //   color: '#f3f8ff'
-                // }
               }
             },
             animationDuration: 2800,
             animationEasing: 'quadraticOut',
             data: this.option.seriesB,
-            // areaStyle: {
-            //   color: '#2bb56e',
-            // },
-            // markPoint: {
-            //   data: [
-            //     { name: 'Max', value: 182.2, xAxis: 7, yAxis: 183 },
-            //     { name: 'Min', value: 2.3, xAxis: 11, yAxis: 3 }
-            //   ]
-            // },
-            // markLine: {
-            //   data: [{ type: 'average', name: 'Avg' }]
-            // },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(43,181,110,0.3)'
+              }, {
+                offset: 0.8,
+                color: 'rgba(43,181,110,0)'
+              }], false),
+              shadowColor: 'rgba(0, 0, 0, 0.1)',
+              shadowBlur: 10
+            },
+            animationDuration
+          },
+          {
+            name: this.option.legend[2],
+            type: 'line',
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 8,
+            showSymbol: false, // 只在hover时显示标记点
+            itemStyle: {
+              normal: {
+                color: '#3b5ff9',
+                lineStyle: {
+                  color: '#3b5ff9',
+                  width: 3
+                }
+              }
+            },
+            animationDuration: 2800,
+            animationEasing: 'quadraticOut',
+            data: this.option.seriesC,
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(59,95,249,0.3)'
+              }, {
+                offset: 0.8,
+                color: 'rgba(59,95,249,0)'
+              }], false),
+              shadowColor: 'rgba(0, 0, 0, 0.1)',
+              shadowBlur: 10
+            },
             animationDuration
           }
         ]

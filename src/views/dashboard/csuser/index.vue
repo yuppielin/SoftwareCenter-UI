@@ -126,7 +126,7 @@
           <div slot="header" class="padding">
             <img src="@/assets/index/hotData.png" width="16" height="16" />
             &nbsp;
-            <span>月上传趋势</span>
+            <span>软件上传趋势</span>
           </div>
           <div class="chart-container">
             <line-chart :chart-data="monthlyUploadData" />
@@ -134,13 +134,13 @@
         </el-card>
       </div>
       
-      <!-- 上传软件进度分类占比 -->
+      <!-- 软件状态占比 -->
       <div style="width: 50%">
         <el-card style="margin: 10px;height:450px;">
           <div slot="header" class="padding">
             <img src="@/assets/index/hotDission.png" width="16" height="16" />
             &nbsp;
-            <span>上传软件进度分类占比</span>
+            <span>软件状态占比</span>
           </div>
           <div class="chart-container">
             <pie-chart :chart-data="uploadStatusData" />
@@ -213,7 +213,7 @@ export default {
         xAxis: [],
         expectedData: [] // 月上传数量
       },
-      // 上传软件进度分类占比数据
+      // 软件状态占比
       uploadStatusData: [
         { value: 0, name: '未通过', itemStyle: { color: '#e67e7e' } },
         { value: 0, name: '进行中', itemStyle: { color: '#f4d07a' } },
@@ -245,6 +245,7 @@ export default {
     },
     resetDateRange() {
       this.dateRange = null;
+      this.updateTime = new Date();
       this.getSystemData();
       this.getMonthlyUploadTrend();
       this.getUploadStatusDistribution();
@@ -252,8 +253,8 @@ export default {
     getSystemData() {
       // 添加时间范围参数
       const params = this.dateRange ? {
-        startDate: this.dateRange[0],
-        endDate: this.dateRange[1]
+        startTime: this.dateRange[0],
+        endTime: this.dateRange[1]
       } : {};
       
       analysis.getSystemData(params).then(response => {
@@ -266,17 +267,25 @@ export default {
     getMonthlyUploadTrend() {
       // 添加时间范围参数
       const params = this.dateRange ? {
-        startDate: this.dateRange[0],
-        endDate: this.dateRange[1]
+        startTime: this.dateRange[0],
+        endTime: this.dateRange[1]
       } : {};
       
       // 调用API获取数据
-      analysis.getMonthlyUploadTrend(params).then(response => {
+      analysis.uploadTrend(params.startTime, params.endTime).then(response => {
         if (response.code == 200) {
-          this.monthlyUploadData = {
-            xAxis: response.data.months || [],
-            expectedData: response.data.counts || []
-          };
+          let uploadTrendList = response.data;
+          if (uploadTrendList.length > 0) {
+            this.monthlyUploadData = {
+              xAxis: [],
+              expectedData: []
+            };
+            
+            uploadTrendList.forEach(item => {
+              this.monthlyUploadData.xAxis.push(item.date);
+              this.monthlyUploadData.expectedData.push(item.software);
+            });
+          }
         } else {
           // 如果API调用失败，使用模拟数据
           this.generateMockMonthlyData();
@@ -325,8 +334,8 @@ export default {
     getUploadStatusDistribution() {
       // 添加时间范围参数
       const params = this.dateRange ? {
-        startDate: this.dateRange[0],
-        endDate: this.dateRange[1]
+        startTime: this.dateRange[0],
+        endTime: this.dateRange[1]
       } : {};
       
       // 调用API获取数据
@@ -347,7 +356,7 @@ export default {
       });
     },
     
-    // 生成模拟的上传软件进度分类占比数据
+    // 生成模拟的软件状态占比数据
     generateMockStatusData() {
       // 根据时间范围调整数据
       let failed = this.topShow.unReleaseNum || 15;

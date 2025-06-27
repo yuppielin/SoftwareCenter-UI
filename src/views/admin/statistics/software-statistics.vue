@@ -3,59 +3,41 @@
     <div style="margin-bottom:10px;">
       <span style="font-size:20px;">数据概况</span>
     </div>
-    <el-row :gutter="10">
-      <el-col :span="3">
+    <el-row :gutter="12">
+      <el-col :span="4">
         <el-card class="topCard">
-          <div class="topTitle"><i style="color: blue;" class="el-icon-s-help"></i>软件总数</div>
+          <div class="topTitle"><i style="color: blue;" class="el-icon-s-help"></i>在库软件总数</div>
           <div class="topNum">{{topShowInfo.softwareAllNum}}</div>
         </el-card>
       </el-col>
-      <el-col :span="3">
+      <el-col :span="4">
         <el-card class="topCard">
-          <div class="topTitle"><i style="color: orange;" class="el-icon-s-help"></i>软件段总数</div>
-          <div class="topNum">{{topShowInfo.fragmentNum}}</div>
-        </el-card>
-      </el-col>
-      <el-col :span="3">
-        <el-card class="topCard">
-          <div class="topTitle"><i style="color: orange;" class="el-icon-s-help"></i>在网软件总数</div>
+          <div class="topTitle"><i style="color: green;" class="el-icon-s-help"></i>通用软件数</div>
           <div class="topNum">{{topShowInfo.softwareNum}}</div>
         </el-card>
       </el-col>
-      <el-col :span="3">
+      <el-col :span="4">
         <el-card class="topCard">
-          <div class="topTitle"><i style="color: orange;" class="el-icon-s-help"></i>待审批</div>
+          <div class="topTitle"><i style="color: orange;" class="el-icon-s-help"></i>软件模型数</div>
+          <div class="topNum">{{topShowInfo.softwareNum}}</div>
+        </el-card>
+      </el-col>
+      <el-col :span="4">
+        <el-card class="topCard">
+          <div class="topTitle"><i style="color: purple;" class="el-icon-s-help"></i>软件段数</div>
+          <div class="topNum">{{topShowInfo.fragmentNum}}</div>
+        </el-card>
+      </el-col>
+      <el-col :span="4">
+        <el-card class="topCard">
+          <div class="topTitle"><i style="color: #da586a;" class="el-icon-s-help"></i>待审核数</div>
           <div class="topNum">{{topShowInfo.unAuditSoftwareNum}}</div>
         </el-card>
       </el-col>
-      <el-col :span="3">
+      <el-col :span="4">
         <el-card class="topCard">
-          <div class="topTitle"><i style="color: green;" class="el-icon-s-help"></i>待试用</div>
-          <div class="topNum">{{topShowInfo.unTrySoftwareNum}}</div>
-        </el-card>
-      </el-col>
-      <el-col :span="3">
-        <el-card class="topCard">
-          <div class="topTitle"><i style="color: green;" class="el-icon-s-help"></i>待安检</div>
-          <div class="topNum">{{topShowInfo.unDetectionSoftwareNum}}</div>
-        </el-card>
-      </el-col>
-      <el-col :span="3">
-        <el-card class="topCard">
-          <div class="topTitle"><i style="color: #da586a;" class="el-icon-s-help"></i>安检不合格数</div>
+          <div class="topTitle"><i style="color: red;" class="el-icon-s-help"></i>未通过数</div>
           <div class="topNum">{{topShowInfo.DetectionRejectSoftwareNum}}</div>
-        </el-card>
-      </el-col>
-      <el-col :span="3">
-        <el-card class="topCard">
-          <div class="topTitle"><i style="color: #da586a;" class="el-icon-s-help"></i>安检不合格率</div>
-          <div class="topNum">{{topShowInfo.detection_probability}}</div>
-          <div class="topTitle">
-            较上月
-            <img v-if="topShowInfo.detection_change_probability.indexOf('+')!=-1" :src="require('@/assets/index/up.png')" />
-            <img v-if="topShowInfo.detection_change_probability.indexOf('-')!=-1" :src="require('@/assets/index/down.png')" />
-            {{topShowInfo.detection_change_probability}}
-          </div>
         </el-card>
       </el-col>
     </el-row>
@@ -107,22 +89,8 @@
       </el-col>
       <el-col :xs="24" :sm="24" :lg="12">
         <div class="chart-wrapper" style="background:#fff;padding:16px 16px 0;margin:0  0 32px 0;">
-          <span style="font-weight: bold;">软件讨论类型占比</span>
-          <PieDoughnut :option="softwareTsOption" />
-        </div>
-      </el-col>
-    </el-row>
-    <el-row :gutter="32" style="margin-top:0px;">
-      <el-col :xs="24" :sm="24" :lg="12">
-        <div class="chart-wrapper" style="background:#fff;padding:16px 16px 0;margin:0  0 32px 0;">
-          <span style="font-weight: bold;">软件评分占比</span>
-          <PieDoughnutStar :option="softwareStarOption" />
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="12">
-        <div class="chart-wrapper" style="background:#fff;padding:16px 16px 0;margin:0  0 32px 0;">
-          <span style="font-weight: bold;">软件段评分占比</span>
-          <PieDoughnutStar :option="segmentStarOption" />
+          <span style="font-weight: bold;">软件审核状态</span>
+          <PieDoughnut :option="softwareAuditOption" />
         </div>
       </el-col>
     </el-row>
@@ -136,7 +104,6 @@ import BarChartSoftware from "./components/BarChartSoftware";
 import MultiLineChart from "./components/MultiLineChart1.vue";
 import MultiBarChart from "./components/MultiBarChart.vue";
 import PieDoughnut from "./components/PieDoughnut";
-import PieDoughnutStar from "./components/PieDoughnutStar";
 import * as statistics from "@/api/statistics";
 import * as analysis from "@/api/analysis";
 const lineChartData = {
@@ -166,8 +133,7 @@ export default {
     BarChartSoftware,
     MultiLineChart,
     MultiBarChart,
-    PieDoughnut,
-    PieDoughnutStar
+    PieDoughnut
   },
   data() {
     return {
@@ -225,18 +191,20 @@ export default {
       softwareOption: {
         title: "上传趋势",
         subTitle: "",
-        legend: ["软件", "软件段"],
+        legend: ["软件", "软件段", "软件模型"],
         xAxis: ["5-21", "5-22", "5-23", "5-24", "5-25", "5-26", "5-27"],
         seriesA: [121, 125, 12, 33, 212, 33, 44],
-        seriesB: [142, 11, 33, 44, 151, 313, 55]
+        seriesB: [142, 11, 33, 44, 151, 313, 55],
+        seriesC: [20, 15, 5, 10, 25, 30, 18]
       },
       softwareOptionDownload: {
         title: "下载趋势",
         subTitle: "",
-        legend: ["软件", "软件段"],
+        legend: ["软件", "软件段", "软件模型"],
         xAxis: ["5-21", "5-22", "5-23", "5-24", "5-25", "5-26", "5-27"],
         seriesA: [12, 121, 12, 33, 12, 33, 44],
-        seriesB: [12, 121, 33, 44, 111, 33, 77]
+        seriesB: [12, 121, 33, 44, 111, 33, 77],
+        seriesC: [5, 25, 10, 15, 20, 12, 8]
       },
       typeOption: {
         legend: ["上传量", "下载量"],
@@ -254,88 +222,22 @@ export default {
         title: "软件类型占比",
         total: 0,
         totalText: "总数",
-        legend: [
-          "态势感知",
-          "联合筹划",
-          "行动控制",
-          "作战值班",
-          "联合训练",
-          "支援保障",
-          "资源管理"
-        ],
+        legend: ["通用软件", "软件模型", "软件段"],
         data: [
-          { name: "态势感知", value: 0 },
-          { name: "联合筹划", value: 0 },
-          { name: "行动控制", value: 0 },
-          { name: "作战值班", value: 0 },
-          { name: "联合训练", value: 0 },
-          { name: "支援保障", value: 0 },
-          { name: "资源管理", value: 0 }
+          { name: "通用软件", value: 0 },
+          { name: "软件模型", value: 0 },
+          { name: "软件段", value: 0 }
         ]
       },
-      softwareTsOption: {
-        title: "软件讨论类型占比",
+      softwareAuditOption: {
+        title: "软件段审核状态",
         total: 0,
-        totalText: "总讨论量",
-        legend: ["问题", "建议", "需求"],
+        totalText: "总数",
+        legend: ["已通过", "未审核", "未通过"],
         data: [
-          { name: "问题", value: 0 },
-          { name: "建议", value: 0 },
-          { name: "需求", value: 0 }
-        ]
-      },
-      softwareStarOption: {
-        title: "软件评分占比",
-        legend: [
-          "5星",
-          "4星半",
-          "4星",
-          "3星半",
-          "3星",
-          "2星半",
-          "2星",
-          "1星半",
-          "1星",
-          "半星"
-        ],
-        data: [
-          { name: "5星", value: 0 },
-          { name: "4星半", value: 0 },
-          { name: "4星", value: 0 },
-          { name: "3星半", value: 0 },
-          { name: "3星", value: 0 },
-          { name: "2星半", value: 0 },
-          { name: "2星", value: 0 },
-          { name: "1星半", value: 0 },
-          { name: "1星", value: 0 },
-          { name: "半星", value: 0 }
-        ]
-      },
-      segmentStarOption: {
-        title: "软件段评分占比",
-        legend: [
-          "5星",
-          "4星半",
-          "4星",
-          "3星半",
-          "3星",
-          "2星半",
-          "2星",
-          "1星半",
-          "1星",
-          "半星"
-        ],
-        data: [
-          { name: "5星", value: 0 },
-          { name: "4星半", value: 0 },
-          { name: "4星", value: 0 },
-          { name: "3星半", value: 0 },
-          { name: "3星", value: 0 },
-          { name: "2星半", value: 0 },
-          { name: "2星", value: 0 },
-          { name: "1星半", value: 0 },
-          { name: "1星", value: 0 },
-          { name: "半星", value: 0 }
+          { name: "已通过", value: 0 },
+          { name: "未审核", value: 0 },
+          { name: "未通过", value: 0 }
         ]
       },
       updateTime: null
@@ -346,6 +248,7 @@ export default {
     this.setBaseData()
     this.getTopShowInfo();
     this.handleSearch();
+    this.initSoftwareTypeData();
   },
   methods: {
     setBaseData() {
@@ -360,6 +263,7 @@ export default {
       analysis.getDataSituation().then(response => {
         if (response.code == 200) {
           this.topShowInfo = response.data;
+          this.initSoftwareTypeData();
         }
       });
     },
@@ -384,10 +288,12 @@ export default {
               this.softwareOption.xAxis = [];
               this.softwareOption.seriesA = [];
               this.softwareOption.seriesB = [];
+              this.softwareOption.seriesC = [];
               uploadTrendList.forEach(item => {
                 this.softwareOption.xAxis.push(item.date);
                 this.softwareOption.seriesA.push(item.software);
                 this.softwareOption.seriesB.push(item.fragment);
+                this.softwareOption.seriesC.push(item.softwareModel || 0);
               });
             }
           }
@@ -400,10 +306,12 @@ export default {
               this.softwareOption.xAxis = [];
               this.softwareOption.seriesA = [];
               this.softwareOption.seriesB = [];
+              this.softwareOption.seriesC = [];
               uploadTrendList.forEach(item => {
                 this.softwareOption.xAxis.push(item.date);
                 this.softwareOption.seriesA.push(item.software);
                 this.softwareOption.seriesB.push(item.fragment);
+                this.softwareOption.seriesC.push(item.softwareModel || 0);
               });
             }
           }
@@ -419,6 +327,7 @@ export default {
               this.softwareOptionDownload.xAxis = [];
               this.softwareOptionDownload.seriesA = [];
               this.softwareOptionDownload.seriesB = [];
+              this.softwareOptionDownload.seriesC = [];
               downloadTrendList.forEach(item => {
                 this.softwareOptionDownload.xAxis.push(item.date);
                 this.softwareOptionDownload.seriesA.push(
@@ -426,6 +335,9 @@ export default {
                 );
                 this.softwareOptionDownload.seriesB.push(
                   item.fragment_download
+                );
+                this.softwareOptionDownload.seriesC.push(
+                  item.softwareModel_download || 0
                 );
               });
             }
@@ -439,6 +351,7 @@ export default {
               this.softwareOptionDownload.xAxis = [];
               this.softwareOptionDownload.seriesA = [];
               this.softwareOptionDownload.seriesB = [];
+              this.softwareOptionDownload.seriesC = [];
               downloadTrendList.forEach(item => {
                 this.softwareOptionDownload.xAxis.push(item.date);
                 this.softwareOptionDownload.seriesA.push(
@@ -446,6 +359,9 @@ export default {
                 );
                 this.softwareOptionDownload.seriesB.push(
                   item.fragment_download
+                );
+                this.softwareOptionDownload.seriesC.push(
+                  item.softwareModel_download || 0
                 );
               });
             }
@@ -461,68 +377,15 @@ export default {
             if (softwareProportionList.length > 0) {
               softwareProportionList.forEach(item => {
                 if (item.pic1_byCategory) {
-                  if (item.pic1_byCategory.length > 0) {
-                    this.softwareTypeOption.legend = [];
-                    this.softwareTypeOption.data = [];
-                    this.softwareTypeOption.total = item.pic1_total;
-                    item.pic1_byCategory.forEach(Element => {
-                      this.softwareTypeOption.legend.push(Element.name);
-                      this.softwareTypeOption.data.push(Element);
-                    });
-                  }
-                } else if (item.pic2_demandByCategory) {
-                  if (item.pic2_demandByCategory.length >0 ) {
-                    this.softwareTsOption.total = item.pic2_total;
-                    this.softwareTsOption.data = [];
-                    item.pic2_demandByCategory.forEach(element => {
-                      this.softwareTsOption.data.push({
-                        name: element.c_name,
-                        value: element.value
-                      });
-                    });
-                  }
-                } else if (item.pic3_bySoftwareScore) {
-                  this.softwareStarOption.data[0].value =
-                    item.pic3_bySoftwareScore["9~9.9"];
-                  this.softwareStarOption.data[1].value =
-                    item.pic3_bySoftwareScore["8~8.9"];
-                  this.softwareStarOption.data[2].value =
-                    item.pic3_bySoftwareScore["7~7.9"];
-                  this.softwareStarOption.data[3].value =
-                    item.pic3_bySoftwareScore["6~6.9"];
-                  this.softwareStarOption.data[4].value =
-                    item.pic3_bySoftwareScore["5~5.9"];
-                  this.softwareStarOption.data[5].value =
-                    item.pic3_bySoftwareScore["4~4.9"];
-                  this.softwareStarOption.data[6].value =
-                    item.pic3_bySoftwareScore["3~3.9"];
-                  this.softwareStarOption.data[7].value =
-                    item.pic3_bySoftwareScore["2~2.9"];
-                  this.softwareStarOption.data[8].value =
-                    item.pic3_bySoftwareScore["1~1.9"];
-                  this.softwareStarOption.data[9].value =
-                    item.pic3_bySoftwareScore["0~0.9"];
-                } else if (item.pic4_byFragmentScore) {
-                  this.segmentStarOption.data[0].value =
-                    item.pic4_byFragmentScore["9~9.9"];
-                  this.segmentStarOption.data[1].value =
-                    item.pic4_byFragmentScore["8~8.9"];
-                  this.segmentStarOption.data[2].value =
-                    item.pic4_byFragmentScore["7~7.9"];
-                  this.segmentStarOption.data[3].value =
-                    item.pic4_byFragmentScore["6~6.9"];
-                  this.segmentStarOption.data[4].value =
-                    item.pic4_byFragmentScore["5~5.9"];
-                  this.segmentStarOption.data[5].value =
-                    item.pic4_byFragmentScore["4~4.9"];
-                  this.segmentStarOption.data[6].value =
-                    item.pic4_byFragmentScore["3~3.9"];
-                  this.segmentStarOption.data[7].value =
-                    item.pic4_byFragmentScore["2~2.9"];
-                  this.segmentStarOption.data[8].value =
-                    item.pic4_byFragmentScore["1~1.9"];
-                  this.segmentStarOption.data[9].value =
-                    item.pic4_byFragmentScore["0~0.9"];
+                  this.softwareTypeOption.total = this.topShowInfo.softwareAllNum;
+                  this.softwareTypeOption.data[0].value = this.topShowInfo.softwareNum;
+                  this.softwareTypeOption.data[1].value = this.topShowInfo.softwareNum;
+                  this.softwareTypeOption.data[2].value = this.topShowInfo.fragmentNum;
+                  
+                  this.softwareAuditOption.total = this.topShowInfo.fragmentNum;
+                  this.softwareAuditOption.data[1].value = this.topShowInfo.unAuditSoftwareNum;
+                  this.softwareAuditOption.data[2].value = this.topShowInfo.DetectionRejectSoftwareNum;
+                  this.softwareAuditOption.data[0].value = this.topShowInfo.fragmentNum - this.topShowInfo.unAuditSoftwareNum - this.topShowInfo.DetectionRejectSoftwareNum;
                 }
               });
             }
@@ -535,73 +398,37 @@ export default {
             if (softwareProportionList.length > 0) {
               softwareProportionList.forEach(item => {
                 if (item.pic1_byCategory) {
-                  if (item.pic1_byCategory.length > 0) {
-                    this.softwareTypeOption.legend = [];
-                    this.softwareTypeOption.data = [];
-                    this.softwareTypeOption.total = item.pic1_total;
-                    item.pic1_byCategory.forEach(Element => {
-                      this.softwareTypeOption.legend.push(Element.name);
-                      this.softwareTypeOption.data.push(Element);
-                    });
-                  }
-                } else if (item.pic2_demandByCategory) {
-                  if (item.pic2_demandByCategory.length == 1) {
-                    this.softwareTsOption.total = item.pic2_total;
-                    this.softwareTsOption.data[0].value =
-                      item.pic2_demandByCategory[0].question;
-                    this.softwareTsOption.data[1].value =
-                      item.pic2_demandByCategory[0].suggest;
-                    this.softwareTsOption.data[2].value =
-                      item.pic2_demandByCategory[0].demand;
-                  }
-                } else if (item.pic3_bySoftwareScore) {
-                  this.softwareStarOption.data[0].value =
-                    item.pic3_bySoftwareScore["0~0.9"];
-                  this.softwareStarOption.data[1].value =
-                    item.pic3_bySoftwareScore["1~1.9"];
-                  this.softwareStarOption.data[2].value =
-                    item.pic3_bySoftwareScore["2~2.9"];
-                  this.softwareStarOption.data[3].value =
-                    item.pic3_bySoftwareScore["3~3.9"];
-                  this.softwareStarOption.data[4].value =
-                    item.pic3_bySoftwareScore["4~4.9"];
-                  this.softwareStarOption.data[5].value =
-                    item.pic3_bySoftwareScore["5~5.9"];
-                  this.softwareStarOption.data[6].value =
-                    item.pic3_bySoftwareScore["6~6.9"];
-                  this.softwareStarOption.data[7].value =
-                    item.pic3_bySoftwareScore["7~7.9"];
-                  this.softwareStarOption.data[8].value =
-                    item.pic3_bySoftwareScore["8~8.9"];
-                  this.softwareStarOption.data[9].value =
-                    item.pic3_bySoftwareScore["9~9.9"];
-                } else if (item.pic4_byFragmentScore) {
-                  this.segmentStarOption.data[0].value =
-                    item.pic4_byFragmentScore["0~0.9"];
-                  this.segmentStarOption.data[1].value =
-                    item.pic4_byFragmentScore["1~1.9"];
-                  this.segmentStarOption.data[2].value =
-                    item.pic4_byFragmentScore["2~2.9"];
-                  this.segmentStarOption.data[3].value =
-                    item.pic4_byFragmentScore["3~3.9"];
-                  this.segmentStarOption.data[4].value =
-                    item.pic4_byFragmentScore["4~4.9"];
-                  this.segmentStarOption.data[5].value =
-                    item.pic4_byFragmentScore["5~5.9"];
-                  this.segmentStarOption.data[6].value =
-                    item.pic4_byFragmentScore["6~6.9"];
-                  this.segmentStarOption.data[7].value =
-                    item.pic4_byFragmentScore["7~7.9"];
-                  this.segmentStarOption.data[8].value =
-                    item.pic4_byFragmentScore["8~8.9"];
-                  this.segmentStarOption.data[9].value =
-                    item.pic4_byFragmentScore["9~9.9"];
+                  this.softwareTypeOption.total = this.topShowInfo.softwareAllNum;
+                  this.softwareTypeOption.data[0].value = this.topShowInfo.softwareNum;
+                  this.softwareTypeOption.data[1].value = this.topShowInfo.softwareNum;
+                  this.softwareTypeOption.data[2].value = this.topShowInfo.fragmentNum;
+                  
+                  this.softwareAuditOption.total = this.topShowInfo.fragmentNum;
+                  this.softwareAuditOption.data[1].value = this.topShowInfo.unAuditSoftwareNum;
+                  this.softwareAuditOption.data[2].value = this.topShowInfo.DetectionRejectSoftwareNum;
+                  this.softwareAuditOption.data[0].value = this.topShowInfo.fragmentNum - this.topShowInfo.unAuditSoftwareNum - this.topShowInfo.DetectionRejectSoftwareNum;
                 }
               });
             }
           }
         });
       }
+    },
+    initSoftwareTypeData() {
+      // 初始化软件类型占比数据
+      this.softwareTypeOption.total = this.topShowInfo.softwareAllNum;
+      this.softwareTypeOption.data[0].value = this.topShowInfo.softwareNum; // 通用软件
+      this.softwareTypeOption.data[1].value = this.topShowInfo.softwareNum; // 软件模型
+      this.softwareTypeOption.data[2].value = this.topShowInfo.fragmentNum; // 软件段
+
+      // 初始化软件段审核状态数据
+      this.softwareAuditOption.total = this.topShowInfo.fragmentNum;
+      // 未审核数量
+      this.softwareAuditOption.data[1].value = this.topShowInfo.unAuditSoftwareNum;
+      // 未通过数量
+      this.softwareAuditOption.data[2].value = this.topShowInfo.DetectionRejectSoftwareNum;
+      // 已通过数量 = 总数 - 未审核数量 - 未通过数量
+      this.softwareAuditOption.data[0].value = this.topShowInfo.fragmentNum - this.topShowInfo.unAuditSoftwareNum - this.topShowInfo.DetectionRejectSoftwareNum;
     }
   }
 };

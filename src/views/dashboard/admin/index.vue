@@ -159,48 +159,63 @@
       
       <!-- 下载排行榜 -->
       <div style="width: 50%">
-        <el-card style="margin: 10px;height:450px;">
+        <el-card style="margin: 10px;height:450px;overflow-y:auto;">
           <div slot="header"  class="padding">
             <img src="@/assets/index/hotData.png" width="16" height="16" />
             &nbsp;
-            <span>下载排行榜（月度）</span>
+            <span>下载排行榜</span>
           </div>
-          <el-table :data="hotData" :show-header="false">
-            <el-table-column width="80px" align="center">
-              <template slot-scope="scoped">
-                <img v-if="scoped.$index+1==1" src="@/assets/index/1.png" width="20" height="20" />
-                <img
-                  v-else-if="scoped.$index+1==2"
-                  src="@/assets/index/2.png"
-                  width="20"
-                  height="20"
-                />
-                <img
-                  v-else-if="scoped.$index+1==3"
-                  src="@/assets/index/3.png"
-                  width="20"
-                  height="20"
-                />
-                <span v-else>{{ scoped.$index+1 }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="softwareName" show-overflow-tooltip>
-              <template slot-scope="scoped">
-                <el-link @click="downloadSoftware(scoped.row.versionId)">{{scoped.row.softwareName}}</el-link>
-              </template>
-            </el-table-column>
-            <el-table-column>
-              <template slot-scope="scope">
-                <el-progress
-                  class="hotpercentage"
-                  :show-text="false"
-                  :percentage="scope.$index*10"
-                  color="#e6ebf5"
-                  style="define-back-color:blue"
-                />
-              </template>
-            </el-table-column>
-          </el-table>
+          <div wrap-style="overflow-y:hiddle;" style="overflow-y:auto">
+            <el-row
+              v-for="(item,index) in hotData"
+              :key="index"
+              style="line-height:40px;height:40px;"
+            >
+            <el-col :span="3" style="text-align:center;">
+                <!-- <span>{{index+1}}</span> -->
+                <div v-if="index+1==1" class="hot-icon">
+                  <span>1</span>
+                  <img  src="@/assets/index/hot1.png">
+                </div>
+                <div v-else-if="index+1==2" class="hot-icon">
+                  <span>2</span>
+                  <img  src="@/assets/index/hot2.png">
+                </div>
+                <div v-else-if="index+1==3" class="hot-icon">
+                  <span>3</span>
+                  <img  src="@/assets/index/hot3.png">
+                </div>
+                
+                <span v-else>{{ index+1 }}</span>
+              </el-col>
+              <el-col :span="17">
+                <div style="font-size:14px;font-weight:600;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display:flex;width:260px;align-items:center;">
+                  <span>{{ item.name }}</span>
+                  <span 
+                    class="rank-software-type-tag software-type-common"
+                    v-if="item.softwareType == 1"
+                  >通用软件</span>
+                  <span 
+                    class="rank-software-type-tag software-type-fragment"
+                    v-else-if="item.softwareType == 2"
+                  >软件段</span>
+                  
+                  <span 
+                    class="rank-software-type-tag software-type-model"
+                    v-else-if="item.softwareType == 4"
+                  >模型</span>
+                </div>
+              </el-col>
+              <el-col :span="4">
+                <div style="display: flex; justify-content: flex-end; align-items: center;">
+                  <div style="margin-right: 10px; font-size: 14px;">
+                    {{ item.downloadCount || 0 }} 次下载
+                  </div>
+                  <!-- <el-button type="success" size="mini" class="downBtn2" @click="downloadSoftware(item.versionId)">下载</el-button> -->
+                </div>
+              </el-col>
+            </el-row>
+          </div>
         </el-card>
       </div>
       
@@ -327,12 +342,21 @@ export default {
       });
     },
     hotDownload() {
-      analysis.hotDownload(10).then(response => {
-        if (response.code == 200) {
-          this.hotData = response.data.list;
-        }
-      });
+      // analysis.hotDownload(10).then(response => {
+      //   if (response.code == 200) {
+      //     this.hotData = response.data.list;
+      //   }
+      // });
+
+      software.getHotSoftwareList(this.userInfo.userId).then(response => {
+        this.hotData = response.data
+        console.log("==============",this.hotData)
+      }).catch(err => {
+        console.log(err)
+      })
     },
+
+
     hotDiscuss() {
       analysis.hotDiscuss(5).then(response => {
         if (response.code == 200) {
@@ -355,6 +379,76 @@ export default {
 .hotpercentage /deep/ .el-progress-bar__outer {
   background-color: #05994e;
 }
+
+/* 添加下载排行榜样式 */
+.hot-icon {
+  position: relative;
+  width: 25px;
+  height: 25px;
+  margin: 0 auto;
+}
+
+.hot-icon span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  color: white;
+  font-size: 12px;
+  line-height: 25px;
+  z-index: 1;
+}
+
+.hot-icon img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 25px;
+  height: 25px;
+}
+
+.downBtn2 {
+  padding: 5px 10px;
+  height: 28px;
+  line-height: 16px;
+}
+
+.info-btn2 {
+  text-align: right;
+}
+
+/* 添加软件类型标签样式 */
+.rank-software-type-tag {
+  display: inline-block;
+  padding: 2px 4px;
+  font-size: 12px;
+  border-radius: 4px;
+  color: white;
+  margin-left: 5px;
+  line-height: 1;
+}
+
+.software-type-common {
+    background-color: #1e7d34;
+    border-color: #1e7d34;
+  }
+
+  .software-type-fragment {
+    background-color: #e6a23c;
+    border-color: #e6a23c;
+  }
+
+  .software-type-business {
+    background-color: #9c27b0;
+    border-color: #9c27b0;
+  }
+
+  .software-type-model {
+    background-color: #409eff;
+    border-color: #409eff;
+  }
 </style>
 <style lang="scss" scoped>
 .topCard {

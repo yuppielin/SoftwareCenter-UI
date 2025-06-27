@@ -298,10 +298,6 @@
                     v-else-if="item.softwareType == 2"
                   >软件段</span>
                   <span 
-                    class="rank-software-type-tag software-type-business"
-                    v-else-if="item.softwareType == 3"
-                  >业务软件</span>
-                  <span 
                     class="rank-software-type-tag software-type-model"
                     v-else-if="item.softwareType == 4"
                   >模型</span>
