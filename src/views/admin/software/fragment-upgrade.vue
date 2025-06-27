@@ -4,13 +4,10 @@
       <el-col :span="20">
         <div style="font-weight:bold;margin-left: 20px;cursor:pointer" @click="goBack">
           <i class="el-icon-back" style="font-weight: bold" />
-          软件升级
+          软件段升级
         </div>
       </el-col>
-      <el-col :span="4" style="text-align: right">
-        <el-button size="small" @click="cancleSubmit" style="background: #fff">取消</el-button>
-        <el-button size="small" type="primary" @click="upgradeSoftware">提交</el-button>
-      </el-col>
+      <!-- 按钮移至底部 -->
     </el-row>
     <el-card class="custome">
       <el-form
@@ -104,6 +101,16 @@
           prop="cpu"
           label="CPU架构:">
           <span class="show-text" v-text="selectDictLabels(fragmentArchList, softwareDataInfo.cpu)" />
+        </el-form-item>
+        <el-form-item
+          prop="languageCate"
+          label="开发语言:">
+          <span class="show-text" v-text="selectDictLabels(languageList, softwareDataInfo.languageCate)" />
+        </el-form-item>
+        <el-form-item
+          prop="techStackCate"
+          label="技术栈:">
+          <span class="show-text" v-text="selectDictLabels(techStackList, softwareDataInfo.techStackCate)" />
         </el-form-item>
         <el-form-item
           prop="service"
@@ -428,10 +435,10 @@
             </el-table-column>
           </el-table>
         </el-form-item> -->
-<!--        <div style="text-align:center;">-->
-<!--          <el-button size="small" type="primary" @click="upgradeSoftware">提交</el-button>-->
-<!--          <el-button size="small" @click="cancleSubmit">取消</el-button>-->
-<!--        </div>-->
+        <div style="text-align:center; margin-top: 20px;">
+          <el-button size="small" @click="cancleSubmit" style="background: #fff">取消</el-button>
+          <el-button size="small" type="primary" @click="upgradeSoftware">提交</el-button>
+        </div>
       </el-form>
 
       <!-- 将上传组件全局注册 -->
@@ -489,6 +496,8 @@ export default {
       softwareDataTypes: [],
       fragmentArchList: [],
       softwareTypeList: [],
+      languageList: [],
+      techStackList: [],
       softwareDataInfo: {},
       softwareForm: {
         name: "",
@@ -501,6 +510,8 @@ export default {
         pic: "",
         fragmentType: "",
         cpu: "",
+        languageCate: "",
+        techStackCate: "",
         description: "",
         paths: "",
         attribute: 1,
@@ -531,6 +542,8 @@ export default {
     await this.getFragmentArchList();
     await this.getFragmentTypeList();
     await this.getSoftwareDataTypeList();
+    await this.getLanguageList();
+    await this.getTechStackList();
     await this.getOfferUnitList();
     await this.getDeptTree();
     // this.getUserList()
@@ -617,6 +630,15 @@ export default {
           // }
           this.softwareForm.logo = this.softwareDataInfo.logo;
           this.softwareForm.pic = this.softwareDataInfo.pic;
+          
+          // 处理languageCate和techStackCate字段
+          if (this.softwareDataInfo.languageCate) {
+            this.softwareForm.languageCate = this.softwareDataInfo.languageCate.split(',');
+          }
+          if (this.softwareDataInfo.techStackCate) {
+            this.softwareForm.techStackCate = this.softwareDataInfo.techStackCate.split(',');
+          }
+          
           // if (softwareDataInfo.testProved) {
           //   softwareDataInfo.testProved.forEach(item => {
           //     this.detailFileList.push({
@@ -680,6 +702,16 @@ export default {
         this.fragmentArchList = response.data.list;
       });
     },
+    getLanguageList() {
+      category.getCategoryList("language_cate", null, null).then(response => {
+        this.languageList = response.data.list;
+      });
+    },
+    getTechStackList() {
+      category.getCategoryList("tech_stack_cate", null, null).then(response => {
+        this.techStackList = response.data.list;
+      });
+    },
     getFragmentTypeList() {
       category.getCategoryList("fragment_type", null, null).then(response => {
         this.softwareTypeList = response.data.list;
@@ -721,6 +753,8 @@ export default {
             description: this.softwareForm.description,
             upgradeDescription: this.softwareForm.upgradeDescription,
             cpu: this.softwareForm.cpu ? this.softwareForm.cpu.join(",") : null,
+            languageCate: this.softwareForm.languageCate ? this.softwareForm.languageCate.join(",") : null,
+            techStackCate: this.softwareForm.techStackCate ? this.softwareForm.techStackCate.join(",") : null,
             fragmentType: this.softwareForm.fragmentType
               ? this.softwareForm.fragmentType.toString()
               : null,

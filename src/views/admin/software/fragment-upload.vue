@@ -7,10 +7,6 @@
           软件段上传
         </div>
       </el-col>
-      <el-col :span="4" style="text-align: right">
-        <el-button size="small" @click="cancleSubmit" style="background: #fff">取消</el-button>
-        <el-button size="small" type="primary" @click="addSoftware">提交</el-button>
-      </el-col>
     </el-row>
     <el-card class="custome">
       <!--    <CloseBack></CloseBack>-->
@@ -102,6 +98,48 @@
           >
             <el-option
               v-for="(item,index) in fragmentArchList"
+              :key="index"
+              :label="item.name"
+              :value="item.identities"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          prop="languageCate"
+          label="开发语言:"
+          :rules="[{required:true,message:'开发语言不能为空',trigger:'blur'}]"
+        >
+          <el-select
+            v-model="softwareForm.languageCate"
+            size="small"
+            style="width:100%"
+            filterable
+            reserve-keyword
+            multiple
+          >
+            <el-option
+              v-for="(item,index) in languageList"
+              :key="index"
+              :label="item.name"
+              :value="item.identities"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          prop="techStackCate"
+          label="技术栈:"
+          :rules="[{required:true,message:'技术栈不能为空',trigger:'blur'}]"
+        >
+          <el-select
+            v-model="softwareForm.techStackCate"
+            size="small"
+            style="width:100%"
+            filterable
+            reserve-keyword
+            multiple
+          >
+            <el-option
+              v-for="(item,index) in techStackList"
               :key="index"
               :label="item.name"
               :value="item.identities"
@@ -454,9 +492,12 @@
             </el-table-column>
           </el-table>
         </el-form-item> -->
-<!--        <div style="text-align:center;">-->
-<!--          -->
-<!--        </div>-->
+        <el-form-item>
+          <div style="text-align: center; margin-top: 20px;">
+            <el-button size="small" @click="cancleSubmit" style="background: #fff; margin-right: 20px;">取消</el-button>
+            <el-button size="small" type="primary" @click="addSoftware">提交</el-button>
+          </div>
+        </el-form-item>
       </el-form>
 
       <!-- 将上传组件全局注册 -->
@@ -513,6 +554,8 @@ export default {
       offerUnits: [],
       softwareDataTypes: [],
       fragmentArchList: [],
+      languageList: [],
+      techStackList: [],
       softwareTypeList: [],
       softwareForm: {
         name: '',
@@ -532,6 +575,8 @@ export default {
         prefix: '',
         pic: '',
         logo: '',
+        languageCate: [],
+        techStackCate: [],
         softwareDetailAntivirusList: [], // 杀毒证明
         softwareDetailTestList: [], // 测试证明
         versionData: {
@@ -561,6 +606,8 @@ export default {
     await this.getFragmentArchList()
     await this.getFragmentTypeList()
     await this.getSoftwareDataTypeList()
+    await this.getLanguageList()
+    await this.getTechStackList()
     await this.getOfferUnitList()
     await this.getDeptTree()
     // this.getUserList()
@@ -641,6 +688,12 @@ export default {
           }
           if (softwareDataInfo.cpu) {
             this.softwareForm.cpu = softwareDataInfo.cpu.split(',')
+          }
+          if (softwareDataInfo.languageCate) {
+            this.softwareForm.languageCate = softwareDataInfo.languageCate.split(',')
+          }
+          if (softwareDataInfo.techStackCate) {
+            this.softwareForm.techStackCate = softwareDataInfo.techStackCate.split(',')
           }
           if (softwareDataInfo.service) {
             const service = softwareDataInfo.service.split(',')
@@ -801,6 +854,8 @@ export default {
             md5: this.softwareForm.md5,
             description: this.softwareForm.description,
             cpu: this.softwareForm.cpu ? this.softwareForm.cpu.join(',') : null,
+            languageCate: this.softwareForm.languageCate ? this.softwareForm.languageCate.join(',') : null,
+            techStackCate: this.softwareForm.techStackCate ? this.softwareForm.techStackCate.join(',') : null,
             categoryIds: this.softwareForm.categoryIds
               ? this.softwareForm.categoryIds.join(',')
               : null,
@@ -1329,6 +1384,16 @@ export default {
 
       this.softwareForm.offerUnitId = this.getComeArrWithChild([this.softwareForm.offerUnitId], this.offerUnits)
       this.softwareForm.offerUnitId = this.softwareForm.offerUnitId.length>0 ? this.softwareForm.offerUnitId[0] : null
+    },
+    getLanguageList() {
+      category.getCategoryList('language_cate', null, null).then(response => {
+        this.languageList = response.data.list
+      })
+    },
+    getTechStackList() {
+      category.getCategoryList('tech_stack_cate', null, null).then(response => {
+        this.techStackList = response.data.list
+      })
     }
   }
 }
