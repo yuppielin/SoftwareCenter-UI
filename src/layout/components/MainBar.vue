@@ -55,8 +55,8 @@
     <div class="menu_container" :class="{'is-active':$route.path=='/index/list'}">
       <span><router-link to="/index/list"><i class="el-icon-s-home"></i> 首页 </router-link></span>
     </div>
-    <div class="menu_container" :class="{'is-active':$route.path=='/index/software-more?service=91&title=我的关注'}">
-      <span><router-link to="/index/software-more?service=91&childService=全部&title=我的关注"> <i class="el-icon-menu"></i> 我的关注</router-link></span>
+    <div class="menu_container" :class="{'is-active':$route.path=='/index/software-more?service=20&title=我的关注'}">
+      <span><router-link to="/index/software-more?service=20&childService=全部&title=我的关注"> <i class="el-icon-menu"></i> 我的关注</router-link></span>
     </div>
     <div class="menu_container" :class="{'is-active':$route.path=='/index/software-more?service=91&title=通用软件'}">
       <span><router-link to="/index/software-more?service=91&childService=全部&title=通用软件"> <i class="el-icon-menu"></i> 通用软件</router-link></span>

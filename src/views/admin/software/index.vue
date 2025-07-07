@@ -132,6 +132,7 @@
               <el-col :span="16" style="line-height:1.5">
                 <div style="position: relative;">
                   <div
+                    v-tooltip="row.name"
                     style="cursor: pointer;font-size:16px;font-weight:600;display:inline-block;width:120px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;color:#1e7d34;"
                   >{{row.name}}</div>
                   <span 
@@ -379,6 +380,92 @@ export default {
     Treeselect,
     mixin,
     SoftwareRelation
+  },
+  directives: {
+    // 自定义悬停提示指令
+    tooltip: {
+      bind(el, binding) {
+        let tooltipTimeout = null;
+        
+        el.addEventListener('mouseenter', () => {
+          // 延迟200ms显示tooltip，避免鼠标快速划过时显示
+          tooltipTimeout = setTimeout(() => {
+            // 创建tooltip元素
+            const tooltip = document.createElement('div');
+            tooltip.className = 'custom-tooltip';
+            tooltip.textContent = binding.value;
+            tooltip.style.position = 'fixed';
+            tooltip.style.zIndex = '10000';
+            tooltip.style.backgroundColor = '#303133';
+            tooltip.style.color = '#fff';
+            tooltip.style.padding = '10px';
+            tooltip.style.borderRadius = '4px';
+            tooltip.style.fontSize = '14px';
+            tooltip.style.maxWidth = '400px';
+            tooltip.style.wordBreak = 'break-all';
+            tooltip.style.whiteSpace = 'normal';
+            tooltip.style.boxShadow = '0 2px 12px 0 rgba(0, 0, 0, 0.1)';
+            
+            // 添加到body以便计算尺寸
+            document.body.appendChild(tooltip);
+            
+            // 获取元素位置
+            const rect = el.getBoundingClientRect();
+            const tooltipHeight = tooltip.offsetHeight;
+            const tooltipWidth = tooltip.offsetWidth;
+            
+            // 计算位置，确保在元素上方显示
+            let left = rect.left;
+            let top = rect.top - tooltipHeight - 10;
+            
+            // 边界检测，确保tooltip不会超出视口
+            if (left + tooltipWidth > window.innerWidth) {
+              left = window.innerWidth - tooltipWidth - 10;
+            }
+            
+            if (top < 0) {
+              // 如果上方空间不足，则显示在元素下方
+              top = rect.bottom + 10;
+            }
+            
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+            
+            // 保存tooltip引用
+            el._tooltip = tooltip;
+          }, 200);
+        });
+        
+        el.addEventListener('mouseleave', () => {
+          // 清除延迟显示的定时器
+          if (tooltipTimeout) {
+            clearTimeout(tooltipTimeout);
+            tooltipTimeout = null;
+          }
+          
+          // 移除tooltip
+          if (el._tooltip) {
+            document.body.removeChild(el._tooltip);
+            delete el._tooltip;
+          }
+        });
+        
+        // 保存定时器引用，以便在unbind时清除
+        el._tooltipTimeout = tooltipTimeout;
+      },
+      unbind(el) {
+        // 清除定时器
+        if (el._tooltipTimeout) {
+          clearTimeout(el._tooltipTimeout);
+        }
+        
+        // 清理tooltip
+        if (el._tooltip) {
+          document.body.removeChild(el._tooltip);
+          delete el._tooltip;
+        }
+      }
+    }
   },
   data() {
     return {
@@ -1009,6 +1096,14 @@ export default {
 </script>
 
 <style scoped>
+/* 全局样式修复 */
+::v-deep .el-tooltip__popper.is-dark {
+  max-width: 400px !important;
+  white-space: normal !important;
+  word-break: break-all !important;
+  z-index: 9999 !important;
+}
+
 /* .title {
   border-left: 4px #409eff solid;
   line-height: 40px;
@@ -1268,6 +1363,23 @@ el-card {
 
 ::v-deep .el-col {
   min-width: 0;
+}
+
+/* 软件名称tooltip自定义样式 */
+::v-deep .software-name-tooltip {
+  max-width: 400px !important;
+  line-height: 1.5;
+  word-break: break-all;
+  padding: 8px 12px;
+  font-size: 14px;
+  z-index: 9999 !important;
+  white-space: normal !important;
+}
+
+::v-deep .el-tooltip__popper {
+  max-width: 400px;
+  white-space: normal;
+  word-break: break-all;
 }
 </style>
 

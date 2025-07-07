@@ -67,7 +67,7 @@
         <el-table-column align="center" header-align="center" prop="type" label="软件类型">
           <template slot-scope="{row}">
             <span v-if="row.softwareType==1">通用软件</span>
-            <span v-else-if="row.softwareType==4">软件模型</span>
+            <!-- <span v-else-if="row.softwareType==4">软件模型</span> -->
             <div v-else>
               <span
                 v-text="row.fragmentType==1?'数据库段':row.fragmentType==2?'镜像段':row.fragmentType==3?'客户端段':row.fragmentType==4?'服务段':'数据段'"

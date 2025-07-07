@@ -166,9 +166,11 @@ export default {
       let type=null;
       if(this.typeName=='通用软件'){
         type="common";
-      }else if(this.typeName=='软件模型'){
-        type="module";
-      }else{
+      }
+      // else if(this.typeName=='软件模型'){
+      //   type="module";
+      // }
+      else{
         type="service"
       }
      
@@ -236,9 +238,11 @@ export default {
       let type=null;
       if(this.typeName=='通用软件'){
         type="common";
-      }else if(this.typeName=='软件模型'){
-        type="module";
-      }else{
+      }
+      // else if(this.typeName=='软件模型'){
+      //   type="module";
+      // }
+      else{
         type="service"
       }
       let category=null;

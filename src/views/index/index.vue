@@ -37,10 +37,10 @@
                       class="software-type-tag software-type-business"
                       v-else-if="item.softwareType == 3"
                     >业务软件</span>
-                    <span 
+                    <!-- <span 
                       class="software-type-tag software-type-model"
                       v-else-if="item.softwareType == 4"
-                    >模型</span>
+                    >模型</span> -->
                   </div>
                   <div style="font-size:12px;color:#000000;margin-top:10px;">{{ item.vtime | parseTime('{y}-{m}-{d}')}}</div>
                   <div class="info-btn">
@@ -86,10 +86,10 @@
                           class="software-type-tag software-type-business"
                           v-else-if="item.softwareType == 3"
                         >业务软件</span>
-                        <span 
+                        <!-- <span 
                           class="software-type-tag software-type-model"
                           v-else-if="item.softwareType == 4"
-                        >模型</span>
+                        >模型</span> -->
                       </div>
                       <div style="font-size:12px;color:#000000;margin-top:10px;">{{ item.vtime | parseTime('{y}-{m}-{d}')}}</div>
                       <div class="info-btn">
@@ -140,14 +140,15 @@
             </el-col>
           </el-row>
           </el-card>
-          <el-card style="margin-top:10px;">
+
+          <!-- <el-card style="margin-top:10px;">
             <div  style="line-height:30px;height:30px;" slot="header">
               <el-row :gutter="20">
                 <el-col :span="12">
                   <i class="el-icon-menu" style="color:#05994e;font-size:16px;margin-right:5px;" />软件模型
                 </el-col>
                 <el-col :span="12" style="text-align:right;">
-                  <!--              <el-input size="mini" style="width:200px;" suffix-icon="el-icon-search" placeholder="请输入关键字" v-model="queryStr" @change="getSoftwareList" />-->
+                               <el-input size="mini" style="width:200px;" suffix-icon="el-icon-search" placeholder="请输入关键字" v-model="queryStr" @change="getSoftwareList" />
                   <el-input
                     v-model="queryStrModule"
                     placeholder="请输入模型名称搜索"
@@ -174,7 +175,9 @@
               <Sitem :data="item" />
             </el-col>
           </el-row>
-          </el-card>
+          </el-card> -->
+
+          <!-- 通用软件 -->
           <el-card style="margin-top:10px;">
             <div  style="line-height:30px;height:30px;" slot="header">
               <el-row :gutter="20">
@@ -297,10 +300,10 @@
                     class="rank-software-type-tag software-type-fragment"
                     v-else-if="item.softwareType == 2"
                   >软件段</span>
-                  <span 
+                  <!-- <span 
                     class="rank-software-type-tag software-type-model"
                     v-else-if="item.softwareType == 4"
-                  >模型</span>
+                  >模型</span> -->
                 </div>
               </el-col>
               <el-col :span="5">
@@ -528,14 +531,14 @@ export default {
       //     this.messageData = response.data.list
       //   }
       // })
-      message.listSysMessagesByUser({ pageNum: 1, pageSize: 10 }).then(response => {
+      message.listSysMessagesByUser({ pageNum: 1, pageSize: 5 }).then(response => {
         if (response.code === 200) {
           this.messageData = response.data.list
         }
       })
     },
     getNoticeList() {
-      notice.getNoticeList(this.userInfo.userId, null, 1, 10).then(response => {
+      notice.getNoticeList(this.userInfo.userId, null, 1, 5).then(response => {
         if (response.code === 200) {
           this.noticeData = response.data.list
         }

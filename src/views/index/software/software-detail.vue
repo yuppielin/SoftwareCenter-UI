@@ -55,7 +55,17 @@
               </el-col>
               <el-col :span="19">
                 <div class="software-title" style="overflow:hidden">
-                  <div style="color:rgba(59,89,117,1);font-size: 16px;float:left">{{ data.name }}</div>
+                  <div style="color:rgba(59,89,117,1);font-size: 20px;float:left;font-weight:500">
+                    {{ data.name }}
+                    <el-button 
+                      size="mini" 
+                      :type="isFavorite ? 'info' : 'success'" 
+                      class="favorite-btn"
+                      :icon="isFavorite ? 'el-icon-check' : 'el-icon-star-off'"
+                      @click="toggleFavorite">
+                      {{ isFavorite ? '已关注' : '关注' }}
+                    </el-button>
+                  </div>
                   <!-- <div style="float:right;font-size:12px;color:#808080">
                     综合应用效能：
                     <span
@@ -102,6 +112,10 @@
                  <span>提供单位：</span>
                   {{ data.offerUnit }}
                 </div>
+                <div class="title">
+                 <span> 研制单位：</span>
+                  {{ data.devUnit }}
+                </div>
                 <!-- <div class="title" v-show="data.softwareType!=1">
                   <span>软件评分：</span>
                   <el-rate
@@ -120,14 +134,19 @@
                   <span>CPU架构：</span>
                   {{ data.versionData.cpu||"——" }}
                 </div>
+                <div class="title" v-show="data.softwareType!=1">
+                  <span>开发语言：</span>
+                  {{ data.versionData.languageCate||"——" }}
+                </div>
+                <div class="title" v-show="data.softwareType!=1">
+                  <span>技术栈：</span>
+                  {{ data.versionData.techStackCate||"——" }}
+                </div>
                 <div class="title">
                   <span> 软件大小：</span>
                   {{ formatFileSize(data.versionData.sizes) }}
                 </div>
-                <div class="title">
-                 <span> 研制单位：</span>
-                  {{ data.devUnit }}
-                </div>
+                
               </el-col>
               <!-- <el-row>
                 <div v-if="data.softwareType==1" class="title"><span>项目分类：</span>{{ data.category }}</div>
@@ -161,7 +180,7 @@
                   </el-table>
                 </div>
                 <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;width: calc(100% - 5em); line-height: 12px;">
-                  <p style="font-size:12px;display:inline;margin-right:10px" v-for="(item, index) in data.versionData.softwareVersionVolumes">{{ item.fileName }}({{ formatFileSize(item.sizes) }})</p>
+                  <p style="font-size:14px;display:inline;margin-right:10px" v-for="(item, index) in data.versionData.softwareVersionVolumes">{{ item.fileName }}({{ formatFileSize(item.sizes) }})</p>
                 </div>
               </el-tooltip>
             </div>
@@ -204,11 +223,11 @@
                   | 软件谱系关系
                 </span> -->
 
-                <span>
+                <span style="font-size: 14px;">
                   <i class="el-icon-time"></i>
                   {{data.ctime}}创建
                 </span>
-                <span style="margin-left: 30px;">
+                <span style="margin-left: 30px; font-size: 14px;">
                   <i class="el-icon-download"></i>
                   {{data.downloadCon}}次下载
                 </span>
@@ -221,11 +240,11 @@
                 <!-- <span style="font-size:18px;color: orange;font-weight: 600">{{ data.score }}</span>
                 <span>分</span> -->
                 <div style="margin-left: 30px;display:inline-block"  v-show="data.softwareType!=1">
-                  <span>应用效能综合评分</span>
+                  <span style="font-size: 14px;">应用效能综合评分</span>
                   <el-rate
-                    v-model="data.myScore/2"
+                    :value="data.myScore/2"
                     allow-half
-                    style="display:inline-block;"
+                    style="display:inline-block;font-size: 16px;"
                     @change="updateSoftwareScore"
                   />
                   <!-- <span >(最高10分)</span> -->
@@ -511,6 +530,7 @@ import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import download from "download-1.4.7";
 import * as deployPosture from '@/api/deploy-posture';
+import * as favorite from "@/api/favorite";
 
 export default {
   directives: { elDragDialog },
@@ -539,6 +559,7 @@ export default {
       titleSoft: "软件资源推送入段库",
       sizeSoft:"small",
       userInfo: {},
+      isFavorite: false,
       tsForm: {
         title: "",
         type: "",
@@ -618,6 +639,7 @@ export default {
     this.dataVersionId = parseInt(this.$route.query.version);
     this.getSoftwareDetail(this.dataVersionId);
     this.getCategoryList();
+    this.getFavoriteStatus();
     // this.getSoftwareDataList(this.id, this.$route.query.version)
     // this.getSoftwareDataTypeList()
   },
@@ -829,6 +851,7 @@ export default {
       // this.data.versionData = version
       this.getSoftwareDetail(this.dataVersionId);
       this.getCategoryList();
+      this.getFavoriteStatus();
       // this.getSoftwareDetail(this.data.versionData)
       // this.getCategoryList()
     },
@@ -1038,8 +1061,51 @@ export default {
     docusignDownload(id, type) {
       // console.log(id)
       software.docusignDownload(id, type)
-    }
+    },
 
+    // 获取关注状态
+    getFavoriteStatus() {
+      favorite.getFavoriteStatus(this.dataVersionId, this.userInfo.userId).then(response => {
+        if (response.code === 200) {
+          // 根据返回的文本状态设置布尔值
+          this.isFavorite = response.data === "已关注";
+        }
+      }).catch(() => {
+        this.isFavorite = false;
+      });
+    },
+
+    // 切换关注状态
+    toggleFavorite() {
+      if (this.isFavorite) {
+        // 取消关注
+        console.log(this.data.softwareId,"xxxxxx")
+        favorite.removeFavorite(this.data.softwareId,this.dataVersionId, this.userInfo.userId).then(response => {
+          if (response.code === 200) {
+            this.isFavorite = false;
+            this.$message.success('已取消关注');
+          } else {
+            this.$message.error(response.msg || '取消关注失败');
+          }
+        }).catch(error => {
+          this.$message.error('取消关注失败');
+          console.error(error);
+        });
+      } else {
+        // 添加关注
+        favorite.addFavorite(this.data.softwareId,this.dataVersionId, this.userInfo.userId).then(response => {
+          if (response.code === 200) {
+            this.isFavorite = true;
+            this.$message.success('关注成功');
+          } else {
+            this.$message.error(response.msg || '关注失败');
+          }
+        }).catch(error => {
+          this.$message.error('关注失败');
+          console.error(error);
+        });
+      }
+    }
   }
 };
 </script>
@@ -1074,13 +1140,14 @@ export default {
     font-size: 12px;
   }
   .software-title {
-    line-height: 25px;
+    line-height: 30px;
     color: #02061F;
-    font-size: 18px;
+    font-size: 20px;
+    font-weight: 500;
   }
 
   .title {
-    font-size: 12px;
+    font-size: 15px;
     // line-height: 24px;
     margin-top: 12px;
     color:#565656;
@@ -1088,11 +1155,12 @@ export default {
       text-align: left;
     }
     span {
-      width: 75px;
-      // font-size: 12px;
+      width: 85px;
+      font-size: 14px;
       color: rgb(161, 161, 161);
       display: inline-block;
       text-align: right;
+      margin-right: 5px;
     }
   }
   }
@@ -1133,39 +1201,35 @@ export default {
 }
 .softwareVersion {
   background-color: #fff;
-  max-width: 77px;
+  max-width: 90px;
   // height: 25px;
   border-radius: 4px;
-  padding: 4px 8px 4px 8px;
+  padding: 6px 10px 6px 10px;
   text-align: left;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   margin: 0 auto;
   margin-top: 28px;
   cursor: pointer;
-
   position: relative;
 
   &.softwareVersionActive {
-
     background-color: #05994e;
     color: white;
+    font-weight: 500;
 
     .dot{
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       border: 3px solid #05994e;
       background: #fff;
       border-radius: 100%;
       position: absolute;
       right: -56px;
-      top: 2px;
+      top: 3px;
       z-index: 22;
     }
   }
-
-
-
 }
 .version-left-split{
   width: 4px;
@@ -1201,6 +1265,31 @@ export default {
 ::v-deep .el-image {
   .el-image__inner {
     object-fit: cover !important;
+  }
+}
+
+::v-deep .el-button--success {
+  background-color: #05994E;
+  border-color: #05994E;
+}
+
+::v-deep .el-button--info {
+  background-color: #8AB9D4;
+  border-color: #8AB9D4;
+  color: #ffffff;
+}
+
+.favorite-btn {
+  margin-left: 15px;
+  vertical-align: middle;
+  transition: all 0.3s;
+  font-size: 13px;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-weight: normal;
+  
+  &:hover {
+    opacity: 0.9;
   }
 }
 
