@@ -9,7 +9,7 @@
               style="margin-bottom: 10px;"
               size="small"
               @click="handAddTs"
-            >技术支持提报</el-button>
+            >问题提报</el-button>
           </el-col>
           <el-col :span="12">
             <!-- <el-input placeholder="请输入查询条件">
@@ -38,6 +38,7 @@
                         icon="el-icon-s-comment"
                         size="small"
                         type="text"
+                        style="color: #05994e;"
                         @click="activeTsName=index;showTsQuestionReply(item)"
                         @click.stop.native
                       >回复（{{ item.answerTotal }}）</el-button>
@@ -84,7 +85,7 @@
         </div>
         <div v-else style="text-align:center;">
           <el-image :src="require('@/assets/index/nodata.png')"  style="height:300px;width:400px;"></el-image>
-          <div>暂无技术支持</div>
+          <div>暂无问题</div>
         </div>
         <el-pagination
           style="margin-top:15px;"
@@ -126,13 +127,13 @@
                     v-if="item.tsDataVo && item.tsDataVo.path"
                     style="font-size:12px;color:#3478d4;"
                   >
-                    <i class="el-icon-files" style="font-size:12px;color:#3478d4;"></i> &nbsp;&nbsp;
-                    <el-button
-                      @click="downloadData(item.tsDataVo)"
-                      style="color:#3478d4"
-                      type="text"
-                      size="mini"
-                    >{{item.tsDataVo.name}}</el-button>
+                                        <i class="el-icon-files" style="font-size:12px;color:#05994e;"></i> &nbsp;&nbsp;
+                        <el-button
+                          @click="downloadData(item.tsDataVo)"
+                          style="color:#05994e"
+                          type="text"
+                          size="mini"
+                        >{{item.tsDataVo.name}}</el-button>
                   </div>
                   <span
                     style="color: rgba(149,149,163,1);font-size: 12px;"
@@ -147,26 +148,29 @@
                   ></el-button>-->
                   <el-button
                     icon="el-icon-s-comment"
-                    size="small"
+                    size="normal"
                     type="text"
                     title="回复"
+                    style="color: #05994e;font-size: 14px;margin-left: 2px; padding: 2px 5px;" 
                     @click="replyTwo(item)"
                   >（{{ item.childrenPage.total }}）</el-button>
                   <el-button
                     v-if="!item.open"
                     icon="el-icon-arrow-down"
-                    size="small"
+                    size="normal"
                     type="text"
                     title="展开"
+                    style="margin-left: 5px;"
                     v-show="item.childrenPage.total>0"
                     @click="item.open=!item.open"
                   ></el-button>
                   <el-button
                     v-else
                     icon="el-icon-arrow-up"
-                    size="small"
+                    size="normal"
                     type="text"
                     title="收起"
+                    style="margin-left: 5px;"
                     v-show="item.childrenPage.total>0"
                     @click="item.open=!item.open"
                   ></el-button>
@@ -185,12 +189,12 @@
                       <div>{{ replyItem.description }}</div>
                       <div
                         v-if="replyItem.tsDataVo && replyItem.tsDataVo.path"
-                        style="font-size:12px;color:#3478d4;"
+                        style="font-size:12px;color:#05994e;"
                       >
-                        <i class="el-icon-files" style="font-size:12px;color:#3478d4;"></i> &nbsp;&nbsp;
+                        <i class="el-icon-files" style="font-size:12px;color:#05994e;"></i> &nbsp;&nbsp;
                         <el-button
                           @click="downloadData(replyItem.tsDataVo)"
-                          style="color:#3478d4"
+                          style="color:#05994e"
                           type="text"
                           size="mini"
                         >{{replyItem.tsDataVo.name}}</el-button>
@@ -208,9 +212,10 @@
                       ></el-button>-->
                       <el-button
                         icon="el-icon-s-comment"
-                        size="small"
+                        size="normal"
                         type="text"
                         title="回复"
+                        style="color: #05994e;font-size: 14px;margin-left: 2px; padding: 2px 5px; " 
                         @click="replyTwo(replyItem)"
                       ></el-button>
                     </div>
@@ -328,7 +333,7 @@
       </span>
     </el-dialog>
     <!--提报技术支持--->
-    <el-dialog :visible.sync="tsVisible" title="提报技术支持" width="700px">
+    <el-dialog :visible.sync="tsVisible" title="提报问题" width="700px">
       <el-form
         name="tsFormSupport"
         ref="tsFormSupport"
@@ -337,7 +342,7 @@
         label-width="120px"
       >
         <el-form-item
-          label="技术支持标题"
+          label="问题标题"
           :rules="[{required:true,message:'标题不能为空',trigger:'blur'}]"
           prop="title"
         >
@@ -825,13 +830,13 @@ export default {
 </script>
 <style lang="scss" scoped>
 ::v-deep .el-collapse-item__header.is-active {
-  background-color: #e1f1ff;
+  background-color: #e8f6ee;
 }
 ::v-deep .el-collapse-item__content {
-  background-color: #e1f1ff;
+  background-color: #e8f6ee;
 }
 ::v-deep .el-collapse > .is-active {
-  border-left: 5px solid rgba(23, 138, 227, 1);
+  border-left: 5px solid #05994e;
 }
 ::v-deep .el-timeline-item__node--normal {
   width: 20px;

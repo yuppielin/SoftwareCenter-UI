@@ -167,9 +167,9 @@ export default {
       if(this.typeName=='通用软件'){
         type="common";
       }
-      // else if(this.typeName=='软件模型'){
-      //   type="module";
-      // }
+      else if(this.typeName=='我的关注'){
+        type="follow";
+      }
       else{
         type="service"
       }

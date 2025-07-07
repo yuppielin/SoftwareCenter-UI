@@ -326,10 +326,11 @@
               /> -->
             </el-tab-pane>
 
-            <!-- <el-tab-pane :label="'技术支持（共 '+ total +' 条）'" name="third" v-if="data.softwareType!=1">
+            <el-tab-pane :label="'问题提报（共 '+ total +' 条）'" name="third" v-if="data.softwareType!=1">
 
               <SoftwareQuestion :softwareInfo="data.versionData" />
-              <el-pagination
+
+              <!-- <el-pagination
                 style="margin-top:15px;"
                 v-if="total>0"
                 :current-page="pageNum"
@@ -338,8 +339,8 @@
                 :total="total"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
-              />
-            </el-tab-pane> -->
+              /> -->
+            </el-tab-pane>
 
 
           </el-tabs>

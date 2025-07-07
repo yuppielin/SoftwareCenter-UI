@@ -197,6 +197,29 @@
             maxlength="200"
           />
         </el-form-item>
+        <el-form-item label="附件上传：">
+          <el-upload
+            style="display:inline-block;"
+            action="#"
+            :multiple="false"
+            :file-list="fileList"
+            :show-file-list="false"
+            :on-remove="handleRemove"
+            :on-success="handleSuccess"
+            :before-upload="beforeUpload"
+            :http-request="
+            (file) => {
+              return uploadFile(file)
+            }"
+            :on-change="handleChangeFile"
+            accept=".mp4, .docx, .pdf"
+            class="editor-slide-upload"
+          >
+            <div>
+              <el-button class="file-btn" size="small" type="primary">附件上传</el-button>
+            </div>
+          </el-upload>
+        </el-form-item>
       </el-form>
       <span slot="footer">
         <el-button size="small" type="primary" @click="addAnswer()">确定</el-button>
@@ -559,7 +582,14 @@ export default {
     handleCurrentChangeDemand(val) {
       this.pageNumDemand = val;
       this.getSoftwareDemand();
-    }
+    },
+    handleRemoveDataFile(index, item) {
+      delete this.fileData;
+      this.tsDataVoList.splice(index, 1);
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
   }
 };
 </script>
