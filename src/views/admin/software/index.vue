@@ -35,7 +35,7 @@
       </el-row>
 
       <el-col :span="12" style="margin-top:10px">
-        <el-button
+        <!-- <el-button
           v-if="$checkPermission(['admin','XTUser','CSUser'])"
           size="small"
           type="primary"
@@ -46,7 +46,7 @@
           size="small"
           type="primary"
           @click="goToFragmentUpload"
-        >软件段上传</el-button>
+        >软件段上传</el-button> -->
 
         <!-- <el-button
           v-if="$checkPermission(['admin','XTUser'])"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 颜色定义
-GREEN_PRIMARY="#2bb56e"       # 主绿色
+GREEN_PRIMARY="#1e7d34"       # 主绿色
 GREEN_LIGHT="#53ca8a"         # 浅绿色
 GREEN_DARK="#0c5f2e"          # 深绿色
 

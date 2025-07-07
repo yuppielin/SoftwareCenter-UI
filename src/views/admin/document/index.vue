@@ -6,8 +6,8 @@
     </el-tabs>
     <el-row style="width: 100%;">
       <el-col :span="8" style="border: 1px solid transparent;">
-        <el-button @click="openAddSoftwareDataDialog" size="small" type="primary" style="background: rgba(23,138,227,1);border:0;height:32px">资料添加</el-button>
-        <el-button @click="resetDataStatusDialog" v-show="dataStatus === '待审核' && $checkPermission(['admin','XTUser']) " :disabled="selectedDataList.length==0" type="primary" size="small" style="border:0;height:32px">批量审批</el-button>
+        <el-button @click="openAddSoftwareDataDialog" size="small" type="primary" style="background: #1e7d34;border:0;height:32px">资料添加</el-button>
+        <el-button @click="resetDataStatusDialog" v-show="dataStatus === '待审核' && $checkPermission(['admin','XTUser']) " :disabled="selectedDataList.length==0" type="primary" size="small" style="background: #1e7d34;border:0;height:32px">批量审批</el-button>
       </el-col>
       <el-col :span="16" style="text-align: right;">
         <el-form id="documentIndex" :inline="true">
@@ -47,10 +47,10 @@
               size="small"
               type="primary"
               @click="searchDoc"
-              style="margin-left:10px; background: rgba(23,138,227,1);border:0;height:32px"
+              style="margin-left:10px; background: #1e7d34;border:0;height:32px"
               icon="el-icon-search"
             >搜索</el-button>
-            <el-button size="small" @click="resetSearch" type="reset" >重置</el-button>
+            <el-button size="small" @click="resetSearch" type="reset" style="background: #1e7d34;color:white;border:0;">重置</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -111,7 +111,7 @@
 
             <el-button
               size="small"
-              style="margin-left: 8px;"
+              style="margin-left: 8px;background: #1e7d34;border:0;"
               type="primary"
               @click="selectUpdateDocument"
             >选择文件</el-button>
@@ -132,8 +132,8 @@
         </el-form-item>
       </el-form>
       <el-row style="text-align: center;">
-        <el-button size="small" type="primary" @click="updateSoftwareData">确定</el-button>
-        <el-button size="small" style="background:orange;color:white;" @click="visibleDlg=false">取消</el-button>
+        <el-button size="small" type="primary" style="background: #1e7d34;border:0;" @click="updateSoftwareData">确定</el-button>
+        <el-button size="small" style="background:#1e7d34;color:white;" @click="visibleDlg=false">取消</el-button>
       </el-row>
     </el-dialog>
 <!--    <el-tabs type="card" v-model="documentType" @tab-click="handleTabClick">-->
@@ -146,7 +146,7 @@
       :data="documentData"
       size="mini"
       style="overflow-y:auto;"
-      :header-cell-style="{background:'#2BB56E',color:'white',height:'30px'}"
+      :header-cell-style="{background:'#1e7d34',color:'white',height:'30px'}"
     >
       <el-table-column align="center" header-align="center" width="55" type="index" label="序号" />
       <el-table-column
@@ -268,7 +268,7 @@
       :data="documentData"
       size="mini"
       stripe
-      :header-cell-style="{background:'#2BB56E',height:'30px'}"
+      :header-cell-style="{background:'#1e7d34',height:'30px'}"
       @selection-change="changeSelectedData"
       :row-key="getDocumentKey"
     >
@@ -320,16 +320,17 @@
             size="mini"
             title="编辑"
             type="primary"
+            style="background: #1e7d34;border:0;margin-left:0px;"
             icon="el-icon-edit"
             @click="handleEdit(row)"
             circle
-            style="margin-left:0px;"
           ></el-button>
           <el-button
             size="mini"
             title="查看"
             icon="el-icon-search"
             type="primary"
+            style="background: #1e7d34;border:0;"
             circle
             :disabled="!judgeShowSoftwareData(row.name)"
             @click="showSoftwareDataDialog(row)"
@@ -339,6 +340,7 @@
             size="mini"
             title="下载"
             type="primary"
+            style="background: #1e7d34;border:0;"
             circle
             icon="el-icon-download"
             @click="downloadFileByNameAndPath(row.name, row.paths)"
@@ -380,9 +382,9 @@
     </div>
     <el-dialog width="300px" title="资料审核" :visible.sync="examineVisible">
       <el-row style="text-align: center;">
-        <el-button type="primary" size="small" @click="decideExamineResult('pass')">通过</el-button>
+        <el-button type="primary" style="background: #1e7d34;border:0;" size="small" @click="decideExamineResult('pass')">通过</el-button>
         <el-button
-          style="margin-left: 20px;"
+          style="margin-left: 20px;background: #1e7d34;border:0;color:white;"
           type="danger"
           size="small"
           @click="decideExamineResult('refuse')"
@@ -524,6 +526,7 @@
               slot="trigger"
               icon="el-icon-upload"
               type="primary"
+              style="background: #1e7d34;border:0;"
               size="small"
             >上传资料</el-button>
             <div slot="tip" class="el-upload__tip" style="display: flex;">
@@ -580,10 +583,11 @@
         </el-table-column>
       </el-table>
       <el-row style="text-align: center;">
-        <el-button size="small" @click="addSoftwareDataForm.visible=false">取消</el-button>
+        <el-button size="small" style="background: #1e7d34;color:white;border:0;" @click="addSoftwareDataForm.visible=false">取消</el-button>
         <el-button
           :disabled="judgeUploadDataAboutSoftware()"
           type="primary"
+          style="background: #1e7d34;border:0;"
           size="small"
           @click="makeSureUploadData"
         >确定</el-button>
@@ -602,8 +606,8 @@
         </el-form-item>
       </el-form>
       <el-row style="text-align: center;">
-        <el-button type="info" size="small" @click="dataBatchVisible=false">取消</el-button>
-        <el-button type="primary" size="small" @click="setDataStatusBatch">确定</el-button>
+        <el-button type="info" style="background: #1e7d34;color:white;border:0;" size="small" @click="dataBatchVisible=false">取消</el-button>
+        <el-button type="primary" style="background: #1e7d34;border:0;" size="small" @click="setDataStatusBatch">确定</el-button>
       </el-row>
     </el-dialog>
   </el-card>
@@ -1405,5 +1409,16 @@ el-card {
   .vue-treeselect__placeholder, .vue-treeselect__single-value {
     line-height: 32px;
   }
+}
+
+// 修改状态选择按钮的颜色
+::v-deep .el-radio-button__inner:hover {
+  color: white;
+  background-color: #1e7d34;
+}
+::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+  background-color: #1e7d34;
+  border-color: #1e7d34;
+  box-shadow: -1px 0 0 0 #1e7d34;
 }
 </style>

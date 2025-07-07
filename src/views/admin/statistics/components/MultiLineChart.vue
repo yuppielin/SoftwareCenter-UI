@@ -172,9 +172,9 @@ export default {
             type: 'line',
             itemStyle: {
               normal: {
-                color: '#2bb56e',
+                color: '#1e7d34',
                 lineStyle: {
-                  color: '#2bb56e',
+                  color: '#1e7d34',
                   width: 2
                 }
                 // areaStyle: {
@@ -186,7 +186,7 @@ export default {
             animationEasing: 'quadraticOut',
             data: this.option.seriesB,
             // areaStyle: {
-            //   color: '#2bb56e',
+            //   color: '#1e7d34',
             // },
             // markPoint: {
             //   data: [

@@ -135,7 +135,7 @@ export default {
     },
     getStatData() {
       getSystemData().then(response => {
-        if (response.code === 20000) {
+        if (response.code === 200) {
           const data = response.data || {}
           this.statData = {
             devUnitCount: data.devUnitCount || 38,

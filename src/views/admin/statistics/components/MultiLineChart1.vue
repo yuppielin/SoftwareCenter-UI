@@ -247,9 +247,9 @@ export default {
             showSymbol: false, // 只在hover时显示标记点
             itemStyle: {
               normal: {
-                color: '#2bb56e',
+                color: '#1e7d34',
                 lineStyle: {
-                  color: '#2bb56e',
+                  color: '#1e7d34',
                   width: 3
                 }
               }

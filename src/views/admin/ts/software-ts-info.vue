@@ -3,7 +3,7 @@
     <div slot="header">
         <el-row>
           <el-col :span="12" style="line-height:30px">
-            技术支持处理情况
+            问题处理情况
           </el-col>
           <el-col :span="12" style="text-align:right;">
             <el-button  size="mini"  onclick="history.go(-1)" icon="el-icon-back">返回</el-button>
@@ -402,7 +402,7 @@ export default {
       })
     },
     closeQuestion() {
-      this.$confirm("确定关闭此技术支持吗", "提示", {
+      this.$confirm("确定关闭此问题吗", "提示", {
         type: "warning"
       }).then(e => {
         ts.finishTsQuestion({id:this.data.id}).then(response => {
@@ -491,7 +491,7 @@ export default {
         });
     },
     deleteSoftwareQuestion() {
-      this.$confirm("确定删除该技术支持吗？", "提示", {
+      this.$confirm("确定删除该问题吗？", "提示", {
         type: "warning"
       }).then(e => {
         ts.delTsQuestion(this.data.id).then(response => {

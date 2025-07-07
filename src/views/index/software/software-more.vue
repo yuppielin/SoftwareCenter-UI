@@ -310,7 +310,7 @@ export default {
 
   /deep/ .el-input__inner {
     border-radius: 20px;
-    border: solid 1px #2bb56e;
+    border: solid 1px #1e7d34;
     color: #000000;
     padding-left: 35px;
     height: 36px;
@@ -326,7 +326,7 @@ export default {
   
   /deep/ .el-input__prefix {
     left: 10px;
-    color: #2bb56e;
+    color: #1e7d34;
   }
   
   /deep/ .el-input-group__append {

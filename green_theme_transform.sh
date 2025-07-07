@@ -6,37 +6,37 @@ find ./src -name "*.vue" -type f -exec sed -i '' "s/background:rgb(8, 151, 151)/
 find ./src -name "*.vue" -type f -exec sed -i '' "s/background: rgb(8, 151, 151)/background: rgb(43, 181, 110)/g" {} \;
 find ./src -name "*.vue" -type f -exec sed -i '' "s/background:rgb(23, 138, 227)/background:rgb(43, 181, 110)/g" {} \;
 find ./src -name "*.vue" -type f -exec sed -i '' "s/background: rgb(23, 138, 227)/background: rgb(43, 181, 110)/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/background:#178ae3/background:#2bb56e/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/background: #178ae3/background: #2bb56e/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/background:#3888fa/background:#2bb56e/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/background: #3888fa/background: #2bb56e/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/background:#178ae3/background:#1e7d34/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/background: #178ae3/background: #1e7d34/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/background:#3888fa/background:#1e7d34/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/background: #3888fa/background: #1e7d34/g" {} \;
 find ./src -name "*.vue" -type f -exec sed -i '' "s/background:#3b5975/background:#0c5f2e/g" {} \;
 find ./src -name "*.vue" -type f -exec sed -i '' "s/background: #3b5975/background: #0c5f2e/g" {} \;
 
 # 替换表格头部样式
 echo "正在替换表格头部样式..."
 find ./src -name "*.vue" -type f -exec sed -i '' "s/:header-cell-style=\"{background:'rgb(8, 151, 151)'/:header-cell-style=\"{background:'rgb(43, 181, 110)'/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/:header-cell-style=\"{background:'#3888fa'/:header-cell-style=\"{background:'#2bb56e'/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/:header-cell-style=\"{background:'#3888fa'/:header-cell-style=\"{background:'#1e7d34'/g" {} \;
 
 # 替换文本颜色
 echo "正在替换文本颜色..."
 find ./src -name "*.vue" -type f -exec sed -i '' "s/color:rgb(23, 138, 227)/color:rgb(43, 181, 110)/g" {} \;
 find ./src -name "*.vue" -type f -exec sed -i '' "s/color: rgb(23, 138, 227)/color: rgb(43, 181, 110)/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/color:#178ae3/color:#2bb56e/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/color: #178ae3/color: #2bb56e/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/color:#178ae3/color:#1e7d34/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/color: #178ae3/color: #1e7d34/g" {} \;
 
 # 替换边框颜色
 echo "正在替换边框颜色..."
-find ./src -name "*.vue" -type f -exec sed -i '' "s/border-color: #178ae3/border-color: #2bb56e/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/border-color:#178ae3/border-color:#2bb56e/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/border-left: 4px solid #178ae3/border-left: 4px solid #2bb56e/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/border: 1px solid #178ae3/border: 1px solid #2bb56e/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/border:1px solid #178ae3/border:1px solid #2bb56e/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/border-color: #178ae3/border-color: #1e7d34/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/border-color:#178ae3/border-color:#1e7d34/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/border-left: 4px solid #178ae3/border-left: 4px solid #1e7d34/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/border: 1px solid #178ae3/border: 1px solid #1e7d34/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/border:1px solid #178ae3/border:1px solid #1e7d34/g" {} \;
 
 # 替换CSS样式文件中的颜色
 echo "正在替换CSS样式文件中的颜色..."
 find ./src -name "*.scss" -type f -exec sed -i '' "s/rgb(23, 138, 227)/rgb(43, 181, 110)/g" {} \;
-find ./src -name "*.scss" -type f -exec sed -i '' "s/#178ae3/#2bb56e/g" {} \;
+find ./src -name "*.scss" -type f -exec sed -i '' "s/#178ae3/#1e7d34/g" {} \;
 find ./src -name "*.scss" -type f -exec sed -i '' "s/rgba(23,138,227,1)/rgba(43,181,110,1)/g" {} \;
 find ./src -name "*.scss" -type f -exec sed -i '' "s/rgba(23, 138, 227, 1)/rgba(43, 181, 110, 1)/g" {} \;
 find ./src -name "*.scss" -type f -exec sed -i '' "s/rgba(23,138,227,0.1)/rgba(43,181,110,0.1)/g" {} \;

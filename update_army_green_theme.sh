@@ -21,8 +21,8 @@ sed -i '' "s/\/\/ \$--color-primary: rgb(12, 95, 46);/\$--color-primary: ${BUTTO
 echo "替换按钮颜色..."
 find ./src -name "*.vue" -type f -exec sed -i '' "s/background:rgb(43, 181, 110)/background:${BUTTON_COLOR}/g" {} \;
 find ./src -name "*.vue" -type f -exec sed -i '' "s/background: rgb(43, 181, 110)/background: ${BUTTON_COLOR}/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/background:#2bb56e/background:${BUTTON_COLOR}/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/background: #2bb56e/background: ${BUTTON_COLOR}/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/background:#1e7d34/background:${BUTTON_COLOR}/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/background: #1e7d34/background: ${BUTTON_COLOR}/g" {} \;
 find ./src -name "*.vue" -type f -exec sed -i '' "s/background:#0c5f2e/background:${BUTTON_COLOR}/g" {} \;
 find ./src -name "*.vue" -type f -exec sed -i '' "s/background: #0c5f2e/background: ${BUTTON_COLOR}/g" {} \;
 
@@ -30,13 +30,13 @@ find ./src -name "*.vue" -type f -exec sed -i '' "s/background: #0c5f2e/backgrou
 echo "替换文本颜色..."
 find ./src -name "*.vue" -type f -exec sed -i '' "s/color:rgb(43, 181, 110)/color:${TEXT_COLOR}/g" {} \;
 find ./src -name "*.vue" -type f -exec sed -i '' "s/color: rgb(43, 181, 110)/color: ${TEXT_COLOR}/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/color:#2bb56e/color:${TEXT_COLOR}/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/color: #2bb56e/color: ${TEXT_COLOR}/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/color:#1e7d34/color:${TEXT_COLOR}/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/color: #1e7d34/color: ${TEXT_COLOR}/g" {} \;
 
 # 替换表格头部样式
 echo "替换表格头部样式..."
 find ./src -name "*.vue" -type f -exec sed -i '' "s/:header-cell-style=\"{background:'rgb(43, 181, 110)'/:header-cell-style=\"{background:'${TEXT_COLOR}'/g" {} \;
-find ./src -name "*.vue" -type f -exec sed -i '' "s/:header-cell-style=\"{background:'#2bb56e'/:header-cell-style=\"{background:'${TEXT_COLOR}'/g" {} \;
+find ./src -name "*.vue" -type f -exec sed -i '' "s/:header-cell-style=\"{background:'#1e7d34'/:header-cell-style=\"{background:'${TEXT_COLOR}'/g" {} \;
 
 # 替换背景颜色
 echo "替换背景颜色..."
@@ -50,7 +50,7 @@ find ./src -name "*.scss" -type f -exec sed -i '' "s/background:#304156/backgrou
 # 替换CSS样式文件中的颜色
 echo "替换CSS样式文件中的颜色..."
 find ./src -name "*.scss" -type f -exec sed -i '' "s/rgb(43, 181, 110)/${TEXT_COLOR}/g" {} \;
-find ./src -name "*.scss" -type f -exec sed -i '' "s/#2bb56e/${TEXT_COLOR}/g" {} \;
+find ./src -name "*.scss" -type f -exec sed -i '' "s/#1e7d34/${TEXT_COLOR}/g" {} \;
 find ./src -name "*.scss" -type f -exec sed -i '' "s/rgba(43,181,110,1)/rgba(43,181,110,1)/g" {} \;
 find ./src -name "*.scss" -type f -exec sed -i '' "s/#0c5f2e/${BUTTON_COLOR}/g" {} \;
 
@@ -69,7 +69,7 @@ find ./src -name "*.scss" -type f -exec sed -i '' "s/color:#333/color:#fff/g" {}
 # 处理悬停和激活状态
 echo "处理悬停和激活状态..."
 find ./src -name "*.scss" -type f -exec sed -i '' "s/&:hover { background: #e8f7ef/\&:hover { background: rgba(43,181,110,0.2)/g" {} \;
-find ./src -name "*.scss" -type f -exec sed -i '' "s/&.is-active { color: #2bb56e/\&.is-active { color: ${TEXT_COLOR}/g" {} \;
-find ./src -name "*.scss" -type f -exec sed -i '' "s/&.is-active { background-color: #2bb56e/\&.is-active { background-color: ${BUTTON_COLOR}/g" {} \;
+find ./src -name "*.scss" -type f -exec sed -i '' "s/&.is-active { color: #1e7d34/\&.is-active { color: ${TEXT_COLOR}/g" {} \;
+find ./src -name "*.scss" -type f -exec sed -i '' "s/&.is-active { background-color: #1e7d34/\&.is-active { background-color: ${BUTTON_COLOR}/g" {} \;
 
 echo "更新完成! 系统已修改为陆军绿色主题." 

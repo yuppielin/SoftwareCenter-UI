@@ -2,7 +2,7 @@
 <div class="app-container">
     <div class="cur-top-admin">
         <img class="icon" src="@/assets/index/tsQuestion.png" />
-        <span class="title" >技术服务</span>
+        <span class="title" >问题管理</span>
     </div>
     <el-card class="custome custome-height">
 <!--         <div style="margin-bottom:10px;">-->
@@ -34,17 +34,17 @@
 <!--             </el-row>-->
 <!--        </div>-->
         <el-tabs v-model="activeName" @tab-click="tabkclick">
-            <el-tab-pane name="first" label="技术支持列表">
+            <el-tab-pane name="first" label="问题列表">
               <div style="margin-bottom:10px;">
                 <el-row :gutter="10">
                   <el-col :span="8" style="text-align:left;border:1px solid transparent">
-                    <el-button size="small" v-if="activeName=='first'" type="primary" icon="el-icon-upload2"  @click="handAddTs" style="background: rgba(23,138,227,1);border:0;height:32px">技术支持提报</el-button>
-                    <el-button size="small" v-if="activeName=='second' && $checkPermission(['admin','XTUser'])"  type="primary" icon="el-icon-upload2" @click="handAdd()" style="background: rgba(23,138,227,1);border:0;height:32px">上传技术支持资料</el-button>
+                    <el-button size="small" v-if="activeName=='first'" type="primary" icon="el-icon-upload2"  @click="handAddTs" style="background: #1e7d34;border:0;height:32px">问题提报</el-button>
+                    <el-button size="small" v-if="activeName=='second' && $checkPermission(['admin','XTUser'])"  type="primary" icon="el-icon-upload2" @click="handAdd()" style="background: #1e7d34;border:0;height:32px">上传问题资料</el-button>
                   </el-col>
                   <el-col :span="16" style="text-align:right">
                     <el-select v-model="search.status" size="small"   v-if="activeName=='first'"
                                style="width:200px;"
-                               placeholder="技术支持状态"
+                               placeholder="问题状态"
                                filterable remote reserve-keyword >
                       <el-option label="已解决" :value="2"></el-option>
                       <el-option label="处理中" :value="1"></el-option>
@@ -52,20 +52,20 @@
                     </el-select>
                     <el-select v-model="search.type" size="small"   v-else
                                style="width:200px;"
-                               placeholder="支持资料类型"
+                               placeholder="支持问题类型"
                                filterable remote reserve-keyword >
                       <el-option :label="item.name" :value="item.id" v-for="(item,index) in typeData" :key="index"></el-option>
                     </el-select>
-                    <el-input size="small" v-model="search.keyword" style="width:200px;margin-left:10px;" placeholder="请输入技术支持标题"></el-input>
-                    <el-button size="small" type="primary" style="margin-left:10px;background: rgba(23,138,227,1);border:0;height:32px" @click="searchSupport" icon="el-icon-search">查询</el-button>
-                    <el-button size="small" type="reset" @click="searchSupportReset">重置</el-button>
+                    <el-input size="small" v-model="search.keyword" style="width:200px;margin-left:10px;" placeholder="请输入问题标题"></el-input>
+                    <el-button size="small" type="primary" style="margin-left:10px;background: #1e7d34;border:0;height:32px" @click="searchSupport" icon="el-icon-search">查询</el-button>
+                    <el-button size="small" type="reset" style="background: #1e7d34;color:white;border:0;" @click="searchSupportReset">重置</el-button>
                   </el-col>
 
                 </el-row>
               </div>
                 <el-table :data="tsQuestionData" size="mini" :header-cell-style="{background:'#2BB56E',height:'30px'}" style="height:calc(100vh - 310px);overflow-y: auto;">
                         <el-table-column align="center" header-align="center" width="55" type="index" label="序号"></el-table-column>
-                        <el-table-column align="center" header-align="center" label="技术支持标题" prop="title" show-overflow-tooltip></el-table-column>
+                        <el-table-column align="center" header-align="center" label="问题标题" prop="title" show-overflow-tooltip></el-table-column>
                         <el-table-column align="center" header-align="center" label="软件名称"  show-overflow-tooltip>
                             <template slot-scope="{row}">
                                 <div v-if="row.softwareName">
@@ -104,8 +104,8 @@
                         </el-table-column>
                         <el-table-column align="center" header-align="center" label="操作" width="100">
                             <template slot-scope="{row}">
-                                <el-button size="mini" title="查看处理" type="primary" circle icon="el-icon-view" @click="showInfo(row)"></el-button>
-                                <el-button size="mini" title="删除" type="danger" circle icon="el-icon-close" @click="deleteItem(row)"></el-button>
+                                <el-button size="mini" title="查看处理" type="primary" circle icon="el-icon-view" style="background: #1e7d34;border:0;" @click="showInfo(row)"></el-button>
+                                <el-button size="mini" title="删除" type="danger" circle icon="el-icon-close"  @click="deleteItem(row)"></el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -119,16 +119,16 @@
                     :total="total">
                     </el-pagination>
             </el-tab-pane>
-             <el-tab-pane name="second" label="技术支持资料" >
+             <el-tab-pane name="second" label="问题资料" >
                <div style="margin-bottom:10px;">
                  <el-row :gutter="10">
                    <el-col :span="8" style="text-align:left;border:1px solid transparent">
-                     <el-button size="small"   type="primary" icon="el-icon-upload2" @click="handAdd()" style="background: rgba(23,138,227,1);border:0;height:32px">技术支持资料上传</el-button>
+                     <el-button size="small"   type="primary" icon="el-icon-upload2" @click="handAdd()" style="background: #1e7d34;border:0;height:32px">资料上传</el-button>
                    </el-col>
                    <el-col :span="16" style="text-align:right">
                      <el-select v-model="search.status" size="small"   v-if="activeName=='first'"
                                 style="width:200px;"
-                                placeholder="技术支持状态"
+                                placeholder="问题状态"
                                 filterable remote reserve-keyword >
                        <el-option label="已解决" :value="2"></el-option>
                        <el-option label="处理中" :value="1"></el-option>
@@ -140,9 +140,9 @@
                                 filterable remote reserve-keyword >
                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in typeData" :key="index"></el-option>
                      </el-select>
-                     <el-input size="small" v-model="search.keyword" style="width:200px;margin-left:10px;" placeholder="请输入技术支持标题"></el-input>
-                     <el-button size="small" type="primary" style="margin-left:10px;background: rgba(23,138,227,1);border:0;height:32px" @click="searchSupport" icon="el-icon-search">查询</el-button>
-                     <el-button size="small" type="reset" @click="searchSupportReset">重置</el-button>
+                     <el-input size="small" v-model="search.keyword" style="width:200px;margin-left:10px;" placeholder="请输入问题标题"></el-input>
+                     <el-button size="small" type="primary" style="margin-left:10px;background: #1e7d34;border:0;height:32px" @click="searchSupport" icon="el-icon-search">查询</el-button>
+                     <el-button size="small" type="reset" style="background: #1e7d34;color:white;border:0;" @click="searchSupportReset">重置</el-button>
                    </el-col>
                  </el-row>
                </div>
@@ -173,11 +173,11 @@
                         </el-table-column>
                         <el-table-column align="center" header-align="center" label="操作"  width="180px">
                             <template slot-scope="{row}">
-                                <el-button size="mini" title="审核" type="warning" circle icon='el-icon-check'  @click="validate(row)"></el-button>
-                                <el-button size="mini" title="查看" type="primary" circle icon='el-icon-view'  @click="showItem(row)"></el-button>
-                                <el-button size="mini" title="编辑" type="primary" circle icon='el-icon-edit'  @click="editItem(row)"></el-button>
-                                <el-button size="mini" title="下载" type="primary" circle icon='el-icon-download' @click="downloadData(row)"></el-button>
-                                <el-button size="mini" title="删除" type="danger" circle icon='el-icon-close' @click="delData(row)"></el-button>
+                                <el-button size="mini" title="审核" type="warning" circle icon='el-icon-check' style="background: #1e7d34;border:0;" @click="validate(row)"></el-button>
+                                <el-button size="mini" title="查看" type="primary" circle icon='el-icon-view' style="background: #1e7d34;border:0;" @click="showItem(row)"></el-button>
+                                <el-button size="mini" title="编辑" type="primary" circle icon='el-icon-edit' style="background: #1e7d34;border:0;" @click="editItem(row)"></el-button>
+                                <el-button size="mini" title="下载" type="primary" circle icon='el-icon-download' style="background: #1e7d34;border:0;" @click="downloadData(row)"></el-button>
+                                <el-button size="mini" title="删除" type="danger" circle icon='el-icon-close' style="background: #1e7d34;border:0;" @click="delData(row)"></el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -204,7 +204,7 @@
         </el-tabs>
 
         <!--上传技术支持资源--->
-        <el-dialog v-el-drag-dialog :visible.sync="uploadDialogVisible" title="上传技术支持资料" @dragDialog="handleDrag" width="600px">
+        <el-dialog v-el-drag-dialog :visible.sync="uploadDialogVisible" title="上传资料" @dragDialog="handleDrag" width="600px">
             <el-form name="tsForm"  ref="tsForm" :model="tsForm" label-position="right" label-width="100px">
                  <el-form-item label="资料上传" :rules="[{required:true,message:'请上传资料',trigger:'blur'}]">
                     <!-- <el-input v-model="tsForm.name" size="small" style="width:calc(100% - 180px)"></el-input> -->
@@ -221,7 +221,7 @@
                         return uploadFile(file)
                         }"
                     >
-                        <el-button size="small" type="primary">上传</el-button>
+                        <el-button size="small" type="primary" style="background: #1e7d34;border:0;">上传</el-button>
                         只能上传.docx/.pdf/.mp4/.jpg文件
                     </el-upload>
 
@@ -278,15 +278,15 @@
                 </el-form-item> -->
             </el-form>
             <span slot="footer">
-                <el-button size="small" type="primary" @click="addTsData('tsForm')">提交</el-button>
-                <el-button size="small" type="info" @click="uploadDialogVisible=false">取消</el-button>
+                <el-button size="small" type="primary" style="background: #1e7d34;border:0;" @click="addTsData('tsForm')">提交</el-button>
+                <el-button size="small" type="info" style="background: #1e7d34;color:white;border:0;" @click="uploadDialogVisible=false">取消</el-button>
             </span>
         </el-dialog>
 
         <!--提报技术支持--->
-        <el-dialog v-el-drag-dialog :visible.sync="tsVisible" title="提报技术支持" @dragDialog="handleDrag" width="700px">
+        <el-dialog v-el-drag-dialog :visible.sync="tsVisible" title="提报问题" @dragDialog="handleDrag" width="700px">
             <el-form name="tsFormSupport" ref="tsFormSupport" :model="tsFormSupport" label-position="top" label-width="100px">
-                <el-form-item label="技术支持标题" :rules="[{required:true,message:'标题不能为空',trigger:'blur'}]" prop="title">
+                <el-form-item label="问题标题" :rules="[{required:true,message:'标题不能为空',trigger:'blur'}]" prop="title">
                     <el-input v-model="tsFormSupport.title" size="small" style="width:100%"></el-input>
                 </el-form-item>
                 <el-form-item name="tsFormSupport" label="关联软件" :rules="[{required:true,message:'请选择关联的软件',trigger:'blur'}]" prop="softwareId">
@@ -322,15 +322,15 @@
                 </el-form-item>
             </el-form>
             <span slot="footer">
-                <el-button size="small" type="primary" @click="submitSupport">提交</el-button>
-                <el-button size="small" type="info" @click="tsVisible=false">取消</el-button>
+                <el-button size="small" type="primary" style="background: #1e7d34;border:0;" @click="submitSupport">提交</el-button>
+                <el-button size="small" type="info" style="background: #1e7d34;color:white;border:0;" @click="tsVisible=false">取消</el-button>
             </span>
         </el-dialog>
 
         <!--技术支持资源--->
         <el-dialog
             v-el-drag-dialog :visible.sync="infoDlgVisible"
-            title="技术支持资料详情"
+            title="资料详情"
             @close="handleClose"
             width="800px"
             >
@@ -377,7 +377,7 @@
                 />
             <el-row v-show="infoData.tsName!=null">
                 <el-col :span="20">
-                    关联技术支持：
+                    关联问题：
                     <el-button  @click="goToInfo(infoData)" style="color:#3b5975" type="text"> {{infoData.tsName}}</el-button>
                     <!-- <el-link :underline="false" href:>{{infoData.tsName!=null?infoData.tsName:'无关联技术支持'}}</el-link> -->
                 </el-col>
@@ -572,7 +572,7 @@
             },
             //删除技术支持资料
             delData(row){
-                this.$confirm('确定删除该技术支持资料吗？','提示',{
+                this.$confirm('确定删除该资料吗？','提示',{
                     type:'warning'
                 }).then(async (e)=>{
                     await ts.delData(row.id).then(res=>{
@@ -781,7 +781,7 @@
                 // this.$refs.select.blur()
             },
             deleteItem(item){
-                this.$confirm('确定删除该技术支持吗？','提示',{
+                this.$confirm('确定删除该问题吗？','提示',{
                     type:'warning'
                 }).then((e)=>{
                     ts.delTsQuestion(item.id).then(response=>{

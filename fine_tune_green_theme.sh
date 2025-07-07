@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 颜色定义
-GREEN_PRIMARY="#2bb56e"
+GREEN_PRIMARY="#1e7d34"
 GREEN_ULTRA_LIGHT="#e8f7ef"
 
 echo "正在优化绿色主题细节..."

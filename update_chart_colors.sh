@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 图表颜色配置
-CHART_COLOR_1="#2bb56e"    # 主绿色
+CHART_COLOR_1="#1e7d34"    # 主绿色
 CHART_COLOR_2="#0c5f2e"    # 深绿色
 CHART_COLOR_3="#53ca8a"    # 浅绿色
 CHART_COLOR_4="#8adfb3"    # 更浅的绿色

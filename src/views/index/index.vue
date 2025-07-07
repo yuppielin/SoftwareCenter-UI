@@ -942,7 +942,7 @@ export default {
   ::v-deep .el-input__inner {
     /* background-color: #0f1518; */
     border-radius: 20px;
-    border: solid 1px #2bb56e;
+    border: solid 1px #1e7d34;
     color: #000000;
     padding-left: 35px;
     height: 36px;
@@ -958,12 +958,12 @@ export default {
   
   ::v-deep .el-input__prefix {
     left: 10px;
-    color: #2bb56e;
+    color: #1e7d34;
   }
   
   ::v-deep .el-input-group__append {
-    background-color: #2bb56e;
-    border-color: #2bb56e;
+    background-color: #1e7d34;
+    border-color: #1e7d34;
     color: white;
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;

@@ -9,8 +9,8 @@
     <el-dialog v-el-drag-dialog :visible.sync="dialogVisible" title="需求导入" width="30%" @dragDialog="handleDrag">
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-button type="primary" size="small" @click="importDemand">确定</el-button>
-          <el-button size="small" @click="dialogVisible=false">取消</el-button>
+          <el-button type="primary" size="small" style="background:#1e7d34;border:0" @click="importDemand">确定</el-button>
+          <el-button size="small" style="background:#1e7d34;color:white;border:0" @click="dialogVisible=false">取消</el-button>
         </el-col>
         <el-col :span="12" style="text-align:right;">
           <el-button type="text" style="color:blue;margin-right:10px;" @click="downloadDemandTemplate">需求模板下载</el-button>
@@ -44,10 +44,10 @@
         <div style="margin-bottom:10px;">
           <el-row :gutter="10">
             <el-col :span="12" style="text-align:left">
-              <!-- <el-button v-show="userType=='admin'||userType=='XTUser'" size="small" style="color:white;" icon="el-icon-edit-outline" type="warning" @click="demandCF">需求拆分</el-button>
-              <el-button v-show="userType=='admin'||userType=='XTUser'" size="small" style="color:white;" icon="el-icon-edit-outline" type="warning" @click="demandZB">需求整编</el-button> -->
-              <el-button size="small" type="primary" icon="el-icon-upload2" style="background: rgba(23,138,227,1);border:0;height:32px" @click="dialogVisible=true" :style="{'margin-left':userType=='admin'||userType=='XTUser'?'':0}">需求导入</el-button>
-              <el-button :loading="loadingExport" size="small" type="primary" icon="el-icon-download" style="background: rgba(23,138,227,1);border:0;height:32px" @click="exportDemand">需求导出</el-button>
+              <!-- <el-button v-show="userType=='admin'||userType=='XTUser'" size="small" style="color:white;background:#1e7d34;border:0" icon="el-icon-edit-outline" type="warning" @click="demandCF">需求拆分</el-button>
+              <el-button v-show="userType=='admin'||userType=='XTUser'" size="small" style="color:white;background:#1e7d34;border:0" icon="el-icon-edit-outline" type="warning" @click="demandZB">需求整编</el-button> -->
+              <el-button size="small" type="primary" icon="el-icon-upload2" style="background: #1e7d34;border:0;height:32px" @click="dialogVisible=true" :style="{'margin-left':userType=='admin'||userType=='XTUser'?'':0}">需求导入</el-button>
+              <el-button :loading="loadingExport" size="small" type="primary" icon="el-icon-download" style="background: #1e7d34;border:0;height:32px" @click="exportDemand">需求导出</el-button>
             </el-col>
             <el-col :span="12" style="text-align:right">
               <el-select
@@ -64,8 +64,8 @@
                 <el-option label="未解决" value="0" />
               </el-select>
               <el-input v-model="search.keyword" size="small"  style="width:200px;margin-left:10px;" placeholder="关键字" />
-              <el-button icon="el-icon-search" size="small" type="primary" style="margin-left:10px;background:rgba(23,138,227,1);border:0;height:32px" @click="searchDemand">查询</el-button>
-              <el-button size="small" type="reset" @click="resetSearch">重置</el-button>
+              <el-button icon="el-icon-search" size="small" type="primary" style="margin-left:10px;background:#1e7d34;border:0;height:32px" @click="searchDemand">查询</el-button>
+              <el-button size="small" type="reset" style="background:#1e7d34;color:white;border:0" @click="resetSearch">重置</el-button>
             </el-col>
           </el-row>
         </div>
@@ -102,8 +102,8 @@
           </el-table-column>
           <el-table-column align="center" label="操作" width="160">
             <template slot-scope="{row}">
-              <el-button icon="el-icon-view" size="mini" title="查看" @click="showInfo(row)" type="primary" circle></el-button>
-              <el-button icon="el-icon-close" size="mini" title="删除" @click="deleteDemand(row)" type="danger" circle></el-button>
+              <el-button icon="el-icon-view" size="mini" title="查看" @click="showInfo(row)" type="primary" style="background:#1e7d34;border:0" circle></el-button>
+              <el-button icon="el-icon-close" size="mini" title="删除" @click="deleteDemand(row)" style="background:#F56C6C;border:0;color:white" circle></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -123,10 +123,10 @@
         <div style="margin-bottom:10px;">
           <el-row :gutter="10">
             <el-col :span="12" style="text-align:left">
-              <el-button v-show="userType=='admin'||userType=='XTUser'" size="small" style="color:white;" icon="el-icon-edit-outline" type="warning" @click="demandCF">需求拆分</el-button>
-              <el-button v-show="userType=='admin'||userType=='XTUser'" size="small" style="color:white;" icon="el-icon-edit-outline" type="warning" @click="demandZB">需求整编</el-button>
-              <el-button size="small" type="primary" icon="el-icon-upload2" style="background: rgba(23,138,227,1);border:0;height:32px" @click="dialogVisible=true" :style="{'margin-left':userType=='admin'||userType=='XTUser'?'':0}">需求导入</el-button>
-              <el-button :loading="loadingExport" size="small" type="primary" icon="el-icon-download" style="background: rgba(23,138,227,1);border:0;height:32px" @click="exportDemand">需求导出</el-button>
+              <el-button v-show="userType=='admin'||userType=='XTUser'" size="small" style="color:white;background:#1e7d34;border:0" icon="el-icon-edit-outline" type="warning" @click="demandCF">需求拆分</el-button>
+              <el-button v-show="userType=='admin'||userType=='XTUser'" size="small" style="color:white;background:#1e7d34;border:0" icon="el-icon-edit-outline" type="warning" @click="demandZB">需求整编</el-button>
+              <el-button size="small" type="primary" icon="el-icon-upload2" style="background: #1e7d34;border:0;height:32px" @click="dialogVisible=true" :style="{'margin-left':userType=='admin'||userType=='XTUser'?'':0}">需求导入</el-button>
+              <el-button :loading="loadingExport" size="small" type="primary" icon="el-icon-download" style="background: #1e7d34;border:0;height:32px" @click="exportDemand">需求导出</el-button>
             </el-col>
             <el-col :span="12" style="text-align:right">
               <el-select
@@ -143,8 +143,8 @@
                 <el-option label="未解决" value="0" />
               </el-select>
               <el-input v-model="search.keyword" size="small" style="width:200px;margin-left:10px;" placeholder="关键字" />
-              <el-button size="small" type="primary" icon="el-icon-search" style="margin-left:10px;background:rgba(23,138,227,1);border:0;height:32px" @click="searchDemand">搜索</el-button>
-              <el-button size="small" type="reset" @click="resetSearch">重置</el-button>
+              <el-button size="small" type="primary" icon="el-icon-search" style="margin-left:10px;background:#1e7d34;border:0;height:32px" @click="searchDemand">搜索</el-button>
+              <el-button size="small" type="reset" style="background:#1e7d34;color:white;border:0" @click="resetSearch">重置</el-button>
             </el-col>
           </el-row>
         </div>
@@ -193,8 +193,8 @@
           </el-table-column>
           <el-table-column align="center" label="操作" width="160">
             <template slot-scope="{row}">
-              <el-button icon="el-icon-view" size="mini" title="查看" @click="showInfo(row)" type="primary" circle></el-button>
-              <el-button icon="el-icon-close" size="mini" title="删除" @click="deleteDemand(row)" type="danger" circle></el-button>
+              <el-button icon="el-icon-view" size="mini" title="查看" @click="showInfo(row)" type="primary" style="background:#1e7d34;border:0" circle></el-button>
+              <el-button icon="el-icon-close" size="mini" title="删除" @click="deleteDemand(row)" style="background:#F56C6C;border:0;color:white" circle></el-button>
             </template>
           </el-table-column>
         </el-table>

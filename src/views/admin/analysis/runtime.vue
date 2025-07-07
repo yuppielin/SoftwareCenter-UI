@@ -135,7 +135,7 @@ export default {
     },
     getStatData() {
       getSystemData().then(response => {
-        if (response.code === 20000) {
+        if (response.code === 200) {
           this.statData = {
             deployCount: response.data.deployCount || 0,
             onlineCount: response.data.onlineCount || 0,
@@ -168,7 +168,7 @@ export default {
       this.loading.downloadTrend = true
       
       downloadTrendNull().then(response => {
-        if (response.code === 20000) {
+        if (response.code === 200) {
           const xData = response.data.xData || []
           const yData = response.data.yData || []
           
@@ -214,12 +214,12 @@ export default {
           }
           this.downloadTrendChart.setOption(option)
         } else {
-          this.$message.error('获取下载趋势数据失败')
+          // this.$message.error('获取下载趋势数据失败')
         }
         this.loading.downloadTrend = false
       }).catch(error => {
         console.error('获取下载趋势数据错误:', error)
-        this.$message.error('获取下载趋势数据出错')
+        // this.$message.error('获取下载趋势数据出错')
         this.loading.downloadTrend = false
       })
     },
@@ -227,7 +227,7 @@ export default {
       this.loading.hotSoftware = true
       
       hotDownload(10).then(response => {
-        if (response.code === 20000) {
+        if (response.code === 200) {
           const data = response.data || []
           const names = data.map(item => item.name)
           const values = data.map(item => item.value)
@@ -267,12 +267,12 @@ export default {
           }
           this.hotSoftwareChart.setOption(option)
         } else {
-          this.$message.error('获取热门软件数据失败')
+          // this.$message.error('获取热门软件数据失败')
         }
         this.loading.hotSoftware = false
       }).catch(error => {
         console.error('获取热门软件数据错误:', error)
-        this.$message.error('获取热门软件数据出错')
+        // this.$message.error('获取热门软件数据出错')
         this.loading.hotSoftware = false
       })
     },
