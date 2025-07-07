@@ -40,7 +40,7 @@
           size="small"
           type="primary"
           @click="goToSoftwareUpload"
-        >软件/模型上传</el-button>
+        >软件上传</el-button>
         <el-button
           v-if="$checkPermission(['admin','XTUser','CSUser'])"
           size="small"
@@ -83,18 +83,18 @@
               @select="selectChange"
             ></treeselect>
           </el-form-item>
-          <el-form-item>
+          <!-- <el-form-item>
             <el-select v-model="search.csStatus" placeholder="审核状态" clearable style="width: 120px">
               <el-option label="进行中" :value="0"></el-option>
               <el-option label="已完成" :value="1"></el-option>
               <el-option label="未通过" :value="2"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item>
             <el-select v-model="search.softwareType" placeholder="软件类型" clearable style="width: 120px">
               <el-option label="通用软件" :value="1"></el-option>
               <el-option label="软件段" :value="2"></el-option>
-              <el-option label="模型" :value="4"></el-option>
+              <!-- <el-option label="模型" :value="4"></el-option> -->
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -129,11 +129,10 @@
                   height="60px"
                 />
               </el-col>
-              <el-col :span="14" style="line-height:1.5">
+              <el-col :span="16" style="line-height:1.5">
                 <div style="position: relative;">
                   <div
                     style="cursor: pointer;font-size:16px;font-weight:600;display:inline-block;width:120px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;color:#1e7d34;"
-                    @click="showRelation(row.versionData)"
                   >{{row.name}}</div>
                   <span 
                     class="software-type-tag software-type-common"
@@ -143,10 +142,10 @@
                     class="software-type-tag software-type-fragment"
                     v-else-if="row.softwareType == 2"
                   >软件段</span>
-                  <span 
+                  <!-- <span 
                     class="software-type-tag software-type-model"
                     v-else-if="row.softwareType == 4"
-                  >模型</span>
+                  >模型</span> -->
                 </div>
                 <el-select
                   v-model="row.versionId"
@@ -195,21 +194,22 @@
             <br />
             <span class="subContent">{{row.versionData.ctime|parseTime('{y}-{m}-{d}')}}</span>
           </el-col>
-          <el-col :span="3" style="line-height:2.0">
+          <!-- <el-col :span="3" style="line-height:2.0">
             <span class="subTitle" style="font-size:14px;font-weight:600;">审核状态</span>
             <br />
             <span class="status-tag" :class="getStatusClass(row.versionData.csStatus || 0)">
               {{getStatusText(row.versionData.csStatus || 0)}}
             </span>
-          </el-col>
+          </el-col> -->
           <el-col :span="5" style="text-align:right;padding:10px 0;">
             <!-- <el-button v-if ="row.softwareType == 2 && $checkPermission(['admin','XTUser'])" circle size="mini" type="warning" icon="el-icon-folder-add" title="推送" @click="pushSoftware(row)"></el-button> -->
             <div style="display:flex;justify-content:flex-end;align-items:center;height:100%;">
-              <el-button v-if="$checkPermission(['admin']) && row.versionData.csStatus !== 1" circle size="small" type="success" icon="el-icon-check" title="审核" @click="reviewSoftware(row)" style="margin-right:5px;"></el-button>
+              <!-- <el-button v-if="$checkPermission(['admin']) && row.versionData.csStatus !== 1" circle size="small" type="success" icon="el-icon-check" title="审核" @click="reviewSoftware(row)" style="margin-right:5px;"></el-button> -->
+              <el-button circle size="small" type="primary" icon="el-icon-connection" title="谱系关系" @click="showSoftwareLineage(row)" style="margin-right:5px;"></el-button>
               <el-button circle size="small" type="warning" icon="el-icon-sell" title="升级" @click="upgradeSoftware(row)" style="margin-right:5px;"></el-button>
               <el-button circle size="small" type="primary" icon="el-icon-edit" title="编辑" @click="editSoftware(row)" style="margin-right:5px;"></el-button>
               <el-button v-if="$checkPermission(['admin'])" circle size="small" type="danger" icon="el-icon-close" title="删除" @click="deleteItem(row)"></el-button>
-              <el-button v-if="$checkPermission(['CSUser'])" circle size="small" type="primary" icon="el-icon-message" title="查看审核意见" @click="showReviewComment(row)" style="margin-right:5px;"></el-button>
+              <!-- <el-button v-if="$checkPermission(['CSUser'])" circle size="small" type="primary" icon="el-icon-message" title="查看审核意见" @click="showReviewComment(row)" style="margin-right:5px;"></el-button> -->
             </div>
           </el-col>
         </el-row>
@@ -964,10 +964,7 @@ export default {
     closeSoftwareRelation() {
       this.softwareRelationVisible = false;
     },
-    showRelation(versionData) {
-      this.softwareRelationVisible = true;
-      this.softwareRelationData = versionData;
-    },
+    
     // 打开审核对话框
     reviewSoftware(item) {
       this.reviewDialogVisible = true;
@@ -1000,7 +997,13 @@ export default {
       console.log("查看审核意见", row);
       this.currentReviewComment = row.versionData.csReview;
       this.commentDialogVisible = true;
-    }
+    },
+         showSoftwareLineage(row) {
+       // 实现查看软件谱系的逻辑
+       console.log("查看软件谱系", row);
+       this.softwareRelationVisible = true;
+       this.softwareRelationData = row.versionData;
+      }
   }
 };
 </script>

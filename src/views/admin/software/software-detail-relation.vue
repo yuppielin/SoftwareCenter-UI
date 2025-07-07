@@ -10,12 +10,12 @@
       <div style="float:left;width:300px;height:500px;">
         <div style="margin-bottom:10px;">
           <el-button v-if="downloadDataList.length>0"  type="primary" size="mini" @click="batchDownload" :loading="loading">批量下载</el-button>
-          <el-button
+          <!-- <el-button
             v-if="selectedItmes.length>0"
             size="mini"
             type="warning"
             @click="pushSoft "
-          >批量推送入段库</el-button>
+          >批量推送入段库</el-button> -->
         </div>
         <div style="overflow-y: auto;height:470px;">
           <el-table  :data="echartData.nodes" :row-key = "getRowKeys" ref="mutipleTable" @selection-change="handleItemSelection">
@@ -25,7 +25,7 @@
             <el-table-column align="center" header-align="center" label="软件类型" prop="softwareType">
               <template slot-scope="{row}">
                 <span v-if="row.softwareType==2">软件段</span>
-                <span v-else-if="row.softwareType==3">业务软件</span>
+                <!-- <span v-else-if="row.softwareType==3">业务软件</span> -->
                 <span v-else-if="row.softwareType==1">通用软件</span>
                 <span v-else>--</span>
               </template>

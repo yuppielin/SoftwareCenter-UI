@@ -32,10 +32,10 @@
               label="业务软件"
               :value="3"
             ></el-option> -->
-            <el-option
+            <!-- <el-option
               label="软件模型"
               :value="4"
-            ></el-option>
+            ></el-option> -->
           </el-select>
       </el-form-item>
       <el-form-item
