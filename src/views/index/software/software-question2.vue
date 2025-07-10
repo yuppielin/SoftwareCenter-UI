@@ -1,94 +1,43 @@
 <template>
   <div>
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <el-row style="height: 45px;">
-          <el-col :span="12">
-            <el-button
-              type="primary"
-              style="margin-bottom: 10px;"
-              size="small"
-              @click="handAddTs"
-            >问题提报</el-button>
-          </el-col>
-          <el-col :span="12">
-            <!-- <el-input placeholder="请输入查询条件">
-              <el-button size="small" slot="append" icon="el-icon-search"></el-button>
-            </el-input>-->
-          </el-col>
-        </el-row>
-        <div style="height:500px;overflow:auto;" v-if="tsQuestionList.length>0">
-          <el-collapse v-model="activeTsName" accordion @change="selected">
-            <el-collapse-item v-for="(item,index) in tsQuestionList" :key="index" :name="index">
-              <template slot="title">
-                <el-row style="width: 100%;">
-                  <el-col :span="12">
-                    <el-row>
-                      <span
-                        style="font-weight: 600;font-size: 16px;margin-left: 10px;"
-                      >{{item.title}}</span>
-                      <span
-                        style="font-size: 12px;margin-left:20px;"
-                      >{{ item.status==0?'未解决':(item.status==1?'处理中':'已解决') }}</span>
-                    </el-row>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-row style="text-align: right;">
-                      <el-button
-                        icon="el-icon-s-comment"
-                        size="small"
-                        type="text"
-                        style="color: #05994e;"
-                        @click="activeTsName=index;showTsQuestionReply(item)"
-                        @click.stop.native
-                      >回复（{{ item.answerTotal }}）</el-button>
-                      <!-- <el-button
-                      icon="el-icon-delete"
-                      size="small"
-                      type="text"
-                      @click="deleteTsQuestion(item.id)"
-                      @click.stop.native
-                      >删除</el-button>-->
-                      <!-- <el-button
-                      style="margin-right: 20px;"
-                      icon="el-icon-success"
-                      size="small"
-                      type="text"
-                      @click="closeTsQuestion(item.id)"
-                      @click.stop.native
-                      >结束</el-button>-->
-                    </el-row>
-                  </el-col>
-                </el-row>
-              </template>
-              <div>
-                <span style="margin-left: 10px;">{{item.content}}</span>
+    <div class="review-list">
+      <div v-if="tsQuestionList.length>0" class="review-items">
+        <el-collapse v-model="activeTsName" accordion @change="selected">
+          <el-collapse-item v-for="(item,index) in tsQuestionList" :key="index" :name="index">
+            <template slot="title">
+              <div class="review-header">
+                <div class="review-title">
+                  <span class="review-title-text">{{item.title}}</span>
+                  <el-tag size="mini" :type="item.status==0 ? 'info' : (item.status==1 ? 'warning' : 'success')" effect="plain">
+                    {{ item.status==0?'未解决':(item.status==1?'处理中':'已解决') }}
+                  </el-tag>
+                </div>
+                <div class="review-actions">
+                  <el-button
+                    icon="el-icon-s-comment"
+                    size="small"
+                    type="text"
+                    class="reply-btn"
+                    @click="activeTsName=index;showTsQuestionReply(item)"
+                    @click.stop.native
+                  >回复（{{ item.answerTotal }}）</el-button>
+                </div>
               </div>
-              <div>
-                <el-row style="margin-left: 10px;">
-                  <el-col :span="6">
-                    <span style="font-size: 12px;">软件名称：{{item.softwareName}}</span>
-                  </el-col>
-                  <el-col :span="6">
-                    <span style="font-size: 12px;">版本号：{{item.softwareVersion}}</span>
-                  </el-col>
-                  <el-col :span="6">
-                    <span style="font-size: 12px;">提报人员：{{item.cname}}</span>
-                  </el-col>
-                  <el-col :span="6">
-                    <span style="font-size: 12px;">提报时间：{{item.ctime.split(' ')[0]}}</span>
-                  </el-col>
-                </el-row>
+            </template>
+            <div class="review-content">
+              <p class="review-description">{{item.content}}</p>
+              <div class="review-meta">
+                <span class="meta-item"><i class="el-icon-goods"></i> {{item.softwareName}}</span>
+                <span class="meta-item"><i class="el-icon-document"></i> {{item.softwareVersion}}</span>
+                <span class="meta-item"><i class="el-icon-user"></i> {{item.cname}}</span>
+                <span class="meta-item"><i class="el-icon-time"></i> {{item.ctime.split(' ')[0]}}</span>
               </div>
-            </el-collapse-item>
-          </el-collapse>
-        </div>
-        <div v-else style="text-align:center;">
-          <el-image :src="require('@/assets/index/nodata.png')"  style="height:300px;width:400px;"></el-image>
-          <div>暂无问题</div>
-        </div>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
+        
         <el-pagination
-          style="margin-top:15px;"
+          class="review-pagination"
           v-if="total>0"
           :current-page="pageNum"
           :page-size="pageSize"
@@ -97,70 +46,65 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
-      </el-col>
-      <el-col :span="12">
-        <div  v-show="questionItem!=null" style="display: flex;height: 45px;">
-          <img :src="avatar" class="user-avatar" :onerror="defaultA" />
-          <el-input
-            style="margin-left: 10px;"
-            placeholder="点击可回复"
-            @focus="replyTwo(null)"
-          />
-        </div>
-        <!-- <div v-if="softwareQuestionAnswers.length==0" style="text-align:center;">
-          <el-image :src="require('@/assets/index/nodata.png')"  style="height:300px;width:400px;"></el-image>
-          <div>暂无回复</div>
-        </div> -->
-        <div style="height:500px;overflow:auto;">
-          <el-timeline style="padding-right: 10px;padding-top: 5px">
-            <el-timeline-item
-              v-for="(item,index) in softwareQuestionAnswers"
-              :key="index"
-              :timestamp="item.cname"
-              icon="el-icon-user-solid"
-              placement="top"
-            >
-              <div class="replay">
-                <div class="title">
-                  <div>{{ item.description }}</div>
-                  <div
-                    v-if="item.tsDataVo && item.tsDataVo.path"
-                    style="font-size:12px;color:#3478d4;"
-                  >
-                                        <i class="el-icon-files" style="font-size:12px;color:#05994e;"></i> &nbsp;&nbsp;
-                        <el-button
-                          @click="downloadData(item.tsDataVo)"
-                          style="color:#05994e"
-                          type="text"
-                          size="mini"
-                        >{{item.tsDataVo.name}}</el-button>
-                  </div>
-                  <span
-                    style="color: rgba(149,149,163,1);font-size: 12px;"
-                  >{{ item.ctime| parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-                  <!-- <el-link icon="el-icon-chat-square" @click="replyDemand(item1)">回复</el-link> -->
-                  <!-- <el-button
-                  type="text"
-                  size="small"
-                  icon="el-icon-delete"
-                  title="删除回复"
-                  @click="deleteReply(item)"
-                  ></el-button>-->
+      </div>
+      
+      <div v-else class="empty-state">
+        <el-image :src="require('@/assets/index/nodata.png')" class="empty-image"></el-image>
+        <div class="empty-text">暂无问题</div>
+      </div>
+    </div>
+    
+    <div class="reply-section">
+      <div v-show="questionItem!=null" class="reply-input">
+        <img :src="avatar" class="user-avatar" :onerror="defaultA" />
+        <el-input
+          class="reply-field"
+          placeholder="点击可回复"
+          @focus="replyTwo(null)"
+        />
+      </div>
+      
+      <div class="reply-list">
+        <el-timeline>
+          <el-timeline-item
+            v-for="(item,index) in softwareQuestionAnswers"
+            :key="index"
+            :timestamp="item.cname"
+            icon="el-icon-user-solid"
+            placement="top"
+          >
+            <div class="replay">
+              <div class="reply-content">
+                <div class="reply-text">{{ item.description }}</div>
+                <div
+                  v-if="item.tsDataVo && item.tsDataVo.path"
+                  class="reply-attachment"
+                >
+                  <i class="el-icon-files"></i>
+                  <el-button
+                    @click="downloadData(item.tsDataVo)"
+                    type="text"
+                    size="mini"
+                    class="download-btn"
+                  >{{item.tsDataVo.name}}</el-button>
+                </div>
+                <div class="reply-footer">
+                  <span class="reply-time">{{ item.ctime| parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
                   <el-button
                     icon="el-icon-s-comment"
                     size="normal"
                     type="text"
                     title="回复"
-                    style="color: #05994e;font-size: 14px;margin-left: 2px; padding: 2px 5px;" 
+                    class="reply-count-btn"
                     @click="replyTwo(item)"
-                  >（{{ item.childrenPage.total }}）</el-button>
+                  >{{ item.childrenPage.total > 0 ? '(' + item.childrenPage.total + ')' : '' }}</el-button>
                   <el-button
                     v-if="!item.open"
                     icon="el-icon-arrow-down"
                     size="normal"
                     type="text"
                     title="展开"
-                    style="margin-left: 5px;"
+                    class="expand-btn"
                     v-show="item.childrenPage.total>0"
                     @click="item.open=!item.open"
                   ></el-button>
@@ -170,13 +114,16 @@
                     size="normal"
                     type="text"
                     title="收起"
-                    style="margin-left: 5px;"
+                    class="expand-btn"
                     v-show="item.childrenPage.total>0"
                     @click="item.open=!item.open"
                   ></el-button>
                 </div>
               </div>
-              <el-timeline v-show="item.open == true" style="padding-right: 40px;padding-top: 5px">
+            </div>
+            
+            <div v-show="item.open == true" class="nested-replies">
+              <el-timeline>
                 <el-timeline-item
                   v-for="(replyItem,index) in item.childrenPage.list"
                   :key="index"
@@ -184,46 +131,38 @@
                   icon="el-icon-user-solid"
                   placement="top"
                 >
-                  <div class="replay">
-                    <div class="title">
-                      <div>{{ replyItem.description }}</div>
+                  <div class="replay nested">
+                    <div class="reply-content">
+                      <div class="reply-text">{{ replyItem.description }}</div>
                       <div
                         v-if="replyItem.tsDataVo && replyItem.tsDataVo.path"
-                        style="font-size:12px;color:#05994e;"
+                        class="reply-attachment"
                       >
-                        <i class="el-icon-files" style="font-size:12px;color:#05994e;"></i> &nbsp;&nbsp;
+                        <i class="el-icon-files"></i>
                         <el-button
                           @click="downloadData(replyItem.tsDataVo)"
-                          style="color:#05994e"
                           type="text"
                           size="mini"
+                          class="download-btn"
                         >{{replyItem.tsDataVo.name}}</el-button>
                       </div>
-                      <span
-                        style="color: rgba(149,149,163,1);font-size: 12px;"
-                      >{{ replyItem.ctime| parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-                      <!-- <el-link icon="el-icon-chat-square" @click="replyDemand(item1)">回复</el-link> -->
-                      <!-- <el-button
-                      type="text"
-                      size="small"
-                      icon="el-icon-delete"
-                      title="删除回复"
-                      @click="deleteReply(replyItem)"
-                      ></el-button>-->
-                      <el-button
-                        icon="el-icon-s-comment"
-                        size="normal"
-                        type="text"
-                        title="回复"
-                        style="color: #05994e;font-size: 14px;margin-left: 2px; padding: 2px 5px; " 
-                        @click="replyTwo(replyItem)"
-                      ></el-button>
+                      <div class="reply-footer">
+                        <span class="reply-time">{{ replyItem.ctime| parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+                        <el-button
+                          icon="el-icon-s-comment"
+                          size="normal"
+                          type="text"
+                          title="回复"
+                          class="reply-btn"
+                          @click="replyTwo(replyItem)"
+                        ></el-button>
+                      </div>
                     </div>
                   </div>
                 </el-timeline-item>
-
+                
                 <el-pagination
-                  style="margin-top:15px;"
+                  class="nested-pagination"
                   v-if="item.childrenPage.totalPage>1"
                   :current-page="rightPageNumOne"
                   :page-size="item.childrenPage.pageSize"
@@ -232,12 +171,12 @@
                   @current-change="answerHleCurrentChange($event,item)"
                 />
               </el-timeline>
-            </el-timeline-item>
-          </el-timeline>
-        </div>
-
+            </div>
+          </el-timeline-item>
+        </el-timeline>
+        
         <el-pagination
-          style="margin-top:15px;"
+          class="reply-pagination"
           v-if="softwareQuestionAnswer.totalPage>1"
           :current-page="rightPageNumTwo"
           :page-size="softwareQuestionAnswer.pageSize"
@@ -245,8 +184,9 @@
           :total="softwareQuestionAnswer.total"
           @current-change="answerHandleCurrent($event,data)"
         />
-      </el-col>
-    </el-row>
+      </div>
+    </div>
+    
     <!--问题回答-->
     <el-dialog :visible.sync="dialogVisible" title="回复">
       <el-form
@@ -828,49 +768,224 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
-::v-deep .el-collapse-item__header.is-active {
-  background-color: #e8f6ee;
-}
-::v-deep .el-collapse-item__content {
-  background-color: #e8f6ee;
-}
-::v-deep .el-collapse > .is-active {
-  border-left: 5px solid #05994e;
-}
-::v-deep .el-timeline-item__node--normal {
-  width: 20px;
-  height: 20px;
-  left: -5px;
-}
-.user-avatar {
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
+<style scoped lang="scss">
+.review-list {
+  width: 48%;
+  float: left;
+  height: 600px;
+  overflow: auto;
+  padding-right: 15px;
+  border-right: 1px solid #eee;
 }
 
-::v-deep .el-timeline-item__timestamp {
-  color: #17bae3;
-  font-size: 14px;
+.review-items {
+  height: 100%;
 }
-::v-deep .el-timeline-item__wrapper {
-  padding-left: 20px;
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
-::v-deep .el-timeline-item {
-  padding-bottom: 0px;
+
+.review-title {
+  display: flex;
+  align-items: center;
 }
+
+.review-title-text {
+  font-weight: 600;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.review-actions {
+  text-align: right;
+}
+
+.reply-btn {
+  color: #05994e;
+}
+
+.review-content {
+  padding: 10px;
+}
+
+.review-description {
+  margin: 0 0 15px 0;
+  line-height: 1.6;
+  color: #333;
+}
+
+.review-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.meta-item {
+  font-size: 12px;
+  color: #666;
+  display: flex;
+  align-items: center;
+}
+
+.meta-item i {
+  margin-right: 5px;
+  color: #05994e;
+}
+
+.review-pagination {
+  margin-top: 15px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 20px;
+}
+
+.empty-image {
+  height: 200px;
+  width: 200px;
+}
+
+.empty-text {
+  color: #999;
+  margin-top: 10px;
+}
+
+.reply-section {
+  width: 48%;
+  float: right;
+  height: 600px;
+  overflow: auto;
+  padding-left: 15px;
+}
+
+.reply-input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.reply-field {
+  margin-left: 10px;
+}
+
+.reply-list {
+  height: calc(100% - 60px);
+  overflow: auto;
+}
+
 .replay {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 12px 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: 10px;
+  
+  &.nested {
+    background-color: #f9f9f9;
+    margin-left: 15px;
+  }
+}
+
+.reply-content {
+  width: 100%;
+}
+
+.reply-text {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.reply-attachment {
+  font-size: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  
+  i {
+    color: #05994e;
+    margin-right: 5px;
+  }
+}
+
+.download-btn {
+  color: #05994e;
+  padding: 0;
+}
+
+.reply-footer {
+  display: flex;
+  align-items: center;
+}
+
+.reply-time {
+  color: #999;
+  font-size: 12px;
+  margin-right: 10px;
+}
+
+.reply-count-btn {
+  color: #05994e;
   font-size: 14px;
-  font-weight: 400;
-  color: #565656;
-  .time {
-    font-size: 12px;
-    color: #9595a3;
-    margin-right: 10px;
-  }
-  .el-button--text {
-    color: #565656;
-  }
+  padding: 2px 5px;
+  margin-left: 2px;
+}
+
+.expand-btn {
+  margin-left: 5px;
+}
+
+.nested-replies {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+
+.nested-pagination {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.reply-pagination {
+  margin-top: 15px;
+  text-align: center;
+}
+
+::v-deep .el-timeline-item__node {
+  background-color: #05994e;
+}
+
+::v-deep .el-tag--mini {
+  height: 20px;
+  padding: 0 6px;
+  line-height: 18px;
+}
+
+::v-deep .el-tag--info {
+  background-color: #f4f4f5;
+  border-color: #e9e9eb;
+  color: #909399;
+}
+
+::v-deep .el-tag--warning {
+  background-color: #fdf6ec;
+  border-color: #faecd8;
+  color: #e6a23c;
+}
+
+::v-deep .el-tag--success {
+  background-color: #f0f9eb;
+  border-color: #e1f3d8;
+  color: #67c23a;
 }
 </style>

@@ -1,179 +1,101 @@
 <template>
-  <div>
-    <el-row :gutter="20" style="display:flex;flex-direction:row">
-      <el-col :span="12" style="border-right:1px solid #fff;">
-        <el-row style="height: 45px;">
-          <el-col :span="12">
-            <el-button
-              type="primary"
-              style="margin-bottom: 10px;"
-              size="small"
-              @click="openAddDemandDialog"
-            >提报需求</el-button>
-          </el-col>
-          <el-col :span="12">
-            <!-- <el-input placeholder="请输入查询条件">
-              <el-button size="small" slot="append" icon="el-icon-search"></el-button>
-            </el-input>-->
-          </el-col>
-        </el-row>
-        <div style="height:500px;overflow:auto;" v-if="demandList.length>0">
-          <el-collapse v-model="activeDemandName" accordion @change="selected">
-            <el-collapse-item v-for="(item,index) in demandList" :key="index" :name="index">
-              <template slot="title">
-                <el-row style="width: 100%;">
-                  <el-col :span="12">
-                    <el-row>
-                      <span
-                        style="font-weight: 600;font-size: 16px;margin-left: 10px;"
-                      >{{item.title}}</span>
-                      <span
-                        style="font-size: 12px;margin-left:20px;"
-                      >{{ item.status==0?'未解决':(item.status==1?'处理中':'已解决') }}</span>
-                    </el-row>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-row style="text-align: right;">
-                      <el-button
-                        icon="el-icon-s-comment"
-                        size="small"
-                        type="text"
-                        @click="activeDemandName=index;replyDemandFunction(item)"
-                        @click.stop.native
-                      >回复（{{ item.replyTotal }}）</el-button>
-                      <!-- <el-button
-                      icon="el-icon-delete"
-                      size="small"
-                      type="text"
-                      @click="deleteDemandFunction(item)"
-                      @click.stop.native
-                    >删除</el-button>
-                    <el-button
-                      style="margin-right: 20px;"
-                      icon="el-icon-success"
-                      size="small"
-                      type="text"
-                      @click="closeDemandFunction(item)"
-                      @click.stop.native
-                      >结束</el-button>-->
-                    </el-row>
-                  </el-col>
-                </el-row>
-              </template>
-              <div>
-                <span style="margin-left: 10px;">{{item.description}}</span>
-              </div>
-              <div>
-                <el-row style="margin-left: 10px;">
-                  <el-col :span="6">
-                    <span style="font-size: 12px;">软件名称：{{item.softwareName}}</span>
-                  </el-col>
-                  <el-col :span="6">
-                    <span style="font-size: 12px;">版本号：{{item.softwareVersion}}</span>
-                  </el-col>
-                  <el-col :span="6">
-                    <span style="font-size: 12px;">提报人员：{{item.realname}}</span>
-                  </el-col>
-                  <el-col :span="6">
-                    <span style="font-size: 12px;">提报时间：{{item.ctime | parseTime('{y}-{m}-{d}')}}</span>
-                  </el-col>
-                </el-row>
-              </div>
-            </el-collapse-item>
-          </el-collapse>
+  <div class="comment-list">
+    <div v-if="demandList.length > 0">
+      <div v-for="(item, index) in demandList" :key="index" class="comment-item">
+        <div class="comment-header">
+          <div class="user-info">
+            <img :src="require('@/assets/index/softwareDefault.png')" class="avatar" />
+            <div class="user-meta">
+              <div class="username">{{ item.realname }}</div>
+              <div class="comment-time">{{ item.ctime | parseTime('{y}-{m}-{d}') }} · {{ item.softwareVersion }}</div>
+            </div>
+          </div>
+          <div class="comment-status">
+            <el-tag size="mini" :type="item.status==0 ? 'info' : (item.status==1 ? 'warning' : 'success')" effect="plain">
+              {{ item.status==0?'未解决':(item.status==1?'处理中':'已解决') }}
+            </el-tag>
+          </div>
         </div>
-        <div v-else style="text-align:center;">
-          <el-image :src="require('@/assets/index/nodata.png')" style="height:300px;width:400px;"></el-image>
-          <div>暂无需求</div>
+        <div class="comment-content">
+          <div class="comment-title">{{ item.title }}</div>
+          <div class="comment-text">{{ item.description }}</div>
         </div>
-        <el-pagination
-          style="margin-top:15px;"
-          v-if="totalDemand>0"
-          :current-page="pageNumDemand"
-          :page-size="pageSizeDemand"
-          layout="total, prev, pager, next"
-          :total="totalDemand"
-          @size-change="handleSizeChangeDemand"
-          @current-change="handleCurrentChangeDemand"
-        />
-      </el-col>
-      <el-col :span="12">
-        <div v-show="replyDemandItem!=null" style="display: flex;height:45px">
-          <img :src="avatar" class="user-avatar" :onerror="defaultA" />
-          <el-input
-            style="margin-left: 10px;"
-            placeholder="点击可回复"
-            @focus="showDemandReply"
-          />
+        <div class="comment-actions">
+          <div class="action-item" @click="replyDemandFunction(item)">
+            <i class="el-icon-chat-line-square"></i> 回复 ({{ item.replyTotal }})
+          </div>
+          <div class="like-count">
+            <i class="el-icon-star-off"></i> {{ Math.floor(Math.random() * 100) }}
+          </div>
         </div>
-        <!-- <div v-if="replyList.length==0" style="text-align:center;">
-          <el-image :src="require('@/assets/index/nodata.png')" style="height:300px;width:400px;"></el-image>
-          <div>暂无回复</div>
-        </div> -->
-        <div style="height:500px;overflow:auto;">
-          <el-timeline style="padding-right: 10px;padding-top: 5px;padding-left: 22px;">
-            <el-timeline-item
-              v-for="(replyItem,index) in replyList"
-              :key="index"
-              :timestamp="replyItem.realname"
-              icon="el-icon-user-solid"
-              placement="top"
-            >
-              <div class="replay">
-                <div>
-                  <div class="desc">{{ replyItem.description }}</div>
-                  <span class="time">{{ replyItem.cTime | parseTime('{y}-{m}-{d}') }}</span>
-                  <!-- <el-link icon="el-icon-chat-square" @click="replyDemand(item1)">回复</el-link> -->
-                  <!-- <el-button
-                  type="text"
-                  size="small"
-                  icon="el-icon-delete"
-                  title="删除回复"
-                  @click="deleteDemandReply(replyItem)"
-                  ></el-button>-->
+        
+        <!-- 回复区域 -->
+        <transition name="slide-fade">
+          <div class="reply-section" v-show="replyDemandItem && replyDemandItem.id === item.id">
+            <div class="reply-header-bar">
+              <span class="reply-title">全部回复 ({{ item.replyTotal }})</span>
+              <el-button type="text" icon="el-icon-close" @click="replyDemandItem = null"></el-button>
+            </div>
+            <div class="reply-list">
+              <div v-if="replyList && replyList.length > 0">
+                <div v-for="(replyItem, replyIndex) in replyList" :key="replyIndex" class="reply-item">
+                  <div class="reply-header">
+                    <img :src="require('@/assets/index/softwareDefault.png')" class="reply-avatar" />
+                    <div class="reply-user-info">
+                      <div class="reply-username">{{ replyItem.realname }}</div>
+                      <div class="reply-time">{{ replyItem.cTime | parseTime('{y}-{m}-{d}') }}</div>
+                    </div>
+                  </div>
+                  <div class="reply-content">{{ replyItem.description }}</div>
                 </div>
               </div>
-            </el-timeline-item>
-          </el-timeline>
-        </div>
-        <el-pagination
-          style="margin-top:15px;"
-          v-if="replyDemandPage.totalPage>1"
-          :current-page="replyDemandPage.pageNum"
-          :page-size="replyDemandPage.pageSize"
-          layout="prev, pager, next,jumper"
-          :total="replyDemandPage.total"
-          @current-change="answerHandleCurrent($event)"
-        />
-        <!-- <div v-for="(replyItem,index) in replyList" :key="index">
-          <el-card>
-            <div style="color: #1f8ace;">{{replyItem.realname}}</div>
-            <div>
-              <span>{{replyItem.description}}</span>
+              <div v-else class="no-replies">
+                还没有回复，快来添加第一条回复吧
+              </div>
+              
+              <div class="add-reply">
+                <img :src="avatar" class="user-avatar" :onerror="defaultA" />
+                <el-input
+                  class="reply-input"
+                  placeholder="添加回复..."
+                  @focus="showDemandReply"
+                />
+              </div>
+              
+              <el-pagination
+                v-if="replyDemandPage.totalPage > 1"
+                class="reply-pagination"
+                :current-page="replyDemandPage.pageNum"
+                :page-size="replyDemandPage.pageSize"
+                layout="prev, pager, next"
+                :total="replyDemandPage.total"
+                @current-change="answerHandleCurrent"
+                small
+              />
             </div>
-            <div>
-              <span style="font-size: 12px;">{{replyItem.cTime}}</span>
-              <el-button
-                type="text"
-                size="small"
-                icon="el-icon-delete"
-                title="删除回复"
-                @click="deleteDemandReply(replyItem)"
-              ></el-button>
-            </div>
-          </el-card>
-        </div>-->
-        <!-- <el-pagination
-          style="margin-top:15px;"
-          :current-page="pageNumDemand"
-          :page-size="pageSizeDemand"
-          layout="total,  prev, pager, next"
-          :total="totalDemand"
-          @size-change="handleSizeChangeDemand"
-          @current-change="handleCurrentChangeDemand"
-        />-->
-      </el-col>
-    </el-row>
+          </div>
+        </transition>
+      </div>
+      
+      <el-pagination
+        class="comment-pagination"
+        v-if="totalDemand > 0"
+        :current-page="pageNumDemand"
+        :page-size="pageSizeDemand"
+        layout="prev, pager, next"
+        :total="totalDemand"
+        @size-change="handleSizeChangeDemand"
+        @current-change="handleCurrentChangeDemand"
+        small
+      />
+    </div>
+    
+    <div v-else class="empty-state">
+      <el-image :src="require('@/assets/index/nodata.png')" class="empty-image"></el-image>
+      <div class="empty-text">暂无评论</div>
+    </div>
+    
+    <!-- 保留原有对话框 -->
     <el-dialog title="需求回复" :visible.sync="replyVisible">
       <el-form
         ref="replyFormRef"
@@ -342,22 +264,17 @@ export default {
       totalDemand: 0,
       totalPageDemand: 0,
       pageNumDemand: 1,
-      pageSizeDemand: 10
+      pageSizeDemand: 5
     };
   },
   watch: {
-    // data(newValue, oldValue) {
-    //   console.log(newValue, oldValue);
-    //   this.demandList = JSON.parse(JSON.stringify(newValue));
-    //   if (this.demandList.length > 0) {
-    //     this.replyDemandFunction(this.demandList[0]);
-    //   }
-    // },
-    async softwareInfo(newValue, oldValue) {
-      this.replyDemandItem = null;
-      this.softwareData = JSON.parse(JSON.stringify(newValue));
-      console.log("newValue", this.softwareData);
-      await this.getSoftwareDemand();
+    softwareInfo: {
+      handler(newVal) {
+        if (newVal) {
+          this.getDemandList();
+        }
+      },
+      immediate: true
     }
   },
   async mounted() {
@@ -443,25 +360,71 @@ export default {
     openAddDemandDialog() {
       this.dialogDemandVisible = true;
     },
-    clearDialog(){
-      this.demandForm = {
-            title: '',
-            type: null,
-            description: '',
-          };
+    /**
+     * 查询需求列表
+     */
+    getDemandList() {
+      if (!this.softwareInfo) {
+        return;
+      }
+      demand
+        .getSoftwareDemand(
+          this.softwareInfo.softwareId,
+          this.softwareInfo.id,
+          this.pageNumDemand,
+          this.pageSizeDemand
+        )
+        .then(response => {
+          if (response.code === 200) {
+            this.demandList = response.data.list;
+            this.totalDemand = response.data.total;
+          }
+        });
     },
-    replyDemandFunction(item) {
-      this.replyList = [];
-      this.replyDemandItem = JSON.parse(JSON.stringify(item));
-      // this.replyList = JSON.parse(JSON.stringify(item.replyList));
-      
-      this.getDemandReply(this.replyDemandItem.id)
-    },
-    selected(activeNames) {
-      this.selectedDemand = activeNames;
-      let item = this.demandList[this.selectedDemand];
 
-      this.replyDemandFunction(item);
+    selected(selectId) {
+      // 选中折叠面板
+      if (selectId === "") {
+        this.replyDemandItem = null;
+        return;
+      }
+      this.replyDemandFunction(this.demandList[selectId]);
+    },
+
+    replyDemandFunction(item) {
+      if(this.replyDemandItem && this.replyDemandItem.id === item.id) {
+        // 如果点击的是已选中的项，取消选中
+        this.replyDemandItem = null;
+        return;
+      }
+      
+      this.replyDemandItem = item;
+      this.getDemandReply(this.replyDemandItem.id);
+    },
+
+    getDemandReply(demandId) {
+      let params = {
+        demandId: demandId,
+        pageNum: this.replyDemandPage.pageNum,
+        pageSize: this.replyDemandPage.pageSize
+      };
+      demand.getSupportAnswer(params).then(response => {
+        if (response.code === 200) {
+          let result = response.data;
+          
+          this.replyDemandPage.total = result.total;
+          this.replyDemandPage.totalPage = result.totalPage;
+          this.replyDemandPage.pageNum = result.pageNum;
+          this.replyList = result.list;
+          
+          // 在控制台输出信息，便于调试
+          console.log("回复列表加载成功", this.replyList);
+        } else {
+          console.error("回复列表加载失败", response);
+        }
+      }).catch(error => {
+        console.error("回复列表加载出错", error);
+      });
     },
     deleteDemandFunction(item) {
       this.$confirm("确定删除该需求吗？", "提示", {
@@ -509,27 +472,9 @@ export default {
     showDemandReply() {
       this.replyVisible = true;
     },
-    getDemandReply(demandId) {
-      let params = {
-        demandId: demandId,
-        pageNum: this.replyDemandPage.pageNum,
-        pageSize: this.replyDemandPage.pageSize
-      };
-      demand.getSupportAnswer(params).then(response => {
-        if (response.code === 200) {
-          let result = response.data;
-        
-          this.replyDemandPage.total = result.total;
-          this.replyDemandPage.totalPage = result.totalPage;
-          this.replyDemandPage.pageNum = result.pageNum;
-          this.replyList = result.list;
-        }
-      });
-    },
-    answerHandleCurrent(current, item) {
+    answerHandleCurrent(current) {
       this.replyDemandPage.pageNum = current;
-      let questionItem = this.demandList[this.activeDemandName];
-      this.getDemandReply(questionItem.id);
+      this.getDemandReply(this.replyDemandItem.id);
     },
     //处理需求
     addAnswer() {
@@ -571,9 +516,8 @@ export default {
      */
     handleSizeChangeDemand(val) {
       this.pageSizeDemand = val;
-
       this.pageNumDemand = 1;
-      this.getSoftwareDemand();
+      this.getDemandList();
     },
     /**
      * 切换分页事件
@@ -581,7 +525,7 @@ export default {
      */
     handleCurrentChangeDemand(val) {
       this.pageNumDemand = val;
-      this.getSoftwareDemand();
+      this.getDemandList();
     },
     handleRemoveDataFile(index, item) {
       delete this.fileData;
@@ -593,48 +537,288 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
-::v-deep .el-collapse-item__header.is-active {
-  background-color: #e8f6ee;
+<style scoped lang="scss">
+.comment-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
-::v-deep .el-collapse-item__content {
-  background-color: #e8f6ee;
+
+.comment-item {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
 }
-::v-deep .el-collapse > .is-active {
-  border-left: 5px solid #05994e;
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-::v-deep .el-timeline-item__node--normal {
-  width: 20px;
-  height: 20px;
-  left: -5px;
+
+.user-info {
+  display: flex;
+  align-items: center;
 }
-.user-avatar {
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.comment-time {
+  font-size: 12px;
+  color: #999;
+  margin-top: 3px;
+}
+
+.comment-status {
+  text-align: right;
+}
+
+.comment-content {
+  padding: 5px 0;
+}
+
+.comment-title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.comment-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.comment-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  color: #666;
   cursor: pointer;
+  font-size: 13px;
+  
+  &:hover {
+    color: #05994e;
+  }
+}
+
+.action-item i {
+  margin-right: 5px;
+}
+
+.like-count {
+  display: flex;
+  align-items: center;
+  color: #999;
+  font-size: 13px;
+}
+
+.like-count i {
+  margin-right: 5px;
+}
+
+.reply-section {
+  margin-top: 10px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.reply-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.reply-title {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.reply-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.reply-item {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.reply-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.reply-avatar {
   width: 30px;
   height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.reply-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.reply-username {
+  font-weight: bold;
+  font-size: 13px;
+  color: #333;
+}
+
+.reply-time {
+  font-size: 11px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.reply-content {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.no-replies {
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+  padding: 10px 0;
+}
+
+.add-reply {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px dashed #eee;
+}
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.reply-input {
+  flex-grow: 1;
+  margin-left: 10px;
+  
+  ::v-deep .el-input__inner {
+    border-radius: 20px;
+    background-color: #f5f5f5;
+  }
+}
+
+.reply-pagination {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.comment-pagination {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  
+  ::v-deep .el-pagination button, ::v-deep .el-pagination span {
+    font-size: 13px;
+  }
+  
+  ::v-deep .el-pagination .btn-prev, ::v-deep .el-pagination .btn-next {
+    background-color: #fff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    padding: 0;
+    text-align: center;
+  }
+  
+  ::v-deep .el-pagination .el-icon {
+    font-weight: bold;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px 0;
+}
+
+.empty-image {
+  height: 150px;
+  width: auto;
+}
+
+.empty-text {
+  color: #999;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+::v-deep .el-tag--mini {
+  height: 20px;
+  padding: 0 6px;
+  line-height: 18px;
   border-radius: 10px;
 }
-::v-deep .el-timeline-item__timestamp {
-  color: #17bae3;
-  font-size: 14px;
+
+/* 添加过渡动画效果 */
+.slide-fade-enter-active {
+  transition: all 0.3s ease;
 }
-::v-deep .el-timeline-item__wrapper {
-  padding-left: 20px;
+.slide-fade-leave-active {
+  transition: all 0.3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
-::v-deep .el-timeline-item {
-  padding-bottom: 0px;
-}
-.replay {
-  font-size: 14px;
-  font-weight: 400;
-  color: #565656;
-  .time {
-    font-size: 12px;
-    color: #9595a3;
-    margin-right: 10px;
-  }
-  .el-button--text {
-    color: #565656;
-  }
+.slide-fade-enter, .slide-fade-leave-to {
+  transform: translateY(-10px);
+  opacity: 0;
 }
 </style>

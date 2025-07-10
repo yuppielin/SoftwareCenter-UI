@@ -39,6 +39,7 @@
             </div>
             <div class="security-tag">
               <el-tag type="success" size="small">安防检测</el-tag>
+              
             </div>
             
             <!-- 版本号和分类信息 -->
@@ -195,35 +196,33 @@
 
     <!-- 需求提报和问题提报部分 -->
     <div style="margin: 10px 20px 0px 20px;background: #fff;min-height:300px;border-radius:8px;box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05)">
-      <el-row style="padding-top:33px;">
-        <el-col style="width:170px;height:100%;margin-right:26px">
-          <div class="version-container">
-            <div
-              v-for="(item, index) in data.versionList"
-              :key="index"
-              class="softwareVersion"
-              :class="dataVersionId==item.id?'softwareVersionActive':''"
-              @click="changeSoftwareVersion(item.id)"
-            >
-            版本{{item.version}}
-
-              <div class="dot"></div>
-            </div>
+      <div class="reviews-container">
+        <div class="reviews-header">
+          <h3 class="reviews-title">共 {{ totalDemand }} 条评论 <i class="el-icon-arrow-down"></i></h3>
+          <div class="review-actions">
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click="dialogDemandVisible = true">
+              提交需求
+            </el-button>
           </div>
-          <div class="version-left-split"></div>
-        </el-col>
-        <el-col style="width:calc(100% - 200px)">
-          <el-tabs v-model="activeName" @tab-click="handleTabClick">
-            <el-tab-pane :label="'需求提报（共 '+ totalDemand +' 条）'" name="first">
-              <SoftwareDemand :softwareInfo="data.versionData" />
-            </el-tab-pane>
+        </div>
 
-            <el-tab-pane :label="'问题提报（共 '+ total +' 条）'" name="third" v-if="data.softwareType!=1">
-              <SoftwareQuestion :softwareInfo="data.versionData" />
-            </el-tab-pane>
-          </el-tabs>
-        </el-col>
-      </el-row>
+        <div class="comment-input-area">
+          <div class="avatar-wrapper">
+            <img :src="userInfo && userInfo.avatar ? globalUrl + userInfo.avatar : require('@/assets/index/softwareDefault.png')" class="user-avatar" :onerror="defaultS" />
+          </div>
+          <div class="comment-input" @click="dialogDemandVisible = true">
+            说点什么...
+          </div>
+          
+        </div>
+
+        <div class="reviews-content">
+          <SoftwareDemand :softwareInfo="data.versionData" />
+        </div>
+      </div>
 
       <!--提报需求-->
       <el-dialog
@@ -734,13 +733,14 @@ export default {
       // this.getSoftwareDetail(this.data.versionData)
       // this.getCategoryList()
     },
-    handleTabClick(tab, event) {
+    handleTabClick(tab) {
+      this.activeName = tab.name;
       if (this.activeName == "first") {
         this.pageNumDemand = 1;
       } else {
         this.pageNum = 1;
       }
-      console.log(tab, event, this.activeName);
+      console.log(tab, this.activeName);
     },
     handleDrag() {},
     getSoftwareDetail(version) {
@@ -1327,5 +1327,145 @@ export default {
   line-height: 32px;
   color: #05994E;
   font-size: 14px;
+}
+
+/* App Store-like Reviews Section Styles */
+.reviews-container {
+  padding: 20px 30px;
+}
+
+.reviews-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.reviews-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  
+  i {
+    margin-left: 5px;
+    font-size: 14px;
+    transition: transform 0.3s;
+  }
+  
+  &:hover i {
+    transform: rotate(-180deg);
+  }
+}
+
+.reviews-tabs {
+  display: flex;
+  gap: 20px;
+}
+
+.review-tab {
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  color: #666;
+}
+
+.review-tab.active {
+  background-color: #05994E;
+  color: white;
+}
+
+.review-count {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.reviews-content {
+  padding: 10px 0;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.comment-input-area {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  border-radius: 20px;
+  padding: 10px 15px;
+}
+
+.avatar-wrapper {
+  margin-right: 10px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.comment-input {
+  flex-grow: 1;
+  color: #999;
+  cursor: pointer;
+  user-select: none;
+}
+
+.comment-tools {
+  display: flex;
+  gap: 15px;
+  color: #999;
+}
+
+.tool-icon {
+  font-size: 18px;
+  cursor: pointer;
+  
+  &:hover {
+    color: #05994E;
+  }
+}
+
+/* Styling for comment items */
+::v-deep .el-collapse-item__header {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+::v-deep .el-collapse-item__content {
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 0 0 8px 8px;
+  margin-bottom: 15px;
+}
+
+::v-deep .el-timeline-item__node {
+  background-color: #05994E;
+}
+
+::v-deep .replay {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 12px 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: 10px;
+}
+
+::v-deep .user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 </style>
