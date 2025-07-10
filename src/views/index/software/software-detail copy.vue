@@ -2,201 +2,279 @@
   <div>
     <el-card id="software-item" class="custome">
       <CloseBack>软件详情</CloseBack>
+      <!-- <el-row :gutter="10" slot="header">
+        <el-col :span="12">
+          <el-button icon="el-icon-back" type="text" @click="goBack"></el-button>
+          <span style="font-size:16px;">软件详情</span>
+          <div v-show="data.rejectMsg" style="margin-top:5px;">
+            <span style="color:red;">申请驳回:</span>
+            <span>{{data.rejectMsg}}</span>
+          </div>
+        </el-col>
+        <el-col :span="12" style="text-align:right"></el-col>
+      </el-row> -->
 
       <div>
         <div v-show="data.rejectMsg" style="margin-top:5px;">
           <span style="color:red;">申请驳回:</span>
           <span>{{data.rejectMsg}}</span>
         </div>
-        <el-row :gutter="20">
-          <!-- 左侧图片区域 -->
-          <el-col :span="6" style="text-align:center;max-width:130px;margin-right:20px">
-            <div class="software-logo">
-              <img
-                :src="data.logo?globalUrl+data.logo:defaultS"
-                :onerror="defaultS"
-                width="80px"
-                height="80px"
-                style="object-fit:cover; border-radius:12px;"
-              />
-            </div>
+        <el-row :gutter="10">
+          <el-col :span="11" style="text-align:center;max-width:600px;box-shadow:2px 2px 8px rgba(255,255,255,0.5)">
+            <el-image
+              v-if="imgList.length<=1"
+              style="width: 100%; height: 350px"
+              :src="data.pic?globalUrl+data.pic:defaultP"
+              :onerror="defaultP"
+              fit="cover"
+            />
+            <el-carousel v-else :interval="4000" height="350px" :autoplay="true">
+              <el-carousel-item v-for="(item,index) in imgList" :key="index">
+                <img
+                  :src="item.logo?logoAndPicUrl+item.logo:defaultS"
+                  :onerror="defaultS"
+                  style="width:100%;height:100%;object-fit:cover;"
+                />
+              </el-carousel-item>
+            </el-carousel>
           </el-col>
 
-          <!-- 中间信息区域 -->
-          <el-col :span="16" style="padding:0px 0 0 10px;">
-            <div class="software-title" style="overflow:hidden">
-              <div style="color:#333;font-size: 22px;float:left;font-weight:bold;margin-bottom:10px">
-                {{ data.name }}
-                <el-button 
-                  size="mini" 
-                  :type="isFavorite ? 'info' : 'success'" 
-                  class="favorite-btn"
-                  :icon="isFavorite ? 'el-icon-check' : 'el-icon-star-off'"
-                  @click="toggleFavorite">
-                  {{ isFavorite ? '已关注' : '关注' }}
-                </el-button>
-              </div>
+          <el-col :span="13" style="padding:0px 0 0 20px;">
+            <el-row :gutter="10">
+              <el-col :span="5" style="max-width:120px">
+                <div class="software-logo">
+                  <!-- <img :src="data.logo" width="60px" height="60px" /> -->
+                  <img
+                    :src="data.logo?globalUrl+data.logo:defaultS"
+                    :onerror="defaultS"
+                    width="60px"
+                    height="60px"
+                    style="object-fit:cover; border-radius:4px;"
+                  />
+                </div>
+              </el-col>
+              <el-col :span="19">
+                <div class="software-title" style="overflow:hidden">
+                  <div style="color:rgba(59,89,117,1);font-size: 20px;float:left;font-weight:500">
+                    {{ data.name }}
+                    <el-button 
+                      size="mini" 
+                      :type="isFavorite ? 'info' : 'success'" 
+                      class="favorite-btn"
+                      :icon="isFavorite ? 'el-icon-check' : 'el-icon-star-off'"
+                      @click="toggleFavorite">
+                      {{ isFavorite ? '已关注' : '关注' }}
+                    </el-button>
+                  </div>
+                  <!-- <div style="float:right;font-size:12px;color:#808080">
+                    综合应用效能：
+                    <span
+                      style="font-size:18px;color: orange;font-weight: 600"
+                    >{{ data.score }}分</span>
+                  </div>-->
+                </div>
+                <el-row>
+                  <div class="title">
+                    <span style="text-align:left;width:70px">版本号：</span>
+                    <el-select style="height:18px" v-model="dataVersionId" size="mini" @change="handleVersionChange">
+                      <el-option
+                        v-for="(version,index) in data.versionList"
+                        :key="index"
+                        :value="version.id"
+                        :label="version.version"
+                      />
+                    </el-select>
+                  </div>
+                  <!-- <div class="title" style="width:auto"><span style="text-align:left;width:70px">软件描述：</span>{{data.versionData.description}}</div> -->
+
+                </el-row>
+
+                <!-- <el-row>
+                  <div class="title" style="text-align:right">综合应用效能：<span style="font-size:18px;color: orange;font-weight: 600">0分</span> </div>
+                </el-row>-->
+              </el-col>
+            </el-row>
+            <el-row :gutter="10">
+              <el-row>
+                <div
+                  class="title"
+                >
+                  <span>软件描述：</span>
+                  
+                  {{data.versionData.description}}
+                </div>
+              </el-row>
+              <el-row>
+                <div
+                  class="title"
+                >
+                  <span>软件校验码：</span>
+                  {{ (data.versionData.md5&&data.versionData.md5!==undefined)?data.versionData.md5:null }}
+                </div>
+              </el-row>
+              <el-col :span="12">
+                <div class="title">
+                  <span>更新时间：</span>
+                  {{ parseTime(data.versionData.ctime, '{y}-{m}-{d}') }}
+                </div>
+                <div class="title">
+                 <span>提供单位：</span>
+                  {{ data.offerUnit }}
+                </div>
+                <div class="title">
+                 <span> 研制单位：</span>
+                  {{ data.devUnit }}
+                </div>
+                <!-- <div class="title" v-show="data.softwareType!=1">
+                  <span>软件评分：</span>
+                  <el-rate
+                    v-model="data.myScore/2"
+                    allow-half
+                    style="display:inline-block"
+                    @change="updateSoftwareScore"
+                  />
+                  <span >(最高10分)</span>
+                </div> -->
+                <div v-if="data.softwareType==1" class="title"><span>项目分类：</span>{{ data.category }}</div>
+                <div v-else class="title"><span>业务分类：</span>{{ data.serviceName }}</div>
+              </el-col>
+              <el-col :span="12">
+                <div class="title" v-show="data.softwareType!=1">
+                  <span>CPU架构：</span>
+                  {{ data.versionData.cpu||"——" }}
+                </div>
+                <!-- <div class="title" v-show="data.softwareType!=1">
+                  <span>开发语言：</span>
+                  {{ data.versionData.languageCate||"——" }}
+                </div> -->
+                <!-- <div class="title" v-show="data.softwareType!=1">
+                  <span>技术栈：</span>
+                  {{ data.versionData.techStackCate||"——" }}
+                </div> -->
+                <div class="title">
+                  <span> 软件大小：</span>
+                  {{ formatFileSize(data.versionData.sizes) }}
+                </div>
+                
+              </el-col>
+              <!-- <el-row>
+                <div v-if="data.softwareType==1" class="title"><span>项目分类：</span>{{ data.category }}</div>
+                <div v-else class="title"><span>业务分类：</span>{{ data.serviceName }}</div>
+              </el-row> -->
+            </el-row>
+            <!-- <div class="title" style="margin-top:0px">
+              软件描述：
+              <span>{{ data.versionData.description }}</span>
+            </div>-->
+            <div v-if="data.versionData.isUpgrade==1" class="title" style="margin-top:10px">
+              <span>升级描述：</span>
+              {{ data.versionData.upgradeDescription }}
             </div>
-            <div class="security-tag">
-              <el-tag type="success" size="small">安防检测</el-tag>
+            <div v-if="data.versionData.softwareVersionVolumes && data.versionData.softwareVersionVolumes.length>0"  class="title" style="margin-top:5px">
+              <span>软件分卷：</span>
+
+              <el-tooltip  placement="bottom" effect="light" :visible-arrow="false" popper-class="tooltipBorderClass">
+                <div slot="content">
+                  <el-table
+                  style=""
+                  :show-header="false"
+                  row-class-name="softwareVolumesRowClass"
+                  :data="data.versionData.softwareVersionVolumes">
+                        <el-table-column width="300" property="fileName" label="文件名称"></el-table-column>
+                        <el-table-column width="150" property="name" label="文件大小">
+                          <template slot-scope="scope">
+                            {{ formatFileSize(scope.row.sizes) }}
+                          </template>
+                        </el-table-column>
+                  </el-table>
+                </div>
+                <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;width: calc(100% - 5em); line-height: 12px;">
+                  <p style="font-size:14px;display:inline;margin-right:10px" v-for="(item, index) in data.versionData.softwareVersionVolumes">{{ item.fileName }}({{ formatFileSize(item.sizes) }})</p>
+                </div>
+              </el-tooltip>
             </div>
-            
-            <!-- 版本号和分类信息 -->
-            <div class="version-info">
-              <div class="info-row">
-                <div class="info-label">版本号：</div>
-                <div class="info-value">
-                  <el-select style="width:150px" v-model="dataVersionId" size="small" @change="handleVersionChange" popper-class="version-dropdown">
-                    <el-option
-                      v-for="(version,index) in data.versionList"
-                      :key="index"
-                      :value="version.id"
-                      :label="version.version"
-                    />
-                  </el-select>
+            <div style="border-top:1px solid #f0f0f0;margin:32px 0px"></div>
+            <div style="margin-left:75px">
+              <el-button
+                v-if="data.permission==1"
+                size="small"
+                title="软件下载"
+                type="primary"
+                @click="downloadSoftware(data.versionData)"
+              >软件下载</el-button>
+              <el-button
+                v-else
+                title="申请下载"
+                size="small"
+                type="primary"
+                @click="addSoftwareDownloadApply(data)"
+              >软件申请</el-button>
+              <el-button
+                size="small"
+                type="primary"
+                @click="downloadData(data.versionData)"
+                :disabled="data.permission!=1"
+              >资料下载</el-button>
+
+<!--              <el-button-->
+<!--                v-if="data.softwareType==2"-->
+<!--                size="small"-->
+<!--                type="primary"-->
+<!--                @click="pushDataDialog"-->
+<!--                -->
+<!--              >软件推送</el-button>-->
+              <div style="margin-top:32px">
+                <!-- <span v-if="softwareLogSwitch==true" style="cursor: pointer;" @click="showChangeLog">
+                  <i class="el-icon-alarm-clock"></i>
+                  更新日志
+                </span>
+                 <span v-if="softwareLogSwitch==true" style="margin-right: 30px;cursor: pointer;" @click="softwareRelationVisible=true">
+                  | 软件谱系关系
+                </span> -->
+
+                <span style="font-size: 14px;">
+                  <i class="el-icon-time"></i>
+                  {{data.ctime}}创建
+                </span>
+                <span style="margin-left: 30px; font-size: 14px;">
+                  <i class="el-icon-download"></i>
+                  {{data.downloadCon}}次下载
+                </span>
+
+                <!-- <span style="margin-left: 30px;cursor: pointer;" @click="docusignDownload(data.versionData.id,'software')">
+                  <i class="el-icon-download"></i>
+                  下载数字签名
+                </span> -->
+                <!-- <span style="margin-left: 30px;">应用效能综合评分</span> -->
+                <!-- <span style="font-size:18px;color: orange;font-weight: 600">{{ data.score }}</span>
+                <span>分</span> -->
+                <div style="margin-left: 30px;display:inline-block"  v-show="data.softwareType!=1">
+                  <span style="font-size: 14px;">应用效能综合评分</span>
+                  <el-rate
+                    :value="data.myScore/2"
+                    allow-half
+                    style="display:inline-block;font-size: 16px;"
+                    @change="updateSoftwareScore"
+                  />
+                  <!-- <span >(最高10分)</span> -->
                 </div>
               </div>
-              <div class="info-row" v-if="data.softwareType==1">
-                <div class="info-label">项目分类：</div>
-                <div class="info-value">{{ data.category }}</div>
-              </div>
-              <div class="info-row" v-else>
-                <div class="info-label">业务分类：</div>
-                <div class="info-value">{{ data.serviceName }}</div>
-              </div>
-              <div class="info-row" v-show="data.softwareType!=1">
-                <div class="info-label">CPU架构：</div>
-                <div class="info-value">{{ data.versionData.cpu||"——" }}</div>
-              </div>
             </div>
 
-            <div class="rating-area">
-              <el-rate
-                :value="data.myScore/2"
-                allow-half
-                style="display:inline-block;font-size: 16px;margin-right:10px"
-                @change="updateSoftwareScore"
-              />
-              <span style="color:#333;font-size:14px">(最高10分)</span>
-            </div>
-
-            <el-button
-              size="small"
-              title="软件下载"
-              type="primary"
-              class="download-btn"
-              @click="downloadSoftware(data.versionData)"
-              v-if="data.permission==1"
-            >软件下载</el-button>
-            <el-button
-              v-else
-              title="申请下载"
-              size="small"
-              type="primary"
-              class="download-btn"
-              @click="addSoftwareDownloadApply(data)"
-            >软件申请</el-button>
-            <el-button
-              size="small"
-              type="primary"
-              class="download-btn"
-              @click="downloadData(data.versionData)"
-              :disabled="data.permission!=1"
-            >资料下载</el-button>
-            
-        
           </el-col>
         </el-row>
-
-        <!-- 详情信息区域 -->
-        <div style="margin-top:30px">
-          <div class="detail-title">详细信息</div>
-          <el-row :gutter="20" style="margin-top:15px">
-            <el-col :span="8">
-              <div class="detail-item">
-                <div class="label">软件大小：</div>
-                <div class="value"> {{ formatFileSize(data.versionData.sizes) }}</div>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <div class="label">下载次数：</div>
-                <div class="value"> {{data.downloadCon}} 次</div>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" style="margin-top:15px">
-            <el-col :span="8">
-              <div class="detail-item">
-                <div class="label">提供单位：</div>
-                <div class="value"> {{ data.offerUnit }}</div>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <div class="label">研制单位：</div>
-                <div class="value"> {{ data.devUnit }}</div>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" style="margin-top:15px">
-            <el-col :span="8">
-              <div class="detail-item">
-                <div class="label">更新时间：</div>
-                <div class="value">2025-07-03</div>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <div class="label">软件评分：</div>
-                <div class="value"> {{ data.myScore/2 }}分</div>
-              </div>
-            </el-col>
-          </el-row>
-          
-        </div>
-
-         <!-- 软件介绍区域 -->
-         <div style="margin-top:30px">
-          <div class="detail-title">软件介绍</div>
-          <div class="app-description" style="margin-top:15px;line-height:1.6;color:#333">
-           {{data.versionData.description}}
-          </div>
-        </div>
-
-        <!-- 软件截图区域 -->
-        <div style="margin-top:30px">
-          <div class="detail-title">软件截图</div>
-          <div class="screenshot-container" style="margin-top:15px">
-            <el-col :span="11" style="text-align:center;max-width:100%;box-shadow:2px 2px 8px rgba(255,255,255,0.5)">
-              <el-image
-                v-if="imgList.length<=1"
-                style="width: 100%; height: 350px"
-                :src="data.pic?globalUrl+data.pic:defaultP"
-                :onerror="defaultP"
-                fit="cover"
-              />
-              <el-carousel v-else :interval="4000" height="350px" :autoplay="true">
-                <el-carousel-item v-for="(item,index) in imgList" :key="index">
-                  <img
-                    :src="item.logo?logoAndPicUrl+item.logo:defaultS"
-                    :onerror="defaultS"
-                    style="width:100%;height:100%;object-fit:cover;"
-                  />
-                </el-carousel-item>
-              </el-carousel>
-            </el-col>
-          </div>
-        </div>
-
-       
       </div>
-    </el-card>
 
-    <!-- 需求提报和问题提报部分 -->
-    <div style="margin: 10px 20px 0px 20px;background: #fff;min-height:300px;border-radius:8px;box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05)">
-      <el-row style="padding-top:33px;">
-        <el-col style="width:170px;height:100%;margin-right:26px">
+      <!-- <div style="background:rgba(255, 255, 255, 0.1);padding:20px;">
+        <timeline :versions="data.versionList" />
+      </div>-->
+
+      <!-- <el-divider /> -->
+
+    </el-card>
+    <div style="margin: 10px 20px 0px 20px;background: #fff;min-height:300px" >
+      <el-row  style="padding-top:33px; ">
+        <el-col  style="width:170px;height:100%;margin-right:26px">
           <div class="version-container">
             <div
               v-for="(item, index) in data.versionList"
@@ -209,18 +287,71 @@
 
               <div class="dot"></div>
             </div>
+
+
+
+            <!-- <el-button
+              style="height: 40px;"
+              :class="dataVersionId==item.id?'softwareVersionActive':'softwareVersion'"
+              @click="changeSoftwareVersion(item.id)"
+            >版本{{item.version}}</el-button>
+            <i
+              v-if="dataVersionId==item.id"
+              style="font-size: 40px;color: #05994e;"
+              class="el-icon-right"
+            /> -->
           </div>
           <div class="version-left-split"></div>
         </el-col>
-        <el-col style="width:calc(100% - 200px)">
+        <el-col  style="width:calc(100% - 200px)">
           <el-tabs v-model="activeName" @tab-click="handleTabClick">
             <el-tab-pane :label="'需求提报（共 '+ totalDemand +' 条）'" name="first">
+              <!-- <el-row v-if="activeName=='first'" style="text-align:right;margin-bottom: 10px;">
+                <el-button
+                  size="small"
+                  type="primary"
+                  style="position: absolute;right: 30px;z-index:100"
+                  @click="dialogDemandVisible=true;resetForm('demandForm')"
+                >提报需求</el-button>
+              </el-row>-->
+
+              <!-- <SoftwareDemand :data="demandList" @getSoftwareDm="getSoftwareDemand(data.id, data.versionId)" :softwareInfo="data" /> -->
               <SoftwareDemand :softwareInfo="data.versionData" />
+              <!-- <SoftwareDemand
+                v-for="(item,index) in demandList"
+                :key="index"
+                :data="item"
+                style="margin-bottom:5px;"
+              />-->
+              <!-- <el-pagination
+                style="margin-top:15px;"
+                v-if="totalDemand>0"
+                :current-page="pageNumDemand"
+                :page-size="pageSizeDemand"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="totalDemand"
+                @size-change="handleSizeChangeDemand"
+                @current-change="handleCurrentChangeDemand"
+              /> -->
             </el-tab-pane>
 
             <el-tab-pane :label="'问题提报（共 '+ total +' 条）'" name="third" v-if="data.softwareType!=1">
+
               <SoftwareQuestion :softwareInfo="data.versionData" />
+
+              <!-- <el-pagination
+                style="margin-top:15px;"
+                v-if="total>0"
+                :current-page="pageNum"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+              /> -->
             </el-tab-pane>
+
+
           </el-tabs>
         </el-col>
       </el-row>
@@ -992,110 +1123,57 @@ export default {
 <style scoped lang="scss">
 #software-item {
   font-size: 14px;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
-
+  //margin: 50px 10px 10px 10px;
+  //margin-top:40px;
   .software-logo {
-    width: 100px;
-    height: 100px;
-    border-radius: 12px;
+    // border: 1px solid lightgray;
+    width: 96px;
+    height: 96px;
+    border-radius: 4px;
     padding: 5px;
     background: #fff;
     text-align: center;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-    margin-top: 10px;
 
     img {
-      width: 90px;
-      height: 90px;
-      border-radius: 12px;
-      object-fit: cover;
+      width: 80px;
+      height: 80px;
+      margin-top: 2px;
     }
   }
 
   .el-card__body {
-    padding: 15px 20px !important;
+    padding: 10px !important;
   }
 
   span {
-    color: rgb(120, 120, 120);
-    font-size: 14px;
+    color: rgb(161, 161, 161);
+    font-size: 12px;
   }
-  
   .software-title {
     line-height: 30px;
-    color: #333;
-    font-size: 22px;
+    color: #02061F;
+    font-size: 20px;
     font-weight: 500;
   }
 
   .title {
     font-size: 15px;
+    // line-height: 24px;
     margin-top: 12px;
-    color: #555;
-    
+    color:#565656;
     &.al-left{
       text-align: left;
     }
-    
     span {
+      width: 85px;
       font-size: 14px;
+      color: rgb(161, 161, 161);
       display: inline-block;
+      text-align: right;
       margin-right: 5px;
     }
   }
-  
-  .detail-title {
-    font-size: 16px;
-    font-weight: 500;
-    color: #333;
-    position: relative;
-    padding-left: 10px;
-    border-left: 4px solid #05994E;
-    margin-bottom: 10px;
   }
-  
-  .detail-item {
-    display: flex;
-    margin-bottom: 15px;
-    
-    .label {
-      width: 80px;
-      color: #666;
-      font-size: 14px;
-    }
-    
-    .value {
-      color: #333;
-      font-size: 14px;
-      flex: 1;
-      font-weight: 500;
-    }
-  }
-  
-  .screenshot-container {
-    width: 100%;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-  }
-  
-  .app-description {
-    color: #444;
-    font-size: 14px;
-    line-height: 1.8;
-    text-align: justify;
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-  }
-  
-  .rating-area {
-    margin-top: 15px;
-    display: flex;
-    align-items: center;
-  }
-}
 </style>
 <style scoped lang="scss">
 ::v-deep .el-table {
@@ -1126,55 +1204,6 @@ export default {
   color: white;
 }
 
-::v-deep .el-rate__icon {
-  font-size: 16px;
-  color: #FFCC33 !important;
-}
-
-::v-deep .el-rate__icon.is-active {
-  color: #FFCC33 !important;
-}
-
-::v-deep .el-button--success {
-  background-color: #05994E;
-  border-color: #05994E;
-}
-
-::v-deep .el-button--info {
-  background-color: #8AB9D4;
-  border-color: #8AB9D4;
-  color: #ffffff;
-}
-
-.favorite-btn {
-  margin-left: 15px;
-  vertical-align: middle;
-  transition: all 0.3s;
-  font-size: 13px;
-  padding: 8px 15px;
-  border-radius: 4px;
-  font-weight: normal;
-  
-  &:hover {
-    opacity: 0.9;
-  }
-}
-
-.download-btn {
-  margin-top: 20px;
-  padding: 12px 30px;
-  font-size: 15px;
-  background-color: #FF6633;
-  border-color: #FF6633;
-  border-radius: 6px;
-  font-weight: 500;
-  
-  &:hover, &:focus {
-    background-color: #ff7d4a;
-    border-color: #ff7d4a;
-  }
-}
-
 .version-container{
   width: 155px;
   margin:0px auto;
@@ -1183,6 +1212,7 @@ export default {
 .softwareVersion {
   background-color: #fff;
   max-width: 90px;
+  // height: 25px;
   border-radius: 4px;
   padding: 6px 10px 6px 10px;
   text-align: left;
@@ -1215,16 +1245,18 @@ export default {
   width: 4px;
   height: 100%;
   background: rgb(243, 243, 243);
+  // float: right;
   position: absolute;
   left: 162px;
   min-height: 200px;
   z-index: 0;
 }
-
 [class^=el-icon-]{
   font-size: 12px;
 }
-
+::v-deep .el-rate__icon{
+  font-size: 12px;
+}
 ::v-deep .softwareVolumesRowClass{
   background:#FFFFFF !important;
   td{
@@ -1240,92 +1272,35 @@ export default {
   }
 }
 
-::v-deep .el-carousel {
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-::v-deep .el-carousel__item {
-  text-align: center;
-}
-
 ::v-deep .el-image {
   .el-image__inner {
     object-fit: cover !important;
-    border-radius: 8px;
-  }
-}
-.security-tag {
-  margin-bottom: 10px;
-}
-
-::v-deep .el-tag--success {
-  background-color: #f0f9eb;
-  border-color: #e1f3d8;
-  color: #05994E;
-}
-
-.version-info {
-  margin-top: 5px;
-  margin-bottom: 15px;
-  /* background-color: #f9f9f9; */
-  /* border-radius: 4px; */
-  /* padding: 10px 15px; */
-  
-  .info-row {
-    display: flex;
-    margin-bottom: 5px;
-    line-height: 32px;
-    align-items: center;
-  }
-  
-  .info-label {
-    width: 75px;
-    color: #666;
-    font-size: 14px;
-    font-weight: normal;
-    text-align: left;
-  }
-  
-  .info-value {
-    color: #333;
-    font-size: 14px;
-    font-weight: normal;
   }
 }
 
-.version-select-item {
-  .el-select {
-    width: 180px;
-  }
+::v-deep .el-button--success {
+  background-color: #05994E;
+  border-color: #05994E;
 }
 
-::v-deep .version-dropdown {
+::v-deep .el-button--info {
+  background-color: #8AB9D4;
+  border-color: #8AB9D4;
+  color: #ffffff;
+}
+
+.favorite-btn {
+  margin-left: 15px;
+  vertical-align: middle;
+  transition: all 0.3s;
+  font-size: 13px;
+  padding: 8px 15px;
   border-radius: 4px;
+  font-weight: normal;
   
-  .el-select-dropdown__item {
-    padding: 0 15px;
-    font-size: 14px;
+  &:hover {
+    opacity: 0.9;
   }
 }
 
-::v-deep .el-select .el-input__inner {
-  border-radius: 4px;
-  height: 32px;
-  line-height: 32px;
-  padding-right: 30px;
-  border-color: #DCDFE6;
-  background-color: white;
-  color: #333;
-}
-
-::v-deep .el-select .el-input__suffix {
-  right: 5px;
-}
-
-::v-deep .el-select .el-input__icon {
-  line-height: 32px;
-  color: #05994E;
-  font-size: 14px;
-}
 </style>
