@@ -7,7 +7,7 @@
             <img :src="require('@/assets/index/softwareDefault.png')" class="avatar" />
             <div class="user-meta">
               <div class="username">{{ item.realname }}</div>
-              <div class="comment-time">{{ item.ctime | parseTime('{y}-{m}-{d}') }} · {{ item.softwareVersion }}</div>
+              <div class="comment-time">{{ item.ctime | parseTime('{y}-{m}-{d}') }} · v{{ item.softwareVersion }}</div>
             </div>
           </div>
           <div class="comment-status">
@@ -17,16 +17,22 @@
           </div>
         </div>
         <div class="comment-content">
-          <div class="comment-title">{{ item.title }}</div>
+          <div class="comment-title">
+            {{ item.title }}
+            <!-- 添加需求类型标签 -->
+            <span class="type-tag" :class="getDemandTypeStyle(item.category)">
+              {{ getDemandTypeName(item.category) }}
+            </span>
+          </div>
           <div class="comment-text">{{ item.description }}</div>
         </div>
         <div class="comment-actions">
           <div class="action-item" @click="replyDemandFunction(item)">
             <i class="el-icon-chat-line-square"></i> 回复 ({{ item.replyTotal }})
           </div>
-          <div class="like-count">
+          <!-- <div class="like-count">
             <i class="el-icon-star-off"></i> {{ Math.floor(Math.random() * 100) }}
-          </div>
+          </div> -->
         </div>
         
         <!-- 回复区域 -->
@@ -142,6 +148,43 @@
             </div>
           </el-upload>
         </el-form-item>
+        <el-table
+          v-if="tsDataVoList.length>0"
+          :data="tsDataVoList"
+          size="mini"
+          style="margin:10px;"
+        >
+          <el-table-column min-width="200px" label="资料名称">
+            <template slot-scope="{row}">
+              <template>
+                <el-input v-model="row.name" class="edit-input" size="small" />
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" header-align="center" label="资料类型" prop="category">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.typeId" size="small" style="width:80%">
+                <el-option
+                  :label="item.name"
+                  :value="item.id"
+                  v-for="(item,index) in typeData"
+                  :key="index"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="操作" width="80">
+            <template slot-scope="scope">
+              <el-button
+                type="text"
+                size="small"
+                style="color:red;"
+                @click="handleRemoveDataFile(scope.$index, scope.row)"
+              >删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-form>
       <span slot="footer">
         <el-button size="small" type="primary" @click="addAnswer()">确定</el-button>
@@ -264,7 +307,12 @@ export default {
       totalDemand: 0,
       totalPageDemand: 0,
       pageNumDemand: 1,
-      pageSizeDemand: 5
+      pageSizeDemand: 5,
+      
+      // 新增附件上传相关数据
+      fileData: {},
+      tsDataVoList: [],
+      fileList: []
     };
   },
   watch: {
@@ -476,32 +524,83 @@ export default {
       this.replyDemandPage.pageNum = current;
       this.getDemandReply(this.replyDemandItem.id);
     },
+    // 新增文件上传相关方法
+    async uploadFile(param) {
+      this.fileData = param.file;
+      let peixunId = 0
+      if(this.typeData.length>0){
+        for(let i=0;i<this.typeData.length;i++){
+          if(this.typeData[i].name == "培训材料"){
+            peixunId = this.typeData[i].id
+          }
+        }
+      }
+      this.tsDataVoList = [
+        {
+          name: param.file.name,
+          typeId: peixunId,
+          typeName: "培训材料"
+        }
+      ];
+    },
+    
+    handleRemoveDataFile(index, item) {
+      delete this.fileData;
+      this.tsDataVoList.splice(index, 1);
+    },
+    
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    
+    handleSuccess() {},
+    
+    beforeUpload() {},
+    
+    handleChangeFile(file, fileList) {
+      this.fileList = [file];
+    },
+    
     //处理需求
     addAnswer() {
-      // console.log(this.replyDemandItem);
       this.$refs.replyFormRef.validate(valid => {
         if (valid) {
-          // debugger;
           if(!this.demandList[this.selectedDemand]) {
             this.$message.info("请选择需要回复的需求");
             return false;
           }
 
-          const data = {
-            demandId: this.demandList[this.selectedDemand].id,
-            description: this.replyForm.replyInfo,
-            uid: this.userInfo.userId,
-            pid: this.demandList[this.selectedDemand].pid
-          };
-          demand.addAnswer(data).then(response => {
+          // 使用FormData来处理文件上传
+          let formData = new FormData();
+          formData.append("demandId", this.demandList[this.selectedDemand].id);
+          formData.append("description", this.replyForm.replyInfo);
+          formData.append("uid", this.userInfo.userId);
+          formData.append("pid", this.demandList[this.selectedDemand].pid || 0);
+          
+          // 添加文件上传逻辑
+          if (this.fileData) {
+            formData.append("files", this.fileData);
+          }
+          
+          // 添加附件类型信息
+          if (this.tsDataVoList.length > 0) {
+            this.tsDataVoList.forEach((obj, index) => {
+              for (var item in obj) {
+                formData.append("tsDataVoList[" + index + "]." + item, obj[item]);
+              }
+            });
+          }
+          
+          demand.addAnswer(formData).then(response => {
             if (response.code == 200) {
               this.$message.success("回复成功！！");
-              // this.getDemandQuery();
+              // 重置表单和文件列表
               this.replyForm.replyInfo = "";
+              this.fileData = {};
+              this.tsDataVoList = [];
+              this.fileList = [];
               this.replyVisible = false;
-              // this.$emit("getSoftwareDm");
               this.getSoftwareDemand();
-              // window.location.reload()
             }
           });
         } else {
@@ -510,6 +609,19 @@ export default {
         }
       });
     },
+    
+    // 清空对话框内容
+    clearDialog() {
+      this.demandForm = {
+        title: "",
+        type: null,
+        description: ""
+      };
+      this.fileData = {};
+      this.tsDataVoList = [];
+      this.fileList = [];
+    },
+    
     /**
      * 分页大小改变事件
      * @param val pageSize大小
@@ -534,6 +646,51 @@ export default {
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
+    
+    /**
+     * 获取需求类型名称
+     */
+    getDemandTypeName(categoryId) {
+      // 根据类型ID返回对应的类型名称
+      if (!categoryId) return '未分类';
+      
+      // 查找类型名称
+      const category = this.typeData.find(item => item.id === categoryId);
+      if (category) {
+        return category.name;
+      }
+      
+      // // 根据ID范围判断类型
+      // if (categoryId >= 1 && categoryId <= 10) {
+      //   return '软件问题';
+      // } else if (categoryId >= 11 && categoryId <= 20) {
+      //   return '软件需求';
+      // } else if (categoryId >= 21 && categoryId <= 30) {
+      //   return '软件建议';
+      // }
+      
+      // return '其他';
+    },
+    
+    /**
+     * 获取需求类型样式
+     */
+    getDemandTypeStyle(categoryId) {
+      // 根据类型返回对应的标签样式
+      console.log(categoryId, "xxxxxxxcategoryId");
+      if (!categoryId) return 'info';
+      
+      // 根据ID范围判断类型
+      if (categoryId === 773) {
+        return 'danger'; // 软件问题用红色
+      } else if (categoryId === 40) {
+        return 'primary'; // 软件需求用蓝色
+      } else if (categoryId === 61) {
+        return ''; // 软件建议用默认色
+      }
+      
+      return 'info';
+    },
   }
 };
 </script>
@@ -542,14 +699,14 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
 
 .comment-item {
   background-color: #fff;
   border-radius: 10px;
   padding: 15px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -595,6 +752,9 @@ export default {
 
 .comment-status {
   text-align: right;
+  display: flex;
+  gap: 5px;
+  align-items: center;
 }
 
 .comment-content {
@@ -604,8 +764,43 @@ export default {
 .comment-title {
   font-weight: bold;
   font-size: 16px;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.type-tag {
+  font-weight: normal;
+  background-color: #f5f5f5;
+  color: #666;
+  border: 1px solid #e8e8e8;
+  margin-left: 8px;
+  height: 20px;
+  line-height: 18px;
+  padding: 0 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  display: inline-block;
+  
+  &.danger {
+    background-color: #fff1f0;
+    color: #f56c6c;
+    border-color: #fbc4c4;
+  }
+  
+  &.primary {
+    background-color: #ecf5ff;
+    color: #409eff;
+    border-color: #b3d8ff;
+  }
+  
+  &.info {
+    background-color: #f4f4f5;
+    color: #909399;
+    border-color: #d3d4d6;
+  }
 }
 
 .comment-text {

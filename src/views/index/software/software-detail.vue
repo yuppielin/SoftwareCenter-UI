@@ -198,7 +198,7 @@
     <div style="margin: 10px 20px 0px 20px;background: #fff;min-height:300px;border-radius:8px;box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05)">
       <div class="reviews-container">
         <div class="reviews-header">
-          <h3 class="reviews-title">共 {{ totalDemand }} 条评论 <i class="el-icon-arrow-down"></i></h3>
+          <h3 class="reviews-title">全部回复 ({{ totalDemand }})</h3>
           <div class="review-actions">
             <el-button 
               type="primary" 
@@ -1400,6 +1400,7 @@ export default {
   background-color: #f5f5f5;
   border-radius: 20px;
   padding: 10px 15px;
+  border: 1px solid #eee;
 }
 
 .avatar-wrapper {
@@ -1418,6 +1419,7 @@ export default {
   color: #999;
   cursor: pointer;
   user-select: none;
+  font-size: 14px;
 }
 
 .comment-tools {
