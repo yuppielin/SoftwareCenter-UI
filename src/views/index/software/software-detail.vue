@@ -110,51 +110,34 @@
         </el-row>
 
         <!-- 详情信息区域 -->
-        <div style="margin-top:30px">
+        <div style="margin-top:30px" class="details-section">
           <div class="detail-title">详细信息</div>
-          <el-row :gutter="20" style="margin-top:15px">
-            <el-col :span="8">
-              <div class="detail-item">
-                <div class="label">软件大小：</div>
-                <div class="value"> {{ formatFileSize(data.versionData.sizes) }}</div>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <div class="label">下载次数：</div>
-                <div class="value"> {{data.downloadCon}} 次</div>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" style="margin-top:15px">
-            <el-col :span="8">
-              <div class="detail-item">
-                <div class="label">提供单位：</div>
-                <div class="value"> {{ data.offerUnit }}</div>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <div class="label">研制单位：</div>
-                <div class="value"> {{ data.devUnit }}</div>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" style="margin-top:15px">
-            <el-col :span="8">
-              <div class="detail-item">
-                <div class="label">更新时间：</div>
-                <div class="value">2025-07-03</div>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <div class="label">软件评分：</div>
-                <div class="value"> {{ data.myScore/2 }}分</div>
-              </div>
-            </el-col>
-          </el-row>
-          
+          <div class="details-grid">
+            <div class="detail-item">
+              <div class="label">软件大小：</div>
+              <div class="value">{{ formatFileSize(data.versionData.sizes) }}</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">下载次数：</div>
+              <div class="value">{{data.downloadCon}} 次</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">提供单位：</div>
+              <div class="value">{{ data.offerUnit }}</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">研制单位：</div>
+              <div class="value">{{ data.devUnit }}</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">更新时间：</div>
+              <div class="value">2025-07-03</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">软件评分：</div>
+              <div class="value">{{ data.myScore/2 }}分</div>
+            </div>
+          </div>
         </div>
 
          <!-- 软件介绍区域 -->
@@ -169,7 +152,7 @@
         <div style="margin-top:30px">
           <div class="detail-title">软件截图</div>
           <div class="screenshot-container" style="margin-top:15px">
-            <el-col :span="11" style="text-align:center;max-width:100%;box-shadow:2px 2px 8px rgba(255,255,255,0.5)">
+            <el-col :span="24" style="text-align:center;max-width:100%;box-shadow:2px 2px 8px rgba(255,255,255,0.5)">
               <el-image
                 v-if="imgList.length<=1"
                 style="width: 100%; height: 350px"
@@ -180,9 +163,9 @@
               <el-carousel v-else :interval="4000" height="350px" :autoplay="true">
                 <el-carousel-item v-for="(item,index) in imgList" :key="index">
                   <img
-                    :src="item.logo?logoAndPicUrl+item.logo:defaultS"
+                    :src="item.logo"
                     :onerror="defaultS"
-                    style="width:100%;height:100%;object-fit:cover;"
+                    style="width:100%;height:100%;object-fit:contain;"
                   />
                 </el-carousel-item>
               </el-carousel>
@@ -488,7 +471,9 @@ export default {
       softPushAddress:'',
       softPushAddressValue:'',
       imgList: [
-        // require('@/assets/imgs/banner.png'),
+        { logo: require('@/assets/index/header1.png') },
+        { logo: require('@/assets/index/banner.png') },
+        { logo: require('@/assets/code.png') }
       ],
       typeData: [],
       dataVersionId: null,
@@ -1052,17 +1037,30 @@ export default {
     position: relative;
     padding-left: 10px;
     border-left: 4px solid #05994E;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .details-section {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
   
   .detail-item {
     display: flex;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     
     .label {
       width: 80px;
       color: #666;
       font-size: 14px;
+      white-space: nowrap;
     }
     
     .value {
