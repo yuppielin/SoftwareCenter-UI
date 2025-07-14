@@ -30,9 +30,10 @@
           <div class="action-item" @click="replyDemandFunction(item)">
             <i class="el-icon-chat-line-square"></i> 回复 ({{ item.replyTotal }})
           </div>
-          <!-- <div class="like-count">
-            <i class="el-icon-star-off"></i> {{ Math.floor(Math.random() * 100) }}
-          </div> -->
+          <div class="action-item" @click="toggleFavorite(item)">
+            <i :class="item.isFavorite ? 'el-icon-star-on favorite-active' : 'el-icon-star-off'"></i> 
+            {{ item.isFavorite ? '已关注' : '关注' }}
+          </div>
         </div>
         
         <!-- 回复区域 -->
@@ -267,6 +268,7 @@
 import elDragDialog from "@/directive/el-drag-dialog";
 // import * as appConfig from "/public/config";
 import * as demand from "@/api/demand";
+import { collectDemand, cancelCollectDemand, isCollectDemand } from "@/api/demand";
 import * as category from "@/api/category";
 import * as ts from "@/api/ts";
 import * as devunit from "@/api/devunit";
@@ -346,11 +348,54 @@ export default {
     //   this.replyDemandFunction(this.demandList[0]);
     // }
     this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    
     this.getCategoryList();
     this.getDataCategoryList();
     this.avatar = appConfig.config.urlFilePrefix + this.userInfo.avatar;
   },
   methods: {
+    /**
+     * 切换关注状态
+     */
+    toggleFavorite(item) {
+      // 如果没有isFavorite属性，先初始化
+      if (typeof item.isFavorite === 'undefined') {
+        this.$set(item, 'isFavorite', false);
+      }
+      
+      // 根据当前状态调用相应的API
+      if (!item.isFavorite) {
+        // 调用关注API
+        collectDemand(item.id, this.userInfo.userId).then(response => {
+          if (response.code === 200) {
+            // 更新状态
+            this.$set(item, 'isFavorite', true);
+            this.$message.success('关注成功');
+          } else {
+            this.$message.error('关注失败：' + response.msg);
+          }
+        }).catch(error => {
+          // this.$message.error('关注失败，请稍后重试');
+        });
+      } else {
+        // 调用取消关注API
+        cancelCollectDemand(item.id, this.userInfo.userId).then(response => {
+          if (response.code === 200) {
+            // 更新状态
+            this.$set(item, 'isFavorite', false);
+            this.$message.info('已取消关注');
+          } else {
+            this.$message.error('取消关注失败：' + response.msg);
+          }
+        }).catch(error => {
+          console.error('取消关注请求失败', error);
+          this.$message.error('取消关注失败，请稍后重试');
+        });
+      }
+    },
+    
+
+    
     getCategoryList() {
       category.getCategoryList("demand_cate", null, null).then(response => {
         if (response.code === 200) {
@@ -447,10 +492,27 @@ export default {
           this.pageNumDemand,
           this.pageSizeDemand
         )
-        .then(response => {
+        .then(async response => {
           if (response.code === 200) {
             this.demandList = response.data.list;
             this.totalDemand = response.data.total;
+            
+            // 为每个需求项查询关注状态
+            if (this.demandList && this.demandList.length > 0 && this.userInfo) {
+              for (let i = 0; i < this.demandList.length; i++) {
+                const item = this.demandList[i];
+                try {
+                  // 调用isCollectDemand API判断是否关注
+                  const collectResponse = await isCollectDemand(item.id, this.userInfo.userId);
+                  if (collectResponse.code === 200) {
+                    // 根据返回结果设置关注状态
+                    this.$set(item, 'isFavorite', collectResponse.data === true);
+                  }
+                } catch (error) {
+                  console.error('获取需求关注状态失败', error);
+                }
+              }
+            }
           }
         });
     },
@@ -760,7 +822,7 @@ export default {
       } else if (categoryId === 40) {
         return 'primary'; // 软件需求用蓝色
       } else if (categoryId === 61) {
-        return ''; // 软件建议用默认色
+        return 'warning'; // 软件建议用黄色
       }
       
       return 'info';
@@ -870,6 +932,12 @@ export default {
     border-color: #b3d8ff;
   }
   
+  &.warning {
+    background-color: #fdf6ec;
+    color: #e6a23c;
+    border-color: #f5dab1;
+  }
+  
   &.info {
     background-color: #f4f4f5;
     color: #909399;
@@ -897,9 +965,14 @@ export default {
   color: #666;
   cursor: pointer;
   font-size: 13px;
+  margin-right: 15px;
   
   &:hover {
     color: #05994e;
+  }
+  
+  .favorite-active {
+    color: #f7ba2a;
   }
 }
 

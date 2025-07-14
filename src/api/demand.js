@@ -16,7 +16,7 @@ export function getSoftwareDemand(softwareId, versionId, pageNum, pageSize) {
     params: { softwareId, versionId, pageNum, pageSize }
   })
 }
-export function getDemandQuery(uid,keyword,status,pageNum,pageSize,zbStatus) {
+export function getDemandQuery(uid,keyword,status,pageNum,pageSize,zbStatus,category) {
   return request({
     url: '/software/demand/query',
     method: 'get',
@@ -26,7 +26,8 @@ export function getDemandQuery(uid,keyword,status,pageNum,pageSize,zbStatus) {
       status:status,
       pageNum:pageNum,
       pageSize: pageSize,
-      zbStatus:zbStatus
+      zbStatus:zbStatus,
+      category:category
     }
   })
 }
@@ -125,6 +126,18 @@ export function finishDemand(demandId, uid)  {
   })
 }
 
+//判断当前用户是否关注过该需求
+export function isCollectDemand(demandId, uid)  {
+  return request({
+    url: '/software/demand/isCollect',
+    method: 'get',
+    params:{
+      demandId:demandId,
+      uid:uid
+    }
+  })
+}
+
 export function collectDemand(demandId, uid)  {
   return request({
     url: '/software/demand/collect',
@@ -143,6 +156,18 @@ export function cancelCollectDemand(demandId, uid)  {
     params:{
       demandId:demandId,
       uid:uid
+    }
+  })
+}
+
+export function queryCollectDemand(uid, pageNum, pageSize) {
+  return request({
+    url: '/software/demand/queryCollect',
+    method: 'get',
+    params: {
+      uid: uid,
+      pageNum: pageNum,
+      pageSize: pageSize
     }
   })
 }
@@ -169,7 +194,7 @@ export function deleteDemandReply(reply_id) {
   })
 }
 
-export function queryBySoftwareUid(uid, keyword, status, pageNum, pageSize, zbStatus) {
+export function queryBySoftwareUid(uid, keyword, status, pageNum, pageSize, zbStatus, category) {
   return request({
     url: '/software/demand/queryBySoftwareUid',
     method: 'get',
@@ -179,12 +204,13 @@ export function queryBySoftwareUid(uid, keyword, status, pageNum, pageSize, zbSt
       status:status,
       pageNum:pageNum,
       pageSize:pageSize,
-      zbStatus:zbStatus
+      zbStatus:zbStatus,
+      category:category
      }
   })
 }
 
-export function queryBySoftwareList(keyword, status, pageNum, pageSize, zbStatus) {
+export function queryBySoftwareList(keyword, status, pageNum, pageSize, zbStatus, category) {
   return request({
     url: '/software/demand/queryBySoftwareList',
     method: 'get',
@@ -193,7 +219,8 @@ export function queryBySoftwareList(keyword, status, pageNum, pageSize, zbStatus
       status:status,
       pageNum:pageNum,
       pageSize:pageSize,
-      zbStatus:zbStatus
+      zbStatus:zbStatus,
+      category:category
      }
   })
 }

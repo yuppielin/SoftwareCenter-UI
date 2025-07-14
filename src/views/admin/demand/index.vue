@@ -43,17 +43,17 @@
       <el-tab-pane name="first" label="新增需求">
         <div style="margin-bottom:10px;">
           <el-row :gutter="10">
-            <el-col :span="12" style="text-align:left">
+            <el-col :span="10" style="text-align:left">
               <!-- <el-button v-show="userType=='admin'||userType=='XTUser'" size="small" style="color:white;background:#1e7d34;border:0" icon="el-icon-edit-outline" type="warning" @click="demandCF">需求拆分</el-button>
               <el-button v-show="userType=='admin'||userType=='XTUser'" size="small" style="color:white;background:#1e7d34;border:0" icon="el-icon-edit-outline" type="warning" @click="demandZB">需求整编</el-button> -->
-              <el-button size="small" type="primary" icon="el-icon-upload2" style="background: #1e7d34;border:0;height:32px" @click="dialogVisible=true" :style="{'margin-left':userType=='admin'||userType=='XTUser'?'':0}">需求导入</el-button>
+              <!-- <el-button size="small" type="primary" icon="el-icon-upload2" style="background: #1e7d34;border:0;height:32px" @click="dialogVisible=true" :style="{'margin-left':userType=='admin'||userType=='XTUser'?'':0}">需求导入</el-button> -->
               <el-button :loading="loadingExport" size="small" type="primary" icon="el-icon-download" style="background: #1e7d34;border:0;height:32px" @click="exportDemand">需求导出</el-button>
             </el-col>
-            <el-col :span="12" style="text-align:right">
+            <el-col :span="14" style="text-align:right">
               <el-select
                 v-model="search.status"
                 size="small"
-                style="width:200px;"
+                style="width:120px;"
                 placeholder="需求状态"
                 filterable
                 remote
@@ -63,7 +63,23 @@
                 <el-option label="处理中" value="1" />
                 <el-option label="未解决" value="0" />
               </el-select>
-              <el-input v-model="search.keyword" size="small"  style="width:200px;margin-left:10px;" placeholder="关键字" />
+              <el-select
+                v-model="search.category"
+                size="small"
+                style="width:120px;margin-left:10px;"
+                placeholder="需求类型"
+                filterable
+                remote
+                reserve-keyword
+              >
+                <el-option 
+                  v-for="item in typeData" 
+                  :key="item.id" 
+                  :label="item.name" 
+                  :value="item.id" 
+                />
+              </el-select>
+              <el-input v-model="search.keyword" size="small" style="width:150px;margin-left:10px;" placeholder="关键字" />
               <el-button icon="el-icon-search" size="small" type="primary" style="margin-left:10px;background:#1e7d34;border:0;height:32px" @click="searchDemand">查询</el-button>
               <el-button size="small" type="reset" style="background:#1e7d34;color:white;border:0" @click="resetSearch">重置</el-button>
             </el-col>
@@ -71,27 +87,38 @@
         </div>
         <el-table :data="demandData" size="mini" stripe :header-cell-style="{background:'#2BB56E',height:'30px'}" style="height:calc(100vh - 310px);overflow-y: auto;">
           <el-table-column width="55" type="index" align="center" label="序号" />
-          <el-table-column label="需求标题" header-align="center" prop="title" show-overflow-tooltip />
-          <el-table-column label="软件名称" header-align="center" show-overflow-tooltip>
+          <el-table-column align="center" label="需求标题" header-align="center" prop="title" show-overflow-tooltip />
+          <el-table-column align="center" label="软件名称" header-align="center" show-overflow-tooltip width="150">
             <template slot-scope="{row}">
               <span style="color:rgb(8, 151, 151)">
                 {{ row.softwareName }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="软件版本" align="center" show-overflow-tooltip>
+          <el-table-column label="软件版本" align="center" show-overflow-tooltip width="120">
             <template slot-scope="{row}">
               {{ row.softwareVersion }}
             </template>
           </el-table-column>
-          <el-table-column align="center" show-overflow-tooltip label="提报人" prop="realname" />
+          <el-table-column align="center" show-overflow-tooltip label="需求类型" width="80">
+            <template slot-scope="{row}">
+              <el-tag 
+                :type="getTagType(row.category)" 
+                size="mini"
+                effect="plain">
+                {{ getCategoryName(row.category) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" show-overflow-tooltip label="提报人" prop="realname" width="120"/>
           <el-table-column align="center" show-overflow-tooltip label="提报单位" prop="company" />
-          <el-table-column align="center" show-overflow-tooltip label="提报时间" prop="ctime">
+          <el-table-column align="center" show-overflow-tooltip label="提报时间" prop="ctime" width="120">
             <template  slot-scope="{row}">
               {{ row.ctime | parseTime('{y}-{m}-{d}') }}
             </template>
           </el-table-column>
-          <el-table-column align="center" show-overflow-tooltip label="状态" width="100">
+          
+          <el-table-column align="center" show-overflow-tooltip label="状态" width="80">
             <template slot-scope="{row}">
               <div style="display: flex;align-items: center;justify-content: center;">
                 <div class="table-data-status-green" v-if="row.status==2" >已解决</div>
@@ -100,7 +127,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="操作" width="160">
+          <el-table-column align="center" label="操作" width="120">
             <template slot-scope="{row}">
               <el-button icon="el-icon-view" size="mini" title="查看" @click="showInfo(row)" type="primary" style="background:#1e7d34;border:0" circle></el-button>
               <el-button icon="el-icon-close" size="mini" title="删除" @click="deleteDemand(row)" style="background:#F56C6C;border:0;color:white" circle></el-button>
@@ -222,6 +249,7 @@ import axios from 'axios'
 import { Col } from 'element-ui'
 import download from 'download-1.4.7'
 import  * as devunit from "@/api/devunit"
+import * as category from '@/api/category'
 export default {
   directives: { elDragDialog },
   data() {
@@ -242,7 +270,8 @@ export default {
       dialogVisible: false,
       search: {
         keyword: '',
-        status: ''
+        status: '',
+        category: ''
       },
       demandForm: {
         softwareId: '',
@@ -259,12 +288,14 @@ export default {
       loadingExport: false,
       deletePic: require('@/assets/picture/delete.jpg'),
       devUnit: [],
-      judgeFileList: []
+      judgeFileList: [],
+      typeData: [] // 需求类型列表
     }
   },
   mounted() {
     this.userInfo = JSON.parse(localStorage.getItem('userInfo'))
     this.getDevUnit()
+    this.getCategoryList() // 获取需求类型列表
     this.getDemandQuery()
     this.userType = localStorage.getItem('userType')
   },
@@ -319,6 +350,33 @@ export default {
           console.log(this.devUnit,"this.devUnit")
         }
       })
+    },
+    // 获取需求类型列表
+    getCategoryList() {
+      category.getCategoryList("demand_cate", null, null).then(response => {
+        if (response.code === 200) {
+          this.typeData = response.data.list
+        }
+      })
+    },
+    // 获取需求类型名称
+    getCategoryName(categoryId) {
+      if (!categoryId || !this.typeData.length) return '';
+      const category = this.typeData.find(item => item.id === categoryId);
+      return category ? category.name : '';
+    },
+    // 根据需求类型获取标签类型
+    getTagType(categoryId) {
+      if (!categoryId || !this.typeData.length) return '';
+      const category = this.typeData.find(item => item.id === categoryId);
+      if (!category) return '';
+      
+      // 根据类型名称返回不同的标签类型
+      const name = category.name;
+      if (name.includes('需求')) return 'primary'; // 蓝色
+      if (name.includes('问题')) return 'danger';  // 红色
+      if (name.includes('建议')) return 'warning'; // 黄色
+      return 'info'; // 默认灰色
     },
     returnDevUnit(item) {
       let num = Number(item)
@@ -386,7 +444,7 @@ export default {
         tabStatus = 1
       }
       if (localStorage.getItem('userType') == 'admin') {
-        demand.getDemandQuery(userId, this.search.keyword, this.search.status, currentPage, this.pageSize, tabStatus).then(response => {
+        demand.getDemandQuery(userId, this.search.keyword, this.search.status, currentPage, this.pageSize, tabStatus, this.search.category).then(response => {
           const demandList = JSON.parse(JSON.stringify(response.data.list))
           this.demandData = []
           for (let i = 0; i < demandList.length; i++) {
@@ -400,20 +458,7 @@ export default {
           this.pageTotal = response.data.total
         })
       } else if (localStorage.getItem('userType') == 'XTUser') {
-        // demand.queryBySoftwareList(this.search.keyword, this.search.status, currentPage, this.pageSize, tabStatus).then(response => {
-        //   const demandList = JSON.parse(JSON.stringify(response.data.list))
-        //   this.demandData = []
-        //   for (let i = 0; i < demandList.length; i++) {
-        //     const item = demandList[i]
-        //     if (item.zbIds != null) {
-        //       item.zbIds = item.zbIds.split(',')
-        //     }
-        //     this.demandData.push(item)
-        //   }
-        //   console.log(this.demandData, 'this.demandData')
-        //   this.pageTotal = response.data.total
-        // })
-        demand.getDemandQuery(userId, this.search.keyword, this.search.status, currentPage, this.pageSize, tabStatus).then(response => {
+        demand.getDemandQuery(userId, this.search.keyword, this.search.status, currentPage, this.pageSize, tabStatus, this.search.category).then(response => {
           const demandList = JSON.parse(JSON.stringify(response.data.list))
           this.demandData = []
           for (let i = 0; i < demandList.length; i++) {
@@ -429,7 +474,7 @@ export default {
       } else {
         console.log('aaa')
         userId = this.userInfo.userId
-        demand.queryBySoftwareUid(userId, this.search.keyword, this.search.status, currentPage, this.pageSize, tabStatus).then(response => {
+        demand.queryBySoftwareUid(userId, this.search.keyword, this.search.status, currentPage, this.pageSize, tabStatus, this.search.category).then(response => {
           const demandList = JSON.parse(JSON.stringify(response.data.list))
           this.demandData = []
           for (let i = 0; i < demandList.length; i++) {
@@ -448,6 +493,7 @@ export default {
     resetSearch() {
       this.search.keyword = ''
       this.search.status = ''
+      this.search.category = ''
       this.currentPage = 1
       this.getDemandList(this.currentPage)
     },
