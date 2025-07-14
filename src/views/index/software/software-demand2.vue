@@ -381,10 +381,13 @@ export default {
             this.demandList = response.data.list;
             this.totalDemand = response.data.total;
             console.log(this.demandList, "demandList");
-            if (this.demandList.length > 0) {
-              this.replyDemandFunction(this.demandList[this.selectedDemand]);
-            }else{
+            // 不自动选中第一个需求
+            // if (this.demandList.length > 0) {
+            //   this.replyDemandFunction(this.demandList[this.selectedDemand]);
+            // }
+            if (!this.demandList.length) {
               this.replyList = []; // 重置需求回复项
+              this.replyDemandItem = null;
             }
           }
         });
@@ -483,6 +486,12 @@ export default {
           let result = response.data;
           console.log("API返回数据结构:", result); // 添加日志，查看API返回的数据结构
           this.replyDemandPage.total = result.answerTotal;
+          
+          // 更新当前选中需求的回复数量
+          if (this.replyDemandItem && this.replyDemandItem.id === demandId) {
+            this.replyDemandItem.replyTotal = result.answerTotal;
+          }
+          
           // 计算总页数
           this.replyDemandPage.totalPage = Math.ceil(result.answerTotal / this.replyDemandPage.pageSize) || 0;
           this.replyDemandPage.pageNum = this.replyDemandPage.pageNum || 1;
@@ -556,6 +565,10 @@ export default {
       });
     },
     showDemandReply() {
+      if (!this.replyDemandItem) {
+        this.$message.info("请先选择一个需求进行回复");
+        return;
+      }
       this.replyVisible = true;
     },
     answerHandleCurrent(current) {
@@ -603,17 +616,17 @@ export default {
     addAnswer() {
       this.$refs.replyFormRef.validate(valid => {
         if (valid) {
-          if(!this.demandList[this.selectedDemand]) {
+          if(!this.replyDemandItem) {
             this.$message.info("请选择需要回复的需求");
             return false;
           }
 
           // 使用FormData来处理文件上传
           let formData = new FormData();
-          formData.append("demandId", this.demandList[this.selectedDemand].id);
+          formData.append("demandId", this.replyDemandItem.id);
           formData.append("description", this.replyForm.replyInfo);
           formData.append("uid", this.userInfo.userId);
-          formData.append("pid", this.demandList[this.selectedDemand].pid || 0);
+          formData.append("pid", this.replyDemandItem.pid || 0);
           
           // 添加文件上传逻辑
           if (this.fileData) {
@@ -638,7 +651,14 @@ export default {
               this.tsDataVoList = [];
               this.fileList = [];
               this.replyVisible = false;
-              this.getSoftwareDemand();
+              
+              // 只刷新当前需求的回复列表，而不是整个需求列表
+              if (this.replyDemandItem) {
+                this.getDemandReply(this.replyDemandItem.id);
+              }
+              
+              // 更新需求列表以更新回复数量显示
+              this.getDemandList();
             }
           });
         } else {
