@@ -590,7 +590,6 @@ export default {
       ts.getSupportAnswer(params).then(response => {
         if (response.code === 200) {
           let result = response.data;
-          console.log(result, 999);
           this.softwareQuestionAnswers = [];
           if (result.data.list.length > 0) {
             result.data.list.forEach(item => {

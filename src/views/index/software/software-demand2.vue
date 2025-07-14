@@ -49,10 +49,22 @@
                     <img :src="require('@/assets/index/softwareDefault.png')" class="reply-avatar" />
                     <div class="reply-user-info">
                       <div class="reply-username">{{ replyItem.realname }}</div>
-                      <div class="reply-time">{{ replyItem.cTime | parseTime('{y}-{m}-{d}') }}</div>
+                      <div class="reply-time">{{ replyItem.ctime | parseTime('{y}-{m}-{d}') }}</div>
                     </div>
                   </div>
                   <div class="reply-content">{{ replyItem.description }}</div>
+                  <div
+                    v-if="replyItem.tsDataVo && replyItem.tsDataVo.path"
+                    class="reply-attachment"
+                  >
+                    <i class="el-icon-files"></i>
+                    <el-button
+                      @click="downloadData(replyItem.tsDataVo)"
+                      type="text"
+                      size="mini"
+                      class="download-btn"
+                    >{{replyItem.tsDataVo.name}}</el-button>
+                  </div>
                 </div>
               </div>
               <div v-else class="no-replies">
@@ -167,7 +179,7 @@
                 <el-option
                   :label="item.name"
                   :value="item.id"
-                  v-for="(item,index) in typeData"
+                  v-for="(item,index) in dataFileType"
                   :key="index"
                 ></el-option>
               </el-select>
@@ -302,6 +314,7 @@ export default {
         description: ""
       },
       typeData: [],
+      dataFileType: [],
       selectedDemand: 0,
 
       totalDemand: 0,
@@ -334,6 +347,7 @@ export default {
     // }
     this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
     this.getCategoryList();
+    this.getDataCategoryList();
     this.avatar = appConfig.config.urlFilePrefix + this.userInfo.avatar;
   },
   methods: {
@@ -341,10 +355,18 @@ export default {
       category.getCategoryList("demand_cate", null, null).then(response => {
         if (response.code === 200) {
           this.typeData = response.data.list;
-          console.log(this.typeData, "this.typeData");
         }
       });
     },
+
+    getDataCategoryList() {
+      category.getCategoryList("data_type").then(response => {
+        if (response.code === 200) {
+          this.dataFileType = response.data.list;
+        }
+      });
+    },
+
     async getSoftwareDemand() {
       demand
         .getSoftwareDemand(
@@ -459,11 +481,27 @@ export default {
       demand.getSupportAnswer(params).then(response => {
         if (response.code === 200) {
           let result = response.data;
+          console.log("API返回数据结构:", result); // 添加日志，查看API返回的数据结构
+          this.replyDemandPage.total = result.answerTotal;
+          // 计算总页数
+          this.replyDemandPage.totalPage = Math.ceil(result.answerTotal / this.replyDemandPage.pageSize) || 0;
+          this.replyDemandPage.pageNum = this.replyDemandPage.pageNum || 1;
+
+          this.replyList = [];
+          // 判断返回的数据结构，灵活处理
+          const listData = result.data && result.data.list ? result.data.list : 
+                          (Array.isArray(result.data) ? result.data : []);
           
-          this.replyDemandPage.total = result.total;
-          this.replyDemandPage.totalPage = result.totalPage;
-          this.replyDemandPage.pageNum = result.pageNum;
-          this.replyList = result.list;
+          if (listData.length > 0) {
+            listData.forEach(item => {
+              let info = JSON.parse(JSON.stringify(item));
+              info.open = false;
+              this.replyList.push(info);
+            });
+          }
+          // 移除错误的赋值操作，不要覆盖上面的处理结果
+          // this.replyList = result.data;
+          console.log(this.replyList, "this.replyList");
           
           // 在控制台输出信息，便于调试
           console.log("回复列表加载成功", this.replyList);
@@ -528,10 +566,10 @@ export default {
     async uploadFile(param) {
       this.fileData = param.file;
       let peixunId = 0
-      if(this.typeData.length>0){
-        for(let i=0;i<this.typeData.length;i++){
-          if(this.typeData[i].name == "培训材料"){
-            peixunId = this.typeData[i].id
+      if(this.dataFileType.length>0){
+        for(let i=0;i<this.dataFileType.length;i++){
+          if(this.dataFileType[i].name == "培训材料"){
+            peixunId = this.dataFileType[i].id
           }
         }
       }
@@ -591,7 +629,7 @@ export default {
             });
           }
           
-          demand.addAnswer(formData).then(response => {
+          demand.addAnswerByFile(formData).then(response => {
             if (response.code == 200) {
               this.$message.success("回复成功！！");
               // 重置表单和文件列表
@@ -645,6 +683,22 @@ export default {
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);
+    },
+    
+    /**
+     * 下载附件
+     */
+    async downloadData(item) {
+      let index = item.path.lastIndexOf('/');
+      const realpath = item.path;
+      const blob = await ts.downloadDataByPath(realpath);
+      const fileName = item.name;
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const a = document.createElement("a");
+      a.setAttribute("download", fileName);
+      a.setAttribute("target", "_blank");
+      a.setAttribute("href", url);
+      a.click();
     },
     
     /**
@@ -918,6 +972,23 @@ export default {
   font-size: 13px;
   color: #333;
   line-height: 1.5;
+}
+
+.reply-attachment {
+  font-size: 12px;
+  margin: 5px 0 8px;
+  display: flex;
+  align-items: center;
+  
+  i {
+    color: #05994e;
+    margin-right: 5px;
+  }
+}
+
+.download-btn {
+  color: #05994e;
+  padding: 0;
 }
 
 .no-replies {

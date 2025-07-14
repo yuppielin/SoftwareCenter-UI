@@ -4,20 +4,20 @@
       <el-tooltip 
         class="item" 
         effect="dark" 
-        :content="item.content" 
+        :content="item.title" 
         placement="top" 
         :disabled="!isContentOverflow"
         popper-class="notice-tooltip"
       >
-        <div class="title">
-          <!-- <img v-if="item.isTop==1" :src="require('@/assets/imgs/top4.png')" alt="" style="margin-right: -10px;" width="12px" height="12px"/> -->
-          <!-- <span v-if="item.isTop==1" style="color:#fff;border-radius: 2px;background: rgb(255, 141, 26);font-size:12px;padding:0 5px;">置顶</span> -->
-          <!-- <span v-else  style="color:#fff;border-radius: 2px;background: #fff;font-size:12px;padding:0 5px;">置顶</span> -->
-          <!-- <div class="ribbon_notice" style="background:orange">
-            <span>置顶</span>
-          </div> -->
-          <i v-if="item.isTop==1" style="color:red;font-size: 14px;" class="el-icon-s-flag"></i>
-          {{ item.content }}
+        <div class="notice-container">
+          <div class="software-line" v-if="item.softwareName">
+            <i v-if="item.isTop==1" style="color:red;font-size: 14px;" class="el-icon-s-flag"></i>
+            <span class="software-name-tag">{{ item.softwareName }}</span>
+          </div>
+          <div class="content-line">
+            <i v-if="item.isTop==1 && !item.softwareName" style="color:red;font-size: 14px;" class="el-icon-s-flag"></i>
+            <span class="content-text">{{ item.title }}</span>
+          </div>
         </div>
       </el-tooltip>
     </el-col>
@@ -45,17 +45,16 @@ export default {
     parseTime,
     checkOverflow() {
       this.$nextTick(() => {
-        const titleEl = this.$el.querySelector('.title');
-        if (titleEl) {
-          this.isContentOverflow = titleEl.scrollWidth > titleEl.clientWidth;
+        const contentEl = this.$el.querySelector('.content-text');
+        if (contentEl) {
+          this.isContentOverflow = contentEl.scrollWidth > contentEl.clientWidth;
         }
       });
     }
   },
   watch: {
     item: {
-      handler(newValue) {
-        newValue.title = newValue.content;
+      handler() {
         this.checkOverflow();
       },
       immediate: true
@@ -72,17 +71,16 @@ export default {
 </script>
 <style scoped lang="scss">
 #message{
-    height: 30px;
-    line-height: 30px;
+    height: 50px;
+    line-height: normal;
     cursor: pointer;
+    margin-bottom: 5px;
     
     .type{
-        // width: 16px;
         width: 60px;
         height: 20px;
         line-height: 16px;
         border-radius: 0 6px;
-        //  border-radius: 50%;
         color: white;
         margin-top:7px;
         padding: 2px;
@@ -91,6 +89,37 @@ export default {
           font-size: 4px;
         }
     }
+    
+    .notice-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+    }
+    
+    .software-line {
+      height: 16px;
+      line-height: 16px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .content-line {
+      height: 20px;
+      line-height: 20px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .content-text {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      font-size: 13px;
+      width: 100%;
+    }
+    
     .title{
         display: block;
         white-space: nowrap;
@@ -99,9 +128,25 @@ export default {
         font-size: 13px;
         width: 100%;
     }
+    
     .date{
         color: rgba(149,149,163,1);
         font-size: 10px;
+    }
+    
+    .software-name-tag {
+        position: relative;
+        margin-right: 5px;
+        font-size: 10px;
+        padding: 0 5px;
+        border-radius: 4px;
+        color: #fff;
+        white-space: nowrap;
+        display: inline-block;
+        height: 16px;
+        line-height: 16px;
+        background-color: #1890ff;
+        border-color: #1890ff;
     }
 
   // .ribbon_notice {

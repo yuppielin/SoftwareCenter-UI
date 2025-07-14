@@ -57,17 +57,25 @@
                   <el-col
                     :span="6"
                     style="font-size:14px;font-weight: 400;color:rgba(149,149,163,1)"
-                  >发布时间：{{ notice.releaseDate }}</el-col>
+                  >所属软件：{{ notice.softwareName }}</el-col>
                   <el-col
-                    :span="6"
+                    :span="5"
+                    style="font-size:14px;font-weight: 400;color:rgba(149,149,163,1)"
+                  >软件版本：{{ notice.versionName }}</el-col>
+                  <!-- <el-col
+                    :span="4"
+                    style="font-size:14px;font-weight: 400;color:rgba(149,149,163,1)"
+                  >发布时间：{{ notice.releaseDate }}</el-col> -->
+                  <el-col
+                    :span="5"
                     style="font-size:14px;font-weight: 400;color:rgba(149,149,163,1)"
                   >发 布 人：{{ notice.cname }}</el-col>
                   <el-col
-                    :span="6"
+                    :span="4"
                     style="font-size:14px;font-weight: 400;color:rgba(149,149,163,1)"
                   >联 系 人：{{ notice.linkman}}</el-col>
                   <el-col
-                    :span="6"
+                    :span="4"
                     style="font-size:14px;font-weight: 400;color:rgba(149,149,163,1)"
                   >联系方式：{{ notice.linkmantel}}</el-col>
                 </el-row>
@@ -173,7 +181,9 @@ export default {
           this.userInfo.userId,
           null,
           this.currentPage,
-          this.pageSize
+          this.pageSize,
+          '',
+          '',
         )
         .then(response => {
           if (response.code === 200) {

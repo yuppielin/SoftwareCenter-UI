@@ -98,6 +98,14 @@ export function addAnswer(data) {
   })
 }
 
+export function addAnswerByFile(files) {
+  return request({
+    url: '/software/demand-reply/byFile',
+    method: 'post',
+    data:files
+  })
+}
+
 export function downloadTemplate() {
   return request({
     url: '/software/demand/downloadDemandTemplate',

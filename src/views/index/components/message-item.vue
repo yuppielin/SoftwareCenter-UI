@@ -9,7 +9,7 @@
         item.messageType==5?'tech-support':
         'other'
       ]">
-        <span v-text="item.messageType==1?'软件发布':item.messageType==2?'软件变更':item.messageType==3?'软件申请':item.messageType==4?'需求提报':item.messageType==5?'技术支持':item.messageType==6?'软件推送':'其他'"></span>
+        <span v-text="item.messageType==1?'软件发布':item.messageType==2?'软件变更':item.messageType==3?'软件申请':item.messageType==4?'软件需求':item.messageType==5?'软件问题':item.messageType==6?'软件推送':'其他'"></span>
       </div>
     </el-col>
     <el-col :xs="12" :sm="13" :md="14" :lg="14" class="content-col">

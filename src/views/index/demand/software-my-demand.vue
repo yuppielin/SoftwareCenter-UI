@@ -43,18 +43,20 @@
 <!--          >{{ item.name }}</el-button>-->
         </div>
         <el-collapse v-model="activeDemand" accordion style="margin-top: 10px;min-height: calc(100vh - 270px)">
-          <el-collapse-item v-for="(item, index) in demandData" :key="index" :name="index">
+          <el-collapse-item v-for="(item, index) in demandData" :key="index" :name="index" class="demand-item">
             <span slot="title" class="collapse-title" size="mini" type="text" @click="handleDemandClick(item)">
               <el-row>
-                <el-col :span="18">
+                <el-col :span="16">
                   <div style="font-weight:bold;font-size:16px">
                     {{ item.title }}
                   </div>
                 </el-col>
-                <el-col :span="6" class="btn-demand" style="text-align:right;padding-right:20px">
-                  <el-button v-if="item.status!=2" size="mini" icon="el-icon-message" type="text" @click.stop.native @click="replyDemand(item, index)">回复 {{ item.replyTotal }}</el-button>
-                  <el-button size="mini" type="text" icon="el-icon-delete" @click.stop.native @click="deleteMyDemand(item)">删除</el-button>
-                  <el-button v-if="item.status!=2" size="mini" icon="el-icon-circle-check" type="text" @click.stop.native @click="closeDemand(item)">关闭</el-button>
+                <el-col :span="8" class="btn-demand" style="text-align:right;padding-right:20px">
+                  <div class="button-group">
+                    <el-button v-if="item.status!=2" size="mini" icon="el-icon-message" type="text" @click.stop.native @click="replyDemand(item, index)">回复 {{ item.replyTotal }}</el-button>
+                    <el-button size="mini" type="text" icon="el-icon-delete" @click.stop.native @click="deleteMyDemand(item)">删除</el-button>
+                    <el-button v-if="item.status!=2" size="mini" icon="el-icon-circle-check" type="text" @click.stop.native @click="closeDemand(item)">关闭需求</el-button>
+                  </div>
                 </el-col>
               </el-row>
             </span>
@@ -503,10 +505,10 @@ export default {
   .software-resource-card >>> .el-collapse{
     border: 0px;
   }
-  .software-resource-card >>>.el-collapse-item__arrow{
+  .software-resource-card >>> .el-collapse-item__arrow{
     margin:0px;
   }
-  .software-resource-card >>>.el-collapse-item__wrap{
+  .software-resource-card >>> .el-collapse-item__wrap{
     border-bottom: 0px;
   }
   ::v-deep .collapse-title {
@@ -525,13 +527,38 @@ export default {
     color: rgba(63,63,63,1);
     font-size: 12px;
   }
-  /deep/ .el-collapse-item__content {
+  /* 修复需求列表项样式 */
+  .demand-item >>> .el-collapse-item__header {
+    height: auto;
+    min-height: 48px;
+    padding: 10px 0;
+    line-height: 1.5;
+  }
+  .demand-item >>> .el-collapse-item__content {
+    padding-bottom: 10px !important;
+  }
+  .btn-demand >>> .el-button {
+    margin-left: 5px;
+    padding: 5px;
+  }
+  .button-group {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .button-group .el-button {
+    margin-left: 0;
+    white-space: nowrap;
+  }
+  ::v-deep .el-collapse-item__content {
     padding-bottom: 0px!important;
   }
-  /deep/ .el-collapse .is-active .el-collapse-item__header,/deep/ .el-collapse .is-active .el-collapse-item__content {
+  ::v-deep .el-collapse .is-active .el-collapse-item__header,
+  ::v-deep .el-collapse .is-active .el-collapse-item__content {
     background: rgba(23,138,227,0.05);
   }
-  /deep/ .el-collapse>.is-active{
+  ::v-deep .el-collapse>.is-active{
     border-left:2px solid rgba(23,138,227,1);
   }
   .user-avatar {
@@ -540,28 +567,29 @@ export default {
     height: 30px;
     border-radius: 10px;
   }
-  /deep/ .el-card__body {
+  ::v-deep .el-card__body {
     padding-bottom: 0px!important;
   }
-  /deep/ .el-timeline-item__timestamp {
+  ::v-deep .el-timeline-item__timestamp {
     color: rgba(23,138,227,1);
   }
-  /deep/ .el-timeline-item__node--normal {
+  ::v-deep .el-timeline-item__node--normal {
     width: 20px;
     height: 20px;
     left: -5px
   }
-  /deep/ .el-button span {
+  ::v-deep .el-button span {
     /*color: rgba(23,138,227,1);*/
   }
-  .el-button--primary:active,/deep/ .el-button--primary.is-active {
+  .el-button--primary:active,
+  ::v-deep .el-button--primary.is-active {
     color: #fff;
   }
-  /deep/ .el-collapse {
+  ::v-deep .el-collapse {
     border-top: none;
     border-bottom: none;
   }
-  /deep/ .btn-demand .el-button--text {
+  ::v-deep .btn-demand .el-button--text {
     color: rgba(86,86,86,1)
   }
 </style>

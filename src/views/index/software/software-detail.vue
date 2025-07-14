@@ -447,7 +447,7 @@ export default {
       timelineData: [],
       dataPushSoftForm:{
           id:1,
-          name: "",
+          name: "", 
           address: "",
           softwareDownloadAddr: "",
           area: "",

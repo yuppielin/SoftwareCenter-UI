@@ -336,8 +336,8 @@
             </el-row>
           </div>
           <div style="overflow-y:auto;flex:1;padding-right:5px;">
-            <notice-item style="margin-top: 5px;margin-bottom: 5px;"  v-for="(item,index) in noticeData" :key="index" :item="item" @click.native="noticeShow(item)" />
-            <div v-show="noticeData.length==0" style="text-align:center;margin:auto;">
+            <notice-item v-for="(item,index) in noticeData" :key="index" :item="item" @click.native="noticeShow(item)" />
+            <div v-show="noticeData.length==0" style="text-align:center;margin:auto;padding: 10px 0;">
               <span>暂无公告！</span>
             </div>
             <noticeDetail :notice-visible-flag.sync="noticeVisibleFlag" :title="title" :data="notice" @clearData="clearData" />
@@ -538,7 +538,7 @@ export default {
       })
     },
     getNoticeList() {
-      notice.getNoticeList(this.userInfo.userId, null, 1, 5).then(response => {
+      notice.getNoticeList(this.userInfo.userId, null, 1, 5, '', '').then(response => {
         if (response.code === 200) {
           this.noticeData = response.data.list
         }

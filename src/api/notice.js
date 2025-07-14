@@ -1,14 +1,16 @@
 import request from '@/utils/request'
 
-export function getNoticeList(uid,keyword,pageNum,pageSize) {
+export function getNoticeList(uid, keyword, pageNum, pageSize, softwareId, versionId) {
   return request({
     url: '/notice/list',
     method: 'get',
     params: {
-        uid,uid,
-        keyword:keyword,
-        pageNum:pageNum,
-        pageSize:pageSize
+        uid,
+        keyword,
+        pageNum,
+        pageSize,
+        softwareId,
+        versionId
     }
   })
 }

@@ -1,16 +1,41 @@
 <template>
   <el-card class="custome custome-height">
     <el-row style="margin-bottom:10px;">
-      <el-col :span="12">
-        <el-button size="small" type="primary" @click="addNotice">新增</el-button>
+      <el-col :span="8">
+        <el-button size="small" type="primary" @click="addNotice">新增公告</el-button>
       </el-col>
-      <el-col :span="12" style="text-align:right">
+      <el-col :span="16" style="text-align:right">
         <el-input
           class="inline-input"
           v-model="keyword"
-          style="width: 200px"
+          style="width: 150px"
           placeholder="请输入关键字"
         ></el-input>
+        <el-select 
+          v-model="searchSoftwareId" 
+          filterable 
+          placeholder="选择软件" 
+          style="width: 150px; margin-left: 10px"
+          @change="handleSoftwareChange">
+          <el-option
+            v-for="item in softwareList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+        <el-select 
+          v-model="searchVersionId" 
+          filterable 
+          placeholder="选择版本" 
+          style="width: 150px; margin-left: 10px">
+          <el-option
+            v-for="item in searchVersionList"
+            :key="item.id"
+            :label="item.version"
+            :value="item.id">
+          </el-option>
+        </el-select>
         <el-button size="small" type="primary" icon="el-icon-search" style="margin-left:10px;" @click="searchNotice">搜索</el-button>
         <el-button size="small" type="reset" title="重置" @click="handleReset">重置</el-button>
       </el-col>
@@ -37,9 +62,11 @@
       :header-cell-style="{height:'30px'}"
     >
       <el-table-column align="center" header-align="center" width="100" type="index" label="序号" />
-      <el-table-column label="通知标题" header-align="center" prop="title" show-overflow-tooltip />
-      <el-table-column align="center" label="发布时间" prop="releaseDate" show-overflow-tooltip />
-      <el-table-column align="center" label="状态" width="200">
+      <el-table-column align="center" label="通知标题" header-align="center" prop="title" show-overflow-tooltip />
+      <el-table-column align="center" label="所属软件" prop="softwareName" show-overflow-tooltip />
+      <el-table-column align="center" label="软件版本" prop="versionName" show-overflow-tooltip />
+      <el-table-column align="center" label="发布时间" prop="releaseDate" show-overflow-tooltip width="180"/>
+      <el-table-column align="center" label="状态" width="100">
         <template slot-scope="{row}">
            <span :style="{'color':row.status==0||row.status==2?'gray':'green'}" v-text="row.status==0?'待发布':row.status==2?'未发布':'已发布'"></span>
         </template>
@@ -55,12 +82,12 @@
           <el-button v-else size="small" :disabled="row.status!=1" type="text"  @click="setTop(row)"> <span style="color:red">否</span></el-button>
         </template>
       </el-table-column>
-      <el-table-column align="center" header-align="center" label="上/下线" width="100">
+      <el-table-column align="center" header-align="center" label="上/下线" width="80">
         <template slot-scope="{row}">
             <el-switch size='mini'  @change="changeStatus(row)" :active-value="1" v-model="row.status"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column align="center" header-align="center" label="操作" width="300">
+      <el-table-column align="center" header-align="center" label="操作" width="200">
         <template slot-scope="{row}">
           <el-button size="small" type="text" icon="el-icon-view" @click="showNotice(row)">查看</el-button>
           <!-- <el-button size="small" type="text" icon="el-icon-top" @click="changeStatus(row)" :disabled="row.status==2 ||row.status==0 ">下线</el-button>
@@ -114,6 +141,35 @@
             value-format="yyyy-MM-dd HH:mm:ss"
             start-placeholder="公告日期"
           />
+        </el-form-item>
+        <el-form-item label="关联软件:" prop="softwareId">
+          <el-select 
+            v-model="dataForm.softwareId" 
+            filterable 
+            placeholder="请选择关联的软件" 
+            style="width:100%" 
+            @change="selectSoftwareChange">
+            <el-option
+              v-for="item in softwareList"
+              :key="item.value"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="软件版本:" prop="versionId">
+          <el-select 
+            v-model="dataForm.versionId" 
+            filterable 
+            placeholder="请选择软件的版本" 
+            style="width:100%">
+            <el-option
+              v-for="item in softwareVersionList"
+              :key="item.id"
+              :label="item.version"
+              :value="item.id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="联  系  人:" prop="linkman">
           <el-input v-model="dataForm.linkman" auto-complete="off" maxlength="10" />
@@ -225,6 +281,7 @@ import * as notice from "@/api/notice"
 import {getOrganization} from "@/api/organization"
 import { deepClone } from '../../../utils'
 import * as category from "@/api/category";
+import * as ts from "@/api/ts"
 export default {
   components: {
     Treeselect,
@@ -253,7 +310,13 @@ export default {
         linkmantel: '',
         publishDept: '',
         content:'',
+        softwareId: '',
+        softwareName: '',
+        versionId: '',
+        softwareVersion: ''
       },
+      softwareList: [],
+      softwareVersionList: [],
       orgData: [], // 组织单位数据
       deptOptions:[],
       reviewData:[],
@@ -277,7 +340,10 @@ export default {
       fileInfo:{
         fileName:'',
         filePath:''
-      }
+      },
+      searchSoftwareId: '', // 搜索时选择的软件ID
+      searchVersionId: '', // 搜索时选择的版本ID
+      searchVersionList: [] // 搜索时版本列表
     }
   },
   mounted() {
@@ -285,14 +351,20 @@ export default {
     this.getOrgList()
     this.getList();
     this.getPublishDeptList();
+    this.getAllSoftware();
   },
   methods: {
     searchNotice() {
+      if (this.searchSoftwareId && !this.searchVersionId) {
+        this.$message.warning('请选择软件版本')
+        return
+      }
       this.currentPage = 1
       this.getList()
     },
     getList() {
-      notice.getNoticeList(this.userInfo.userId,this.keyword,this.currentPage,this.pageSize).then(response=>{
+      // console.log(this.searchSoftwareId,this.searchVersionId,'this.searchSoftwareId,this.searchVersionId')
+      notice.getNoticeList(this.userInfo.userId, this.keyword, this.currentPage, this.pageSize, this.searchSoftwareId, this.searchVersionId).then(response=>{
         if(response.code==200){
           this.reviewData=response.data.list;
           this.totalPage=response.data.totalPage;
@@ -308,6 +380,7 @@ export default {
       this.dialogVisible = true
       this.operation = true
       this.$refs.noticeFile.clearFiles();
+      this.softwareVersionList = [];
     },
     //创建
     createNotice(){
@@ -351,6 +424,13 @@ export default {
       }
       this.dialogVisible = true;
       this.$refs.noticeFile.clearFiles();
+      
+      // 如果有软件ID，获取对应版本列表
+      if(this.dataForm.softwareId) {
+        this.getSoftwareVersionById();
+      } else {
+        this.softwareVersionList = [];
+      }
     },
     //更新
     updateNotice(){
@@ -378,6 +458,28 @@ export default {
         }
       })  
       
+    },
+    // 获取所有软件
+    getAllSoftware(){
+      ts.getAllSoftware().then(response =>{
+        if(response.code === 200){
+          this.softwareList = response.data
+        }
+      })
+    },
+    // 根据软件ID获取版本
+    getSoftwareVersionById() {
+      ts.getSoftwareVersion(this.dataForm.softwareId).then(response =>{
+        if(response.code === 200){
+          this.softwareVersionList = response.data
+          console.log(this.softwareVersionList,'this.softwareVersionListxxxxx')
+        }
+      })
+    },
+    // 选择软件时触发
+    selectSoftwareChange(){
+      this.getSoftwareVersionById();
+      this.dataForm.versionId = '';
     },
     showNotice(item) {
       this.notice = JSON.parse(JSON.stringify(item));
@@ -457,6 +559,9 @@ export default {
     handleReset(){
       this.currentPage = 1
       this.keyword=''
+      this.searchSoftwareId = ''
+      this.searchVersionId = ''
+      this.searchVersionList = []
       this.getList();
     },
     deleteItem(item){
@@ -560,6 +665,17 @@ export default {
         this.publishDeptList = response.data.list;
       });
     },
+    handleSoftwareChange(softwareId) {
+      this.searchVersionId = null; // 清空版本选择
+      this.searchVersionList = []; // 清空版本列表
+      if (softwareId) {
+        ts.getSoftwareVersion(softwareId).then(response => {
+          if (response.code === 200) {
+            this.searchVersionList = response.data;
+          }
+        });
+      }
+    }
   }
 }
 </script>
