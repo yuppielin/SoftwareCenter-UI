@@ -1,15 +1,8 @@
 <template>
   <el-row id="message" :gutter="0">
     <el-col :xs="5" :sm="5" :md="4" :lg="4" class="type-col">
-      <div class="type" :class="[
-        item.messageType==1?'software-release':
-        item.messageType==2?'software-change':
-        item.messageType==3?'software-apply':
-        item.messageType==4?'demand-report':
-        item.messageType==5?'tech-support':
-        'other'
-      ]">
-        <span v-text="item.messageType==1?'软件发布':item.messageType==2?'软件变更':item.messageType==3?'软件申请':item.messageType==4?'软件需求':item.messageType==5?'软件问题':item.messageType==6?'软件推送':'其他'"></span>
+      <div class="type" :class="messageTypeInfo.class">
+        <span>{{ messageTypeInfo.text }}</span>
       </div>
     </el-col>
     <el-col :xs="12" :sm="13" :md="14" :lg="14" class="content-col">
@@ -39,6 +32,22 @@ export default {
     item: {
       type: Object,
       default: null
+    }
+  },
+  computed: {
+    messageTypeInfo() {
+      const type = this.item.messageType;
+      switch (type) {
+        case 1: return { class: 'software-release', text: '软件发布' };
+        case 2: return { class: 'software-change', text: '软件变更' };
+        case 3: return { class: 'software-apply', text: '软件申请' };
+        case 40: return { class: 'demand-report', text: '软件需求' };
+        case 773: return { class: 'software-issue', text: '软件问题' };
+        case 61: return { class: 'software-suggestion', text: '软件建议' };
+        case 5: return { class: 'tech-support', text: '软件问题' };
+        case 6: return { class: 'software-push', text: '软件推送' };
+        default: return { class: 'other', text: '其他' };
+      }
     }
   },
   data() {
@@ -108,9 +117,9 @@ export default {
         max-width: 75px;
         min-width: 60px;
         height: 24px;
-        line-height: 24px;
+        line-height: 22px;
         border-radius: 6px 6px 6px 6px;
-        color: white;
+        border: 1px solid;
         margin-top: 3px;
         margin-left: 0px;
         text-align: center;
@@ -121,22 +130,49 @@ export default {
         padding-right: 0px;
         
         &.demand-report {
-          background: #5bbdb6;
+          color: #409eff;
+          background-color: #ecf5ff;
+          border-color: #b3d8ff;
         }
         &.tech-support {
-          background: #f19149;
+          color: #f19149;
+          background-color: #fef8f2;
+          border-color: #f8e4d2;
+        }
+        &.software-issue {
+          color: #f56c6c;
+          background-color: #fef0f0;
+          border-color: #fbc4c4;
+        }
+        &.software-suggestion {
+          color: #e6a23c;
+          background-color: #fdf6ec;
+          border-color: #f5dab1;
         }
         &.software-release {
-          background: #5e9de6;
+          color: #5e9de6;
+          background-color: #eef5fc;
+          border-color: #d8e7fa;
         }
         &.software-change {
-          background: #4c85e6;
+          color: #4c85e6;
+          background-color: #ecf2fc;
+          border-color: #d4e0fa;
         }
         &.software-apply {
-          background: #67b356;
+          color: #67b356;
+          background-color: #f0f9eb;
+          border-color: #c2e7b0;
+        }
+        &.software-push {
+          color: #909399;
+          background-color: #f4f4f5;
+          border-color: #d3d4d6;
         }
         &.other {
-          background: #a77bc2;
+          color: #a77bc2;
+          background-color: #f6f2f9;
+          border-color: #eadaf3;
         }
         
         span{
