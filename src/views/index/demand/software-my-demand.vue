@@ -1,46 +1,41 @@
 <template>
   <div style="overflow-y: auto;height:calc(100vh - 150px)">
-    <!--    <div>-->
-    <!--      <el-button-->
-    <!--        v-for="(item, index) in navList"-->
-    <!--        :key="index"-->
-    <!--        class="nav-button"-->
-    <!--        :class="{active:item.status==curIndex}"-->
-    <!--        type="button"-->
-    <!--        @click="changeStatus(item)"-->
-    <!--      >{{ item.name }}</el-button>-->
-    <!--    </div>-->
-    <!--    <span style="width:50%;border-right:1px solid rgba(230,237,240,1);">-->
-    <!--        <div>-->
-    <!--        <el-button-->
-    <!--          v-for="(item, index) in navList"-->
-    <!--          :key="index"-->
-    <!--          class="nav-button"-->
-    <!--          :class="{active:item.status==curIndex}"-->
-    <!--          type="button"-->
-    <!--          @click="changeStatus(item)"-->
-    <!--        >{{ item.name }}</el-button>-->
-    <!--      </div>-->
-    <!--      -->
-    <!--    </span>-->
-    <!--    <span style="width:50%"></span>-->
 
     <el-row>
-      <el-col :span="12" style="border-right:1px solid rgba(154,159,161,0.5);">
+      <el-col :span="14" style="border-right:1px solid rgba(154,159,161,0.5);">
         <div calss="status-btn" style="text-align:right;margin-right: 10px;margin-top: 15px">
-          <el-radio-group v-model="statusRadio" @change="changeStatus()">
-            <el-radio-button :label=0>未解决</el-radio-button>
-            <el-radio-button :label=1>处理中</el-radio-button>
-            <el-radio-button :label=2>已处理</el-radio-button>
-          </el-radio-group>
-<!--          <el-button-->
-<!--            v-for="(item, index) in navList"-->
-<!--            :key="index" plain-->
-<!--            :class="{active:item.status==curIndex}"-->
-<!--            type="primary"-->
-<!--            @click="changeStatus(item)"-->
-<!--            style="border: none"-->
-<!--          >{{ item.name }}</el-button>-->
+          <el-input v-model="search.keyword" size="small" style="width:150px;margin-left:10px;" placeholder="关键字" />
+          <el-select
+            v-model="search.status"
+            size="small"
+            style="width:120px;margin-left:10px;"
+            placeholder="需求状态"
+            filterable
+            remote
+            reserve-keyword
+          >
+            <el-option label="已解决" value="2" />
+            <el-option label="处理中" value="1" />
+            <el-option label="未解决" value="0" />
+          </el-select>
+          <el-select
+            v-model="search.category"
+            size="small"
+            style="width:120px;margin-left:10px;"
+            placeholder="需求类型"
+            filterable
+            remote
+            reserve-keyword
+          >
+            <el-option 
+              v-for="item in typeData" 
+              :key="item.id" 
+              :label="item.name" 
+              :value="item.id" 
+            />
+          </el-select>
+          <el-button icon="el-icon-search" size="small" type="primary" style="margin-left:10px;background:#1e7d34;border:0;height:32px" @click="searchDemand">查询</el-button>
+          <el-button size="small" type="reset" style="background:#1e7d34;color:white;border:0" @click="resetSearch">重置</el-button>
         </div>
         <el-collapse v-model="activeDemand" accordion style="margin-top: 10px;min-height: calc(100vh - 270px)">
           <el-collapse-item v-for="(item, index) in demandData" :key="index" :name="index" class="demand-item">
@@ -49,6 +44,14 @@
                 <el-col :span="16">
                   <div style="font-weight:bold;font-size:16px">
                     {{ item.title }}
+                    <el-tag 
+                      :type="getTagType(item.category)" 
+                      size="mini"
+                      effect="plain" 
+                      style="margin-left: 10px;"
+                    >
+                      {{ getCategoryName(item.category) }}
+                    </el-tag>
                   </div>
                 </el-col>
                 <el-col :span="8" class="btn-demand" style="text-align:right;padding-right:20px">
@@ -93,8 +96,8 @@
           :total="total">
         </el-pagination>
       </el-col>
-      <el-col :span="12">
-        <el-row style="margin-top: 15px" v-if="this.statusRadio!=2">
+      <el-col :span="6">
+        <el-row style="margin-top: 15px">
           <el-col :span="2" style="text-align: right">
             <img :src="avatar+'?imgSource'" class="user-avatar" :onerror="defaultA">
           </el-col>
@@ -250,6 +253,7 @@ import MarkdownEditor from '@/components/MarkdownEditor'
 import * as demand from '@/api/demand'
 import * as ts from '@/api/ts'
 import * as devunit from '@/api/devunit'
+import * as category from '@/api/category'
 export default {
   components: {
     DemandItem: () => import('./demand-item.vue'),
@@ -257,6 +261,12 @@ export default {
   },
   data() {
     return {
+      search: {
+        keyword: '',
+        status: '',
+        category: ''
+      },
+      typeData: [], // 需求类型列表
       activeDemand: 0,
       avatar: null,
       replyForm: {
@@ -274,8 +284,6 @@ export default {
       pageSize: 10,
       total: 0,
       totalPage: '',
-      keyword: '',
-      status: '',
       defaultA: 'this.src="' + require('@/assets/index/avatar.png') + '"',
       replyMessage: '',
       navList: [
@@ -283,11 +291,9 @@ export default {
         { status: 1, name: '处理中' },
         { status: 2, name: '已处理' }
       ],
-      curIndex: 0,
       replyVisible: false,
       demandData: [],
       scopeId: -1,
-      statusRadio: 0,
       currentDemand: {
         replyList: [
           // {
@@ -308,6 +314,7 @@ export default {
   },
   async created() {
     this.userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    await this.getCategoryList() // 获取需求类型列表
     await this.getDemandQuery()
   },
   async mounted() {
@@ -393,16 +400,17 @@ export default {
     },
     // 获取需求提报列表
     async getDemandQuery() {
-      this.status = this.curIndex
+      this.demandData = []
       this.zbStatus = 0
       // demand.getDemandQuery(this.userInfo.userId,this.keyword,this.status,1,10,this.zbStatus).then(response=>{
       const response = await demand.getDemandQuery(
         this.userInfo.userId,
-        this.keyword,
-        this.status,
+        this.search.keyword,
+        this.search.status,
         this.currentPage,
         this.pageSize,
-        this.zbStatus
+        this.zbStatus,
+        this.search.category
       )
       if (response.code === 200) {
         this.demandData = JSON.parse(JSON.stringify(response.data.list))
@@ -425,13 +433,6 @@ export default {
         
       }
       // })
-    },
-    async changeStatus() {
-      this.currentPage = 1
-      this.replyMessage = ""
-      this.curIndex = this.statusRadio
-      await this.getDemandQuery()
-      this.activeDemand = 0
     },
     handle(val) {
       this.replyVisible = true
@@ -486,12 +487,51 @@ export default {
           return false
         }
       })
-    }
+    },
     // create(){
     //     this.$router.push({
     //         path: '/index/technical/add',
     //     })
     // },
+    // 获取需求类型名称
+    getCategoryName(categoryId) {
+      if (!categoryId || !this.typeData.length) return '';
+      const category = this.typeData.find(item => item.id === categoryId);
+      return category ? category.name : '';
+    },
+    // 根据需求类型获取标签类型
+    getTagType(categoryId) {
+      if (!categoryId || !this.typeData.length) return '';
+      const category = this.typeData.find(item => item.id === categoryId);
+      if (!category) return '';
+      
+      // 根据类型名称返回不同的标签类型
+      const name = category.name;
+      if (name.includes('需求')) return 'primary'; // 蓝色
+      if (name.includes('问题')) return 'danger';  // 红色
+      if (name.includes('建议')) return 'warning'; // 黄色
+      return 'info'; // 默认灰色
+    },
+    // 获取需求类型列表
+    getCategoryList() {
+      category.getCategoryList("demand_cate", null, null).then(response => {
+        if (response.code === 200) {
+          this.typeData = response.data.list
+        }
+      })
+    },
+    searchDemand() {
+      this.currentPage = 1
+      this.getDemandQuery()
+    },
+    resetSearch() {
+      this.search = {
+        keyword: '',
+        status: '',
+        category: ''
+      }
+      this.searchDemand()
+    }
   }
 }
 </script>

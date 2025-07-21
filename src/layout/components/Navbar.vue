@@ -9,7 +9,7 @@
         </template>
 
         <!-- <el-button v-show="!showTopInfo" type="text" icon="el-icon-menu" title="大屏" @click="$router.push('/bigscreen')"  class="right-menu-item"  style="margin-left:0px;"></el-button> -->
-        <el-button v-show="showTopInfo" type="text" icon="el-icon-edit-outline" title="我的需求" @click="$router.push('/index/demand/index')" size="18px" class="right-menu-item " style="margin-left:0px;">我的需求</el-button>
+        <el-button v-show="showTopInfo" type="text" icon="el-icon-edit-outline" title="我的反馈" @click="$router.push('/index/demand/index')" size="18px" class="right-menu-item " style="margin-left:0px;">我的反馈</el-button>
         <!-- <el-button v-show="showTopInfo" type="text" icon="el-icon-service" title="技术支持" @click="$router.push('/index/onlinets/index')"  class="right-menu-item"  style="margin-left:0px;"></el-button> -->
         <!-- <el-button type="text" icon="el-icon-message-solid" title="系统公告" @click="$router.push('/notice/index')"  class="right-menu-item"  style="margin-left:0px;"></el-button> -->
 

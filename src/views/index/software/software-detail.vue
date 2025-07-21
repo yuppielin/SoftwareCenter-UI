@@ -182,14 +182,14 @@
       <div class="reviews-container">
         <div class="reviews-header">
           <h3 class="reviews-title">全部回复 ({{ totalDemand }})</h3>
-          <div class="review-actions">
+          <!-- <div class="review-actions">
             <el-button 
               type="primary" 
               size="small" 
               @click="dialogDemandVisible = true">
               提交需求
             </el-button>
-          </div>
+          </div> -->
         </div>
 
         <div class="comment-input-area">
