@@ -211,7 +211,7 @@
       <el-dialog
         v-el-drag-dialog
         :visible.sync="dialogDemandVisible"
-        title="需求提报"
+        title="使用反馈"
         @dragDialog="handleDrag"
       >
         <el-form
@@ -222,16 +222,16 @@
           label-width="100px"
         >
           <el-form-item
-            label="需求标题："
+            label="反馈标题："
             prop="title"
             :rules="[{required:true,message:'标题不能为空',trigger:'blur'},{min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' },{pattern:/^[^\s]+(\s+[^\s]+)*$/,message: '标题不合法', trigger: 'blur'}]"
           >
             <el-input v-model="demandForm.title" size="small" show-word-limit maxlength="50" />
           </el-form-item>
           <el-form-item
-            label="需求类型："
+            label="反馈类型："
             prop="type"
-            :rules="[{required:true,message:'请选择需求类型',trigger:'change'}]"
+            :rules="[{required:true,message:'请选择反馈类型',trigger:'change'}]"
           >
             <treeselect
               v-model="demandForm.type"
@@ -243,11 +243,11 @@
               :normalizer="normalizer"
               z-index="9999"
               :show-count="true"
-              placeholder="请选择资料类型"
+              placeholder="请选择反馈类型"
             />
           </el-form-item>
           <el-form-item
-            label="需求内容："
+            label="反馈内容："
             prop="description"
             :rules="[{required:true,message:'内容不能为空',trigger:'blur'}]"
           >
@@ -761,7 +761,7 @@ export default {
         if (valid) {
           const data = {
             title: this.tsForm.title,
-            content: this.tsForm.description,
+            content: this.tsForm.content,
             cid: this.userInfo.userId,
             softwareId: this.data.id,
             softwareVersion: this.data.version,
@@ -776,6 +776,13 @@ export default {
               this.dialogTsVisible = false;
               this.getSoftwareDetail(this.data.versionId);
               this.$message.success("技术支持提报成功");
+              // 重置表单数据
+              this.tsForm = {
+                title: "",
+                type: "",
+                content: ""
+              };
+              this.$refs[formName].resetFields();
             }
           });
         }
@@ -807,7 +814,14 @@ export default {
             if (response.code === 200) {
               this.dialogDemandVisible = false;
               this.getSoftwareDetail(this.data.versionId);
-              this.$message.success("需求提报成功");
+              this.$message.success("提报成功");
+              // 重置表单数据
+              this.demandForm = {
+                title: "",
+                type: null,
+                description: ""
+              };
+              this.$refs[formName].resetFields();
             }
           });
         }

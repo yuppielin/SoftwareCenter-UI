@@ -9,7 +9,7 @@
             v-model="search.status"
             size="small"
             style="width:120px;margin-left:10px;"
-            placeholder="需求状态"
+            placeholder="反馈状态"
             filterable
             remote
             reserve-keyword
@@ -22,7 +22,7 @@
             v-model="search.category"
             size="small"
             style="width:120px;margin-left:10px;"
-            placeholder="需求类型"
+            placeholder="反馈类型"
             filterable
             remote
             reserve-keyword
@@ -58,7 +58,7 @@
                   <div class="button-group">
                     <el-button v-if="item.status!=2" size="mini" icon="el-icon-message" type="text" @click.stop.native @click="replyDemand(item, index)">回复 {{ item.replyTotal }}</el-button>
                     <el-button size="mini" type="text" icon="el-icon-delete" @click.stop.native @click="deleteMyDemand(item)">删除</el-button>
-                    <el-button v-if="item.status!=2" size="mini" icon="el-icon-circle-check" type="text" @click.stop.native @click="closeDemand(item)">关闭需求</el-button>
+                    <el-button v-if="item.status!=2" size="mini" icon="el-icon-circle-check" type="text" @click.stop.native @click="closeDemand(item)">关闭</el-button>
                   </div>
                 </el-col>
               </el-row>
@@ -361,19 +361,19 @@ export default {
       this.replyDemandIndex = index;
     },
     closeDemand(item) {
-      this.$confirm('确定关闭该需求吗？', '提示', {
+      this.$confirm('确定关闭该反馈内容吗？', '提示', {
         type: 'warning'
       }).then(e => {
         demand.finishDemand(item.id, this.userInfo.userId).then(response => {
           if (response.code === 200) {
-            this.$message.info('需求关闭成功。')
+            this.$message.info('反馈内容关闭成功。')
             location.reload()
           }
         })
       })
     },
     deleteMyDemand(item) {
-      this.$confirm('确定删除该需求吗？', '提示', {
+      this.$confirm('确定删除该反馈内容吗？', '提示', {
         type: 'warning'
       }).then(e => {
         demand.deleteDemand(item.id).then(async response => {
@@ -386,7 +386,7 @@ export default {
       })
     },
     deleteMyDemandReply(item) {
-      this.$confirm('确定删除该需求吗？', '提示', {
+        this.$confirm('确定删除该反馈内容吗？', '提示', {
         type: 'warning'
       }).then(e => {
         demand.deleteDemandReply(item.id).then(async response => {

@@ -2,6 +2,29 @@
   <div class="app-container">
     <el-row :gutter="20" class="main-content-row">
       <el-col :span="18" class="left-content">
+        <!-- 消息通知栏 -->
+        <el-card style="margin-bottom:10px;">
+          <div slot="header" style="height:20px;line-height:20px;padding: 0 5px;">
+            <el-row :gutter="10">
+              <el-col :span="12">
+                <div class="header-title">
+                  <img class="title-icon" src="@/assets/index/messageInform.png">
+                  <span>消息通知</span>
+                </div>
+              </el-col>
+              <el-col :span="12" style="text-align:right;">
+                <router-link to="/notice/index?type=message" style="font-size:14px;"> 更多 >></router-link>
+              </el-col>
+            </el-row>
+          </div>
+          <div style="overflow-y:auto;padding: 5px;" class="message-container">
+            <message-item v-for="(item,index) in messageData" :key="index" :item="item" @click.native="messageShow(item)" />
+            <div v-show="messageData.length==0" style="text-align:center;margin:auto;padding: 5px 0;">
+              <span>暂无消息！</span>
+            </div>
+          </div>
+        </el-card>
+        
         <el-card>
           <div slot="header" style="padding:5px 5px 5px 0;">
             <img style="position: relative;top:2px;" src="@/assets/index/hotDission.png" width="16" height="16">
@@ -341,30 +364,6 @@
               <span>暂无公告！</span>
             </div>
             <noticeDetail :notice-visible-flag.sync="noticeVisibleFlag" :title="title" :data="notice" @clearData="clearData" />
-          </div>
-        </el-card>
-        <!--消息通知--->
-        <el-card style="margin-bottom:10px;height:auto;min-height:300px;display:flex;flex-direction:column;overflow:hidden;">
-          <div slot="header" style="height:20px;line-height:20px;">
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <!-- <i class="el-icon-message-solid" /> -->
-                <div class="header-title">
-                  <img class="title-icon" src="@/assets/index/messageInform.png">
-                  <span>消息通知</span>
-                </div>
-              </el-col>
-              <el-col :span="12" style="text-align:right;">
-                <!-- <router-link to="/inform/index" style="font-size:12px;"> 更多 >></router-link> -->
-                <router-link to="/notice/index?type=message" style="font-size:14px;"> 更多 >></router-link>
-              </el-col>
-            </el-row>
-          </div>
-          <div style="overflow-y:auto;flex:1;padding-right:5px;" class="message-container">
-            <message-item v-for="(item,index) in messageData" :key="index" :item="item" @click.native="messageShow(item)" />
-            <div v-show="messageData.length==0" style="text-align:center;margin:auto;padding: 10px 0;">
-              <span>暂无消息！</span>
-            </div>
           </div>
         </el-card>
        </el-col>
@@ -1064,6 +1063,15 @@ export default {
     .message-container {
       padding-right: 0 !important;
     }
+  }
+
+  /* 消息通知样式优化 */
+  .message-container {
+    margin-top: -5px;
+  }
+
+  .message-container >>> #message {
+    margin-bottom: 5px;
   }
 
   /* 软件分类标签样式 */

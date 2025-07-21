@@ -1,11 +1,11 @@
 <template>
   <el-row id="message" :gutter="0">
-    <el-col :xs="5" :sm="5" :md="4" :lg="4" class="type-col">
+    <el-col :xs="5" :sm="5" :md="4" :lg="2" class="type-col">
       <div class="type" :class="messageTypeInfo.class">
         <span>{{ messageTypeInfo.text }}</span>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="13" :md="14" :lg="14" class="content-col">
+    <el-col :xs="12" :sm="13" :md="14" :lg="16" class="content-col">
       <el-tooltip 
         class="item" 
         effect="dark" 
@@ -100,11 +100,11 @@ export default {
     }
   
     .type-col {
-      padding-right: 8px;
+      padding-right: 4px;
     }
     
     .content-col {
-      padding-left: 8px;
+      padding-left: 4px;
     }
     
     .date-col {
@@ -192,7 +192,7 @@ export default {
       display: flex;
       align-items: center;
       width: 100%;
-      padding-left: 2px;
+      padding-left: 0;
     }
     
     .title{

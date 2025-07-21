@@ -115,7 +115,7 @@
     </div>
     
     <!-- 保留原有对话框 -->
-    <el-dialog title="需求回复" :visible.sync="replyVisible">
+    <el-dialog title="反馈回复" :visible.sync="replyVisible">
       <el-form
         ref="replyFormRef"
         name="replyForm"
@@ -204,7 +204,7 @@
         <el-button size="small" type="info" @click="replyVisible=false">取消</el-button>
       </span>
     </el-dialog>
-    <el-dialog :visible.sync="dialogDemandVisible" title="需求提报">
+    <el-dialog :visible.sync="dialogDemandVisible" title="使用反馈">
       <el-form
         ref="demandForm"
         name="demandForm"
@@ -213,14 +213,14 @@
         label-width="100px"
       >
         <el-form-item
-          label="需求标题："
+          label="反馈标题："
           prop="title"
           :rules="[{required:true,message:'标题不能为空',trigger:'blur'},{min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' },{pattern:/^[^\s]+(\s+[^\s]+)*$/,message: '标题不合法', trigger: 'blur'}]"
         >
           <el-input v-model="demandForm.title" size="small" show-word-limit maxlength="50" />
         </el-form-item>
         <el-form-item
-          label="需求类型："
+          label="反馈类型："
           prop="type"
           :rules="[{required:true,message:'请选择需求类型',trigger:'change'}]"
         >
@@ -238,7 +238,7 @@
           />
         </el-form-item>
         <el-form-item
-          label="需求内容："
+          label="反馈内容："
           prop="description"
           :rules="[{required:true,message:'内容不能为空',trigger:'blur'}]"
         >
@@ -455,7 +455,7 @@ export default {
           demand.addDemand(data).then(response => {
             if (response.code === 200) {
               this.dialogDemandVisible = false;
-              this.$message.success("需求提报成功");
+              this.$message.success("提报成功");
               // this.$emit("getSoftwareDm");
               this.getSoftwareDemand();
                this.clearDialog();
@@ -509,7 +509,7 @@ export default {
                     this.$set(item, 'isFavorite', collectResponse.data === true);
                   }
                 } catch (error) {
-                  console.error('获取需求关注状态失败', error);
+                  console.error('获取关注状态失败', error);
                 }
               }
             }
@@ -584,7 +584,7 @@ export default {
       });
     },
     deleteDemandFunction(item) {
-      this.$confirm("确定删除该需求吗？", "提示", {
+      this.$confirm("确定删除该反馈内容吗？", "提示", {
         type: "warning"
       }).then(e => {
         demand.deleteDemand(item.id).then(async response => {
@@ -599,12 +599,12 @@ export default {
       });
     },
     closeDemandFunction(item) {
-      this.$confirm("确定关闭该需求吗？", "提示", {
+      this.$confirm("确定关闭该反馈内容吗？", "提示", {
         type: "warning"
       }).then(e => {
         demand.finishDemand(item.id, this.userInfo.userId).then(response => {
           if (response.code === 1) {
-            this.$message.info("需求关闭成功。");
+            this.$message.info("反馈内容关闭成功。");
             // this.$emit("getSoftwareDm");
             this.getSoftwareDemand();
           }
@@ -612,7 +612,7 @@ export default {
       });
     },
     deleteDemandReply(item) {
-      this.$confirm("确定删除该需求回复吗？", "提示", {
+      this.$confirm("确定删除该反馈回复吗？", "提示", {
         type: "warning"
       }).then(e => {
         demand.deleteDemandReply(item.id).then(async response => {
@@ -628,7 +628,7 @@ export default {
     },
     showDemandReply() {
       if (!this.replyDemandItem) {
-        this.$message.info("请先选择一个需求进行回复");
+        this.$message.info("请先选择一个反馈进行回复");
         return;
       }
       this.replyVisible = true;
@@ -679,7 +679,7 @@ export default {
       this.$refs.replyFormRef.validate(valid => {
         if (valid) {
           if(!this.replyDemandItem) {
-            this.$message.info("请选择需要回复的需求");
+            this.$message.info("请选择需要回复的反馈");
             return false;
           }
 
