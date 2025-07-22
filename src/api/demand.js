@@ -232,3 +232,47 @@ export function cfDemand(data) {
     data
   })
 }
+
+// 获取需求统计概览数据
+export function getDemandStatisticsOverview() {
+  return request({
+    url: '/software/demand/statistics/overview',
+    method: 'get'
+  })
+}
+
+// 获取需求统计趋势数据
+export function getDemandStatisticsTrend(startDate, endDate) {
+  return request({
+    url: '/software/demand/statistics/trend',
+    method: 'get',
+    params: {
+      startDate,
+      endDate
+    }
+  })
+}
+
+// 获取反馈类型占比数据
+export function getDemandStatisticsByType(startDate, endDate) {
+  return request({
+    url: '/software/demand/statistics/type',
+    method: 'get',
+    params: {
+      startDate,
+      endDate
+    }
+  })
+}
+
+// 获取反馈状态占比数据
+export function getDemandStatisticsByStatus(startDate, endDate) {
+  return request({
+    url: '/software/demand/statistics/status',
+    method: 'get',
+    params: {
+      startDate,
+      endDate
+    }
+  })
+}

@@ -4,31 +4,31 @@
       <span style="font-size:20px;">数据概况</span>
     </div>
     <el-row :gutter="12">
-      <el-col :span="4">
+      <el-col :span="6">
         <el-card class="topCard">
           <div class="topTitle"><i style="color: blue;" class="el-icon-s-help"></i>在库软件总数</div>
           <div class="topNum">{{topShowInfo.softwareAllNum}}</div>
         </el-card>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="6">
         <el-card class="topCard">
           <div class="topTitle"><i style="color: green;" class="el-icon-s-help"></i>通用软件数</div>
           <div class="topNum">{{topShowInfo.softwareNum}}</div>
         </el-card>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="6">
         <el-card class="topCard">
           <div class="topTitle"><i style="color: orange;" class="el-icon-s-help"></i>软件模型数</div>
-          <div class="topNum">{{topShowInfo.softwareNum}}</div>
+          <div class="topNum">{{topShowInfo.softwareModelNum}}</div>
         </el-card>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="6">
         <el-card class="topCard">
           <div class="topTitle"><i style="color: purple;" class="el-icon-s-help"></i>软件段数</div>
           <div class="topNum">{{topShowInfo.fragmentNum}}</div>
         </el-card>
       </el-col>
-      <el-col :span="4">
+      <!-- <el-col :span="4">
         <el-card class="topCard">
           <div class="topTitle"><i style="color: #da586a;" class="el-icon-s-help"></i>待审核数</div>
           <div class="topNum">{{topShowInfo.unAuditSoftwareNum}}</div>
@@ -39,7 +39,7 @@
           <div class="topTitle"><i style="color: red;" class="el-icon-s-help"></i>未通过数</div>
           <div class="topNum">{{topShowInfo.DetectionRejectSoftwareNum}}</div>
         </el-card>
-      </el-col>
+      </el-col> -->
     </el-row>
     <div style="margin-top:20px;text-align:right;">
       <el-date-picker
@@ -146,7 +146,8 @@ export default {
         unTrySoftwareNum: 0,
         softwareAllNum: 99,
         unDetectionSoftwareNum: 4,
-        softwareNum: 19
+        softwareNum: 19,
+        softwareModelNum: 0
       },
       lineChartData: lineChartData.newVisitis,
       plateformPieData: [],
@@ -379,7 +380,7 @@ export default {
                 if (item.pic1_byCategory) {
                   this.softwareTypeOption.total = this.topShowInfo.softwareAllNum;
                   this.softwareTypeOption.data[0].value = this.topShowInfo.softwareNum;
-                  this.softwareTypeOption.data[1].value = this.topShowInfo.softwareNum;
+                  this.softwareTypeOption.data[1].value = this.topShowInfo.softwareModelNum;
                   this.softwareTypeOption.data[2].value = this.topShowInfo.fragmentNum;
                   
                   this.softwareAuditOption.total = this.topShowInfo.fragmentNum;
@@ -400,7 +401,7 @@ export default {
                 if (item.pic1_byCategory) {
                   this.softwareTypeOption.total = this.topShowInfo.softwareAllNum;
                   this.softwareTypeOption.data[0].value = this.topShowInfo.softwareNum;
-                  this.softwareTypeOption.data[1].value = this.topShowInfo.softwareNum;
+                  this.softwareTypeOption.data[1].value = this.topShowInfo.softwareModelNum;
                   this.softwareTypeOption.data[2].value = this.topShowInfo.fragmentNum;
                   
                   this.softwareAuditOption.total = this.topShowInfo.fragmentNum;
@@ -416,9 +417,10 @@ export default {
     },
     initSoftwareTypeData() {
       // 初始化软件类型占比数据
+      console.log(this.topShowInfo, "this.topShowInfo");
       this.softwareTypeOption.total = this.topShowInfo.softwareAllNum;
       this.softwareTypeOption.data[0].value = this.topShowInfo.softwareNum; // 通用软件
-      this.softwareTypeOption.data[1].value = this.topShowInfo.softwareNum; // 软件模型
+      this.softwareTypeOption.data[1].value = this.topShowInfo.softwareModelNum; // 软件模型
       this.softwareTypeOption.data[2].value = this.topShowInfo.fragmentNum; // 软件段
 
       // 初始化软件段审核状态数据

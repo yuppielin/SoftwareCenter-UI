@@ -22,7 +22,7 @@ export default {
     },
     height: {
       type: String,
-      default: '300px'
+      default: '400px'
     },
     option: {
       type: Object,
@@ -74,7 +74,8 @@ export default {
         ],
         title: {
           text: this.option.title,
-          subtext: this.option.subTitle
+          subtext: this.option.subTitle,
+          show: false
         },
         tooltip: {
           trigger: 'axis',
@@ -83,10 +84,10 @@ export default {
           }
         },
         grid: {
-          top: 30,
-          left: '2%',
-          right: '4%',
-          bottom: '3%',
+          top: 50,
+          left: '1%',
+          right: '1%',
+          bottom: '4%',
           containLabel: true
         },
         legend: {
@@ -108,7 +109,15 @@ export default {
               color: '#000'
             },
             interval: 0,
-            rotate: 20// 顺时针旋转20度
+            rotate: 45,
+            margin: 10,
+            formatter: function(value) {
+              // 只保留月和日，减少宽度
+              if (value && value.length >= 10) {
+                return value.substring(5); // 只显示月-日部分
+              }
+              return value;
+            }
           }
         }],
         yAxis: [{
@@ -119,11 +128,18 @@ export default {
           axisLabel: {
             textStyle: {
               color: '#000'
+            },
+            formatter: function(value) {
+              return parseInt(value);
             }
           },
           textStyle: {
             color: '#000'
-          }
+          },
+          max: function(value) {
+            return value.max ? Math.ceil(value.max * 1.5) : 10;
+          },
+          minInterval: 1 // 确保刻度间隔至少为1
         }],
         // toolbox: {
         //     show: true,
@@ -197,6 +213,23 @@ export default {
             // markLine: {
             //   data: [{ type: 'average', name: 'Avg' }]
             // },
+            animationDuration
+          },
+          {
+            name: this.option.legend[2],
+            type: 'line',
+            itemStyle: {
+              normal: {
+                color: '#3498db',
+                lineStyle: {
+                  color: '#3498db',
+                  width: 2
+                }
+              }
+            },
+            animationDuration: 2800,
+            animationEasing: 'quadraticOut',
+            data: this.option.seriesC,
             animationDuration
           }
         ]
