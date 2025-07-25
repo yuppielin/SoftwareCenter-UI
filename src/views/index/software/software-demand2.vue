@@ -19,8 +19,8 @@
         <div class="comment-content">
           <div class="comment-title">
             {{ item.title }}
-            <!-- 添加需求类型标签 -->
-            <span class="type-tag" :class="getDemandTypeStyle(item.category)">
+            <!-- 添加需求类型标签，仅当category不为0时显示 -->
+            <span v-if="item.category && item.category !== 0" class="type-tag" :class="getDemandTypeStyle(item.category)">
               {{ getDemandTypeName(item.category) }}
             </span>
           </div>
@@ -222,7 +222,6 @@
         <el-form-item
           label="反馈类型："
           prop="type"
-          :rules="[{required:true,message:'请选择需求类型',trigger:'change'}]"
         >
           <treeselect
             v-model="demandForm.type"
@@ -787,8 +786,8 @@ export default {
      * 获取需求类型名称
      */
     getDemandTypeName(categoryId) {
-      // 根据类型ID返回对应的类型名称
-      if (!categoryId) return '未分类';
+      // 如果分类ID为0或不存在，返回空字符串不显示
+      if (!categoryId || categoryId === 0) return '';
       
       // 查找类型名称
       const category = this.typeData.find(item => item.id === categoryId);
@@ -805,7 +804,7 @@ export default {
       //   return '软件建议';
       // }
       
-      // return '其他';
+      return '其他';
     },
     
     /**

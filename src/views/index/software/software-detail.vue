@@ -231,7 +231,7 @@
           <el-form-item
             label="反馈类型："
             prop="type"
-            :rules="[{required:true,message:'请选择反馈类型',trigger:'change'}]"
+            style="margin-left: 6px;"
           >
             <treeselect
               v-model="demandForm.type"
@@ -807,7 +807,7 @@ export default {
             versionId: this.data.versionId,
             username: this.userInfo.username,
             realname: this.userInfo.realName,
-            category: parseInt(this.demandForm.type),
+            category: this.demandForm.type ? parseInt(this.demandForm.type) : 0,
             // uUser: this.userInfo.userId
           };
           demand.addDemand(data).then(response => {

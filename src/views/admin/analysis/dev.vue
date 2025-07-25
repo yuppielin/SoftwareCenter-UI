@@ -8,27 +8,27 @@
           <div class="data-card orange">
             <div class="icon-wrapper"><i class="el-icon-s-data"></i></div>
             <div class="data-label">研发项目总数</div>
-            <div class="data-value">{{ statData.projectCount || 0 }}</div>
+            <div class="data-value">{{ statData.totalProjects || 0 }}</div>
           </div>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6">
           <div class="data-card green">
             <div class="icon-wrapper"><i class="el-icon-s-check"></i></div>
             <div class="data-label">完成项目数</div>
-            <div class="data-value">{{ statData.finishedCount || 0 }}</div>
+            <div class="data-value">{{ statData.completedProjects || 0 }}</div>
           </div>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6">
           <div class="data-card yellow">
             <div class="icon-wrapper"><i class="el-icon-s-custom"></i></div>
             <div class="data-label">开发人员总数</div>
-            <div class="data-value">{{ statData.developerCount || 0 }}</div>
+            <div class="data-value">{{ statData.totalDevelopers || 0 }}</div>
           </div>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6">
           <div class="data-card purple">
             <div class="icon-wrapper"><i class="el-icon-s-opportunity"></i></div>
-            <div class="data-label">本月代码提交量</div>
+            <div class="data-label">软件版本更新数</div>
             <div class="data-value">{{ statData.monthlyCommits || 0 }}</div>
           </div>
         </el-col>
@@ -88,327 +88,188 @@
 
 <script>
 import * as echarts from 'echarts'
-import { getSystemData, uploadTrendNull, downloadTrendNull } from '@/api/analysis'
+import { getDataOverview, getLanguageUsage, getTechStackUsage, getReport } from '@/api/ecosystem-analysis'
 
 export default {
   name: 'DevAnalysis',
   data() {
     return {
-      dateRange: [
-        this.getDefaultStartDate(),
-        this.getDefaultEndDate()
-      ],
+      dateRange: [null, null],
       statData: {
-        devUnitCount: 38,
-        projectCount: 68,
-        finishedCount: 46,
-        developerCount: 253,
-        monthlyCommits: 1289
+        totalProjects: 0,
+        completedProjects: 0,
+        totalDevelopers: 0,
+        monthlyCommits: 0
       },
       loading: {
-        uploadTrend: false,
-        downloadTrend: false,
+        overview: false,
         language: false,
-        techStack: false
+        techStack: false,
+        report: false
       },
-      uploadTrendChart: null,
-      downloadTrendChart: null,
       languageChart: null,
       techStackChart: null
     }
   },
   methods: {
-    getDefaultStartDate() {
-      const date = new Date()
-      date.setDate(1)
-      return this.formatDate(date)
-    },
-    getDefaultEndDate() {
-      const date = new Date()
-      return this.formatDate(date)
-    },
-    formatDate(date) {
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
-    },
     getStatData() {
-      getSystemData().then(response => {
+      this.loading.overview = true
+      getDataOverview(this.dateRange[0], this.dateRange[1]).then(response => {
         if (response.code === 200) {
           const data = response.data || {}
           this.statData = {
-            devUnitCount: data.devUnitCount || 38,
-            projectCount: data.projectCount || 68,
-            finishedCount: data.finishedCount || 46,
-            developerCount: data.developerCount || 253,
-            monthlyCommits: data.monthlyCommits || 1289
+            totalProjects: data.totalProjects || 0,
+            completedProjects: data.completedProjects || 0,
+            totalDevelopers: data.totalDevelopers || 0,
+            monthlyCommits: data.monthlyCommits || 0
           }
         } else {
           this.$message.error('获取统计数据失败')
         }
+        this.loading.overview = false
       }).catch(error => {
         console.error('获取统计数据错误:', error)
         this.$message.error('获取统计数据出错')
+        this.loading.overview = false
       })
     },
     handleSearch() {
+      this.getStatData()
       this.initCharts()
     },
     generateReport() {
-      this.$message.success('正在生成报告，请稍候...')
-      setTimeout(() => {
-        this.$notify({
-          title: '成功',
-          message: '开发生态分析报告已生成，请到"我的报告"中查看',
-          type: 'success',
-          duration: 3000
-        })
-      }, 2000)
-    },
-    initUploadTrendChart() {
-      this.loading.uploadTrend = true
-      
-      uploadTrendNull().then(response => {
-        if (response.code === 20000 && response.data) {
-          const { xData = [], yData = [] } = response.data
-          
-          this.uploadTrendChart = echarts.init(this.$refs.uploadTrendChart)
-          const option = {
-            tooltip: {
-              trigger: 'axis'
-            },
-            xAxis: {
-              type: 'category',
-              data: xData,
-              axisLabel: {
-                rotate: 30,
-                interval: 0
-              }
-            },
-            yAxis: {
-              type: 'value'
-            },
-            series: [
-              {
-                name: '软件',
-                type: 'line',
-                data: yData.softwareData || [],
-                smooth: true,
-                itemStyle: {
-                  color: '#FFA500'
-                }
-              },
-              {
-                name: '软件段',
-                type: 'line',
-                data: yData.moduleData || [],
-                smooth: true,
-                itemStyle: {
-                  color: '#4CAF50'
-                }
-              }
-            ]
-          }
-          this.uploadTrendChart.setOption(option)
+      this.loading.report = true
+      getReport(this.dateRange[0], this.dateRange[1]).then(response => {
+        if (response.code === 200) {
+          this.$notify({
+            title: '成功',
+            message: '开发生态分析报告已生成，请到"我的报告"中查看',
+            type: 'success',
+            duration: 3000
+          })
         } else {
-          // 使用模拟数据
-          const xData = this.generateDateRange()
-          const softwareData = Array(xData.length).fill(0)
-          const moduleData = Array(xData.length).fill(0)
-          
-          this.uploadTrendChart = echarts.init(this.$refs.uploadTrendChart)
-          const option = {
-            tooltip: {
-              trigger: 'axis'
-            },
-            xAxis: {
-              type: 'category',
-              data: xData,
-              axisLabel: {
-                rotate: 30,
-                interval: 0
-              }
-            },
-            yAxis: {
-              type: 'value'
-            },
-            series: [
-              {
-                name: '软件',
-                type: 'line',
-                data: softwareData,
-                smooth: true,
-                itemStyle: {
-                  color: '#FFA500'
-                }
-              },
-              {
-                name: '软件段',
-                type: 'line',
-                data: moduleData,
-                smooth: true,
-                itemStyle: {
-                  color: '#4CAF50'
-                }
-              }
-            ]
-          }
-          this.uploadTrendChart.setOption(option)
+          this.$message.error('生成报告失败')
         }
-        this.loading.uploadTrend = false
-      }).catch(() => {
-        // 使用模拟数据
-        const xData = this.generateDateRange()
-        const softwareData = Array(xData.length).fill(0)
-        const moduleData = Array(xData.length).fill(0)
-        
-        this.uploadTrendChart = echarts.init(this.$refs.uploadTrendChart)
-        const option = {
-          tooltip: {
-            trigger: 'axis'
-          },
-          xAxis: {
-            type: 'category',
-            data: xData,
-            axisLabel: {
-              rotate: 30,
-              interval: 0
-            }
-          },
-          yAxis: {
-            type: 'value'
-          },
-          series: [
-            {
-              name: '软件',
-              type: 'line',
-              data: softwareData,
-              smooth: true,
-              itemStyle: {
-                color: '#FFA500'
-              }
-            },
-            {
-              name: '软件段',
-              type: 'line',
-              data: moduleData,
-              smooth: true,
-              itemStyle: {
-                color: '#4CAF50'
-              }
-            }
-          ]
-        }
-        this.uploadTrendChart.setOption(option)
-        this.loading.uploadTrend = false
+        this.loading.report = false
+      }).catch(error => {
+        console.error('生成报告错误:', error)
+        this.$message.error('生成报告出错')
+        this.loading.report = false
       })
     },
     initLanguageChart() {
       this.loading.language = true
       
-      // 模拟开发语言使用情况数据
-      const languageData = [
-        { name: 'Java', value: 42 },
-        { name: 'JavaScript', value: 28 },
-        { name: 'Python', value: 18 },
-        { name: 'C++', value: 15 },
-        { name: 'C#', value: 12 },
-        { name: 'PHP', value: 8 },
-        { name: 'Go', value: 7 },
-        { name: '其他', value: 10 }
-      ]
-      
-      this.languageChart = echarts.init(this.$refs.languageChart)
-      const option = {
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)'
-        },
-        legend: {
-          orient: 'vertical',
-          left: 'left',
-          data: languageData.map(item => item.name)
-        },
-        series: [
-          {
-            name: '开发语言',
-            type: 'pie',
-            radius: '55%',
-            center: ['50%', '60%'],
-            data: languageData,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
+      getLanguageUsage(this.dateRange[0], this.dateRange[1]).then(response => {
+        if (response.code === 200 && response.data) {
+          const languageData = response.data || []
+          
+          this.languageChart = echarts.init(this.$refs.languageChart)
+          const option = {
+            tooltip: {
+              trigger: 'item',
+              formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            legend: {
+              orient: 'vertical',
+              left: 'left',
+              data: languageData.map(item => item.name)
+            },
+            series: [
+              {
+                name: '开发语言',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: languageData,
+                emphasis: {
+                  itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                  }
+                }
               }
-            }
+            ]
           }
-        ]
-      }
-      this.languageChart.setOption(option)
-      this.loading.language = false
+          this.languageChart.setOption(option)
+        } else {
+          this.$message.error('获取语言使用情况数据失败')
+        }
+        this.loading.language = false
+      }).catch(error => {
+        console.error('获取语言使用情况错误:', error)
+        this.$message.error('获取语言使用情况出错')
+        this.loading.language = false
+      })
     },
     initTechStackChart() {
       this.loading.techStack = true
       
-      // 模拟技术栈使用情况数据
-      const techStackData = [
-        { name: 'Spring Boot', value: 35 },
-        { name: 'React', value: 25 },
-        { name: 'Vue', value: 23 },
-        { name: 'Angular', value: 15 },
-        { name: 'Django', value: 12 },
-        { name: 'Flask', value: 10 },
-        { name: 'Express', value: 8 },
-        { name: 'Laravel', value: 7 }
-      ]
-      
-      this.techStackChart = echarts.init(this.$refs.techStackChart)
-      const option = {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-        xAxis: {
-          type: 'value'
-        },
-        yAxis: {
-          type: 'category',
-          data: techStackData.map(item => item.name).reverse()
-        },
-        series: [
-          {
-            name: '使用数量',
-            type: 'bar',
-            data: techStackData.map(item => item.value).reverse(),
-            itemStyle: {
-              color: function(params) {
-                const colorList = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4']
-                return colorList[params.dataIndex % colorList.length]
+      getTechStackUsage(this.dateRange[0], this.dateRange[1]).then(response => {
+        if (response.code === 200 && response.data) {
+          const techStackData = response.data || []
+          
+          // 按值排序并取前8个
+          const sortedData = [...techStackData].sort((a, b) => b.value - a.value).slice(0, 8)
+          
+          // 计算Y轴最大值，大于最大数据值的1/3
+          const maxValue = Math.max(...sortedData.map(item => item.value))
+          const yAxisMax = Math.ceil(maxValue * 1.33)
+          
+          this.techStackChart = echarts.init(this.$refs.techStackChart)
+          const option = {
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                type: 'shadow'
               }
-            }
+            },
+            xAxis: {
+              type: 'category',
+              data: sortedData.map(item => item.name),
+              axisLabel: {
+                interval: 0,
+                rotate: 30
+              }
+            },
+            yAxis: {
+              type: 'value',
+              max: yAxisMax,
+              axisLabel: {
+                formatter: '{value}'
+              },
+              minInterval: 1
+            },
+            series: [
+              {
+                name: '使用数量',
+                type: 'bar',
+                data: sortedData.map(item => item.value),
+                itemStyle: {
+                  color: function(params) {
+                    const colorList = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4']
+                    return colorList[params.dataIndex % colorList.length]
+                  }
+                },
+                label: {
+                  show: true,
+                  position: 'top',
+                  formatter: '{c}'
+                }
+              }
+            ]
           }
-        ]
-      }
-      this.techStackChart.setOption(option)
-      this.loading.techStack = false
-    },
-    generateDateRange() {
-      const dates = []
-      const start = new Date('2025-06-05')
-      const end = new Date('2025-06-20')
-      
-      let current = new Date(start)
-      while (current <= end) {
-        dates.push(`2025-${String(current.getMonth() + 1).padStart(2, '0')}-${String(current.getDate()).padStart(2, '0')}`)
-        current.setDate(current.getDate() + 1)
-      }
-      
-      return dates
+          this.techStackChart.setOption(option)
+        } else {
+          this.$message.error('获取技术栈使用情况数据失败')
+        }
+        this.loading.techStack = false
+      }).catch(error => {
+        console.error('获取技术栈使用情况错误:', error)
+        this.$message.error('获取技术栈使用情况出错')
+        this.loading.techStack = false
+      })
     },
     initCharts() {
       this.$nextTick(() => {
@@ -434,14 +295,6 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.handleResize)
-    if (this.uploadTrendChart) {
-      this.uploadTrendChart.dispose()
-      this.uploadTrendChart = null
-    }
-    if (this.downloadTrendChart) {
-      this.downloadTrendChart.dispose()
-      this.downloadTrendChart = null
-    }
     if (this.languageChart) {
       this.languageChart.dispose()
       this.languageChart = null
