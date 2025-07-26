@@ -57,7 +57,7 @@
         :picker-options="pickerOptions"
       />
       <el-button size="small" type="primary" icon="el-icon-search" style="margin-left:10px;height:30px" @click="handleSearch">搜索</el-button>
-      <el-button size="small" type="primary" style="margin-left:10px;height:30px" @click="generateReport">生成分析报告</el-button>
+      <el-button size="small" type="primary" icon="el-icon-document" style="margin-left:10px;height:30px" @click="generateReport">生成分析报告</el-button>
     </div>
     <!---上传下载趋势-->
     <!-- <el-row style="background:#fff;padding:16px 16px 0;margin:0  0 32px 0;">

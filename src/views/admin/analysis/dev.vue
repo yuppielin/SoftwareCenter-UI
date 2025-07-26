@@ -37,7 +37,7 @@
     
     <div class="filter-container">
       <div class="left-controls">
-        <el-button type="primary" icon="el-icon-document" size="small" @click="generateReport">生成报告</el-button>
+        <el-button type="primary" icon="el-icon-document" size="small" @click="generateReport">生成分析报告</el-button>
       </div>
       <div class="right-controls">
         <div class="date-range">

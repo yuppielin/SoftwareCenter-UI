@@ -47,7 +47,7 @@
         :picker-options="pickerOptions">
       </el-date-picker>
       <el-button size="small" type="primary" style="color:white;margin-left:10px" @click="handleSearch">搜索</el-button>
-      <el-button size="small" type="primary" style="color:white;margin-left:10px" @click="generateReport">报告导出</el-button>
+      <el-button size="small" type="primary" icon="el-icon-document" style="color:white;margin-left:10px" @click="generateReport">生成分析报告</el-button>
     </div>
     <!-- <el-row style="background:#fff;padding:16px 16px 0;margin:10px  0 32px 0;">
       <BarChartDemand></BarChartDemand>
