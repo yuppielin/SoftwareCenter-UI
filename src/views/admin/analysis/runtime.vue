@@ -90,6 +90,7 @@
 <script>
 import * as echarts from 'echarts'
 import { getSystemData, downloadTrendNull, hotDownload } from '@/api/analysis'
+import {  getRuntimeReport } from '@/api/ecosystem-analysis'
 
 export default {
   name: 'RuntimeAnalysis',
@@ -100,9 +101,9 @@ export default {
         this.getDefaultEndDate()
       ],
       statData: {
-        deployCount: 0,
-        onlineCount: 0,
-        downloadCount: 0,
+        deployCount: 4,
+        onlineCount: 1,
+        downloadCount: 1,
         monthlyDeployCount: 0
       },
       loading: {
@@ -153,17 +154,25 @@ export default {
     handleSearch() {
       this.initCharts()
     },
+
     generateReport() {
-      this.$message.success('正在生成报告，请稍候...')
-      setTimeout(() => {
-        this.$notify({
-          title: '成功',
-          message: '运行生态分析报告已生成，请到"我的报告"中查看',
-          type: 'success',
-          duration: 3000
-        })
-      }, 2000)
+      this.loading.report = true
+      getRuntimeReport(this.dateRange[0], this.dateRange[1]).then(response => {
+        let blob = new Blob([response], {type: "application/msword"});
+          let downloadUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = downloadUrl;
+          link.download = "软件运行生态分析报告";
+          link.click();
+          URL.revokeObjectURL(downloadUrl);
+        this.loading.report = false
+      }).catch(error => {
+        console.error('生成报告错误:', error)
+        this.$message.error('生成报告出错')
+        this.loading.report = false
+      })
     },
+
     initDownloadTrendChart() {
       this.loading.downloadTrend = true
       

@@ -57,6 +57,7 @@
         :picker-options="pickerOptions"
       />
       <el-button size="small" type="primary" icon="el-icon-search" style="margin-left:10px;height:30px" @click="handleSearch">搜索</el-button>
+      <el-button size="small" type="primary" style="margin-left:10px;height:30px" @click="generateReport">生成分析报告</el-button>
     </div>
     <!---上传下载趋势-->
     <!-- <el-row style="background:#fff;padding:16px 16px 0;margin:0  0 32px 0;">
@@ -431,7 +432,22 @@ export default {
       this.softwareAuditOption.data[2].value = this.topShowInfo.DetectionRejectSoftwareNum;
       // 已通过数量 = 总数 - 未审核数量 - 未通过数量
       this.softwareAuditOption.data[0].value = this.topShowInfo.fragmentNum - this.topShowInfo.unAuditSoftwareNum - this.topShowInfo.DetectionRejectSoftwareNum;
-    }
+    },
+
+    generateReport() {
+      analysis.getReport(this.search.date[0], this.search.date[1]).then(response => {
+        let blob = new Blob([response], {type: "application/msword"});
+          let downloadUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = downloadUrl;
+          link.download = "软件谱系分析报告";
+          link.click();
+          URL.revokeObjectURL(downloadUrl);
+      }).catch(error => {
+        console.error('生成报告错误:', error)
+        this.$message.error('生成报告出错')
+      })
+    },
   }
 };
 </script>

@@ -35,15 +35,19 @@ export function getTechStackUsage(startDate, endDate) {
 }
 
 /**
- * 获取数据分析报告
+ * 获取生态数据分析报告
  * @param {string} startDate 开始日期，格式为 yyyy-MM-dd
  * @param {string} endDate 结束日期，格式为 yyyy-MM-dd
  * @returns {Promise} 返回数据分析报告
  */
 export function getReport(startDate, endDate) {
   return request({
-    url: '/ecosystem/getReport',
+    url: '/ecosystem/getDevReport',
     method: 'get',
+    header: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
+    responseType: "blob",
     params: {
       startDate,
       endDate
@@ -68,3 +72,26 @@ export function getDataOverview(startDate, endDate) {
     }
   })
 }
+
+
+
+/**
+ * 获取运行生态数据分析报告
+ * @param {string} startDate 开始日期，格式为 yyyy-MM-dd
+ * @param {string} endDate 结束日期，格式为 yyyy-MM-dd
+ * @returns {Promise} 返回数据分析报告
+ */
+export function getRuntimeReport(startDate, endDate) {
+    return request({
+      url: '/ecosystem/getRuntimeReport',
+      method: 'get',
+      header: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+        },
+      responseType: "blob",
+      params: {
+        startDate,
+        endDate
+      }
+    })
+  }

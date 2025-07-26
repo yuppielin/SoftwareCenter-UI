@@ -47,7 +47,7 @@
         :picker-options="pickerOptions">
       </el-date-picker>
       <el-button size="small" type="primary" style="color:white;margin-left:10px" @click="handleSearch">搜索</el-button>
-      <el-button size="small" type="primary" style="color:white;margin-left:10px">报告导出</el-button>
+      <el-button size="small" type="primary" style="color:white;margin-left:10px" @click="generateReport">报告导出</el-button>
     </div>
     <!-- <el-row style="background:#fff;padding:16px 16px 0;margin:10px  0 32px 0;">
       <BarChartDemand></BarChartDemand>
@@ -102,7 +102,7 @@ import MultiLineChart from './components/MultiLineChart.vue'
 import MultiBarChart from './components/MultiBarChart.vue'
 import BarChartDemand from './components/BarChartDemand.vue'
 import * as echarts from 'echarts'
-import { getDemandStatisticsOverview, getDemandStatisticsTrend, getDemandStatisticsByType, getDemandStatisticsByStatus } from '@/api/demand'
+import { getDemandStatisticsOverview, getDemandStatisticsTrend, getDemandStatisticsByType, getDemandStatisticsByStatus,getDemandReport } from '@/api/demand'
 import { parseTime } from '@/utils/index'
 
 export default {
@@ -417,7 +417,24 @@ export default {
       if (this.feedbackStatusChart) {
         this.feedbackStatusChart.resize()
       }
-    }
+    },
+    generateReport() {
+      this.loading.report = true
+      getDemandReport(this.dateRange[0], this.dateRange[1]).then(response => {
+        let blob = new Blob([response], {type: "application/msword"});
+          let downloadUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = downloadUrl;
+          link.download = "软件运营反馈分析报告";
+          link.click();
+          URL.revokeObjectURL(downloadUrl);
+        this.loading.report = false
+      }).catch(error => {
+        console.error('生成报告错误:', error)
+        this.$message.error('生成报告出错')
+        this.loading.report = false
+      })
+    },
   },
   created() {
     this.getStatData()

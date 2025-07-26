@@ -140,16 +140,13 @@ export default {
     generateReport() {
       this.loading.report = true
       getReport(this.dateRange[0], this.dateRange[1]).then(response => {
-        if (response.code === 200) {
-          this.$notify({
-            title: '成功',
-            message: '开发生态分析报告已生成，请到"我的报告"中查看',
-            type: 'success',
-            duration: 3000
-          })
-        } else {
-          this.$message.error('生成报告失败')
-        }
+        let blob = new Blob([response], {type: "application/msword"});
+          let downloadUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = downloadUrl;
+          link.download = "软件开发生态分析报告";
+          link.click();
+          URL.revokeObjectURL(downloadUrl);
         this.loading.report = false
       }).catch(error => {
         console.error('生成报告错误:', error)
@@ -157,6 +154,8 @@ export default {
         this.loading.report = false
       })
     },
+
+
     initLanguageChart() {
       this.loading.language = true
       

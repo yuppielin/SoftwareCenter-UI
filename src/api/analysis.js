@@ -134,3 +134,26 @@ export function getUploadStatusDistribution(params) {
         params: params
     })
 }
+
+
+
+/**
+ * 获取运行生态数据分析报告
+ * @param {string} startDate 开始日期，格式为 yyyy-MM-dd
+ * @param {string} endDate 结束日期，格式为 yyyy-MM-dd
+ * @returns {Promise} 返回数据分析报告
+ */
+export function getReport(startDate, endDate) {
+    return request({
+      url: '/statistic/getReport',
+      method: 'get',
+      header: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+        },
+      responseType: "blob",
+      params: {
+        startDate,
+        endDate
+      }
+    })
+  }
